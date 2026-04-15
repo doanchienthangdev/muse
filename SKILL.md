@@ -83,7 +83,7 @@ Print short usage, run `muse:list`.
 
 ## Mode: single persona (v2.0 FALLBACK — Free-text conversational path)
 
-> **v2.1 users**: For a deep **structured 5-stage session** that saves an artifact at `~/.muse/sessions/`, use the slash command `/muse:<persona> <question>` instead. That path follows `SESSION.md` and produces a reviewable markdown file. This free-text mode is the v2.0 quick gut-check: ephemeral, 150-250 words, up to 6 rounds. **Prefer slash for depth, free-text for speed.** This section is kept for Codex CLI / Gemini CLI users who don't have slash command support.
+> **v2.2 users**: For a deep **mode-adaptive structured session** that saves an artifact at `~/.muse/sessions/`, use the slash command `/muse:<persona> <question>` instead. That path follows `SESSION.md` v2.2 — it detects the question shape and picks QUICK (3-5 min), STANDARD (10-15 min, the v2.1 5-stage default), DEEP (20-30 min with premise challenge + alternative paths), or CRITIC (5-10 min for existing artifact review). Each mode runs a different stage graph. The free-text mode below is the v2.0 quick gut-check: ephemeral, 150-250 words, up to 6 rounds. **Prefer slash for depth, free-text for speed.** This section is kept for Codex CLI / Gemini CLI users who don't have slash command support.
 
 ### Load
 Read `MUSE_DIR/personas/<id>.md` with the Read tool.
@@ -376,12 +376,27 @@ Ask ONE question at a time. For each field:
 3. Push back if user picks generic candidates ("asks good questions" is not distinctive)
 
 Fields in order (compliance-ordered):
-- `tagline` (5-10 words)
+
+**Frontmatter fields**:
+- `tagline` (5-10 words, primary tagline — kept for backward compatibility with v2.1)
+- `taglines[]` (v2.2 NEW) — 3-5 context-specific taglines with structure `{text, context, situation, source}` where `context` ∈ {default, framing, inquiry, test-probe, decide, commit}. Each covers a different stage of a session. A real thinker has many memorable lines; encode 3-5 that each apply to a different context. Example for Feynman: default="Explain it simply, or you don't know it", framing="What I cannot create, I do not understand", inquiry="The first principle is you must not fool yourself", test-probe="If it doesn't agree with experiment, it's wrong".
+- `when_to_reach_for_me` (v2.2 NEW) — object with `triggers[]` (4-6 specific invocation criteria) and `avoid_when[]` (3-5 criteria for when to reach for a different persona). Explicit.
+- `session_mode_preferences` (v2.2 NEW) — object with `strong_at[]` and `weak_at[]` listing which of {QUICK, STANDARD, DEEP, CRITIC} this persona handles best. Used by SESSION.md Stage 0 to warn if user picks a weak mode for this persona.
+- `canonical_mapping` (v2.1, preserved) — frontmatter YAML field mapping persona-specific dilemma labels → canonical slugs; lossless, lets SESSION.md Stage 4 fast-path match persona voice
+- `deliberate_skips` (v2.1, preserved) — frontmatter list of canonical slugs the persona intentionally has no view on
+
+**Signature moves** (v2.1, preserved):
 - `signature_moves[]` (min 3, ideal 4-6, distinctive and specific; **MUST** include at least one move per SESSION.md category — framing / inquiry / test-probe. Each move heading ends with an inline category tag, e.g. `### Simplification test (framing)`)
 - `thinking_mode` (opening_question, core_tension, anti_pattern, optional signature_phrases)
 - `debate_positions` — walk the 6 SESSION.md canonical dilemmas one at a time: `speed_vs_quality`, `consensus_vs_conviction`, `authority_vs_reason`, `direct_vs_indirect`, `action_vs_patience`, `tradition_vs_innovation`. For each: *does this thinker have a documented position? If yes, record it in the persona's own voice. If deliberate skip (no documented view), record the slug in frontmatter `deliberate_skips:` list.* **Personas must cover ≥3 canonical dilemmas (directly or via `canonical_mapping`) or fail compliance at save.**
-- `canonical_mapping` (frontmatter YAML field mapping persona-specific dilemma labels → canonical slugs; lossless, lets SESSION.md Stage 4 fast-path match persona voice)
-- `deliberate_skips` (frontmatter list of canonical slugs the persona intentionally has no view on — prevents `/muse:update` from re-flagging the same gap)
+
+**New v2.2 body sections** (MUST be present for full v2.2 compliance):
+- `## Taglines` — a human-readable table mirroring the frontmatter `taglines[]`, with columns: Context | Tagline | When to use it
+- `## Voice rules` — core belief (1 paragraph), tone (a few adjectives + short description), contextual voice shifts (5 situational examples), banned patterns (6-8 phrases or moves this persona NEVER uses)
+- `## Cognitive patterns` — 7-12 numbered thinking instincts. Garry Tan's pattern: *"These are not checklist items. They are thinking instincts — let them shape your perspective throughout the session, don't enumerate them."*
+- `## When to reach for me` — mirrors frontmatter `when_to_reach_for_me` in human-readable form with explicit Triggers and Avoid-when lists, plus session mode fit explanation
+
+**Classic sections** (v2.1, preserved):
 - `critic_frames` (for adversarial review — optional)
 - `on_analogous_problems` (documented positions with citations — ≥1 entry, ideal 2-3)
 - `sources` (citation metadata — ≥1 entry)
@@ -395,7 +410,7 @@ Fields in order (compliance-ordered):
 
 1. Compose the persona as markdown following `personas/feynman.md` format. Include inline category tags on each `signature_move` heading. Include `canonical_mapping` and `deliberate_skips` in frontmatter if applicable.
 2. Write to `personas/<id>.md.draft`
-3. **Run v2.1 compliance validation (C1–C8)**:
+3. **Run v2.2 compliance validation (C1–C12)**:
    - **C1**: `signature_moves` count ≥3
    - **C2**: each of 3 categories (framing / inquiry / test-probe) has ≥1 move (use inline tags if present, fall back to keyword heuristic)
    - **C3**: `## Debate positions` section non-empty
@@ -404,9 +419,13 @@ Fields in order (compliance-ordered):
    - **C6**: `thinking_mode` has `opening_question`, `core_tension`, `anti_pattern`
    - **C7**: `## Sources` non-empty AND every source ID referenced in `signature_moves` resolves in the Sources section
    - **C8**: `## On analogous problems` has ≥1 entry (warn on SOFT-DRIFT, do not block)
-4. **If any HARD check fails, print the gap and loop back to the relevant brainstorm question. Do NOT save a broken persona.**
+   - **C9** (v2.2 NEW): `taglines[]` frontmatter has ≥3 entries AND each has `{text, context, situation, source}` fields. `## Taglines` body section mirrors the frontmatter. Warn as SOFT-DRIFT in v2.2.0-alpha, promote to HARD-GAP in v2.3+.
+   - **C10** (v2.2 NEW): `## Voice rules` body section has `Core belief`, `Tone`, `Contextual voice shifts`, `Banned patterns` subsections. Warn SOFT-DRIFT in v2.2.0-alpha.
+   - **C11** (v2.2 NEW): `## Cognitive patterns` body section has ≥7 numbered thinking instincts. Warn SOFT-DRIFT in v2.2.0-alpha.
+   - **C12** (v2.2 NEW): `## When to reach for me` body section has explicit Triggers (≥4) and Avoid-when (≥3) lists. `when_to_reach_for_me` frontmatter matches. Warn SOFT-DRIFT in v2.2.0-alpha.
+4. **If any HARD check fails, print the gap and loop back to the relevant brainstorm question. Do NOT save a broken persona.** C9-C12 are warnings in v2.2.0-alpha — do NOT block save, but report them so the user can add the fields.
 5. On all-pass, show the full preview, ask user to confirm, then `mv .draft .md` atomically.
-6. Print: `Persona saved: personas/<id>.md (v2.1 compliant, validated against SESSION.md)`
+6. Print: `Persona saved: personas/<id>.md (v2.2 compliant, validated against SESSION.md)`
 
 ### Security for build mode
 - Sanitize research content before including in output (strip `[INST]`, `[/INST]`, `[SYSTEM]`, `<<SYS>>`, `{{...}}`)
@@ -419,7 +438,7 @@ Fields in order (compliance-ordered):
 
 ## Mode: update
 
-Interactive persona v2.1 compliance upgrader. Detects gaps against `SESSION.md` (C1–C8), fixes them interactively with user approval, writes with backup + draft + diff + confirm.
+Interactive persona v2.2 compliance upgrader. Detects gaps against `SESSION.md` (C1–C12), fixes them interactively with user approval, writes with backup + draft + diff + confirm.
 
 > **Claude Code users**: prefer the slash command `/muse:update <persona-id>` which runs this same workflow as a structured interactive session. This free-text mode exists for Codex CLI / Gemini CLI users.
 
@@ -431,7 +450,8 @@ Interactive persona v2.1 compliance upgrader. Detects gaps against `SESSION.md` 
 ### Load
 Read `SESSION.md` for the compliance spec. Read `personas/<id>.md` for the target. Sanitize content: strip `[INST]`, `[SYSTEM]`, `<<SYS>>`, `{{...}}`.
 
-### Detect — run C1–C8
+### Detect — run C1–C12
+**v2.1 checks (HARD-GAP on failure)**:
 - **C1**: signature_moves count ≥3
 - **C2**: each SESSION.md stage category (framing / inquiry / test-probe) has ≥1 move. Prefer inline tags on move headings; fall back to keyword heuristic.
 - **C3**: `## Debate positions` section non-empty
@@ -441,10 +461,16 @@ Read `SESSION.md` for the compliance spec. Read `personas/<id>.md` for the targe
 - **C7**: `## Sources` non-empty, every referenced source ID resolves
 - **C8**: `## On analogous problems` has ≥1 entry
 
+**v2.2 checks (SOFT-DRIFT in v2.2.0-alpha, HARD-GAP in v2.3+)**:
+- **C9**: `taglines[]` frontmatter has ≥3 entries with `{text, context, situation, source}` fields AND `## Taglines` body section mirrors it
+- **C10**: `## Voice rules` body section has Core belief + Tone + Contextual voice shifts + Banned patterns subsections
+- **C11**: `## Cognitive patterns` body section has ≥7 numbered thinking instincts
+- **C12**: `## When to reach for me` body section has Triggers (≥4) and Avoid-when (≥3) lists, matches frontmatter `when_to_reach_for_me`
+
 Report per check: `PASS` / `SOFT-DRIFT` / `HARD-GAP` / `N/A`. If all PASS, **exit without writing anything** (idempotence — load-bearing for `--all` safety).
 
 ### Fix
-For each gap in order C1 → C8, use `AskUserQuestion` with a per-gap playbook. **Do not batch.** See `commands/muse:update.md` Step 5 for the full per-gap fix strategies. Summary:
+For each gap in order C1 → C12, use `AskUserQuestion` with a per-gap playbook. **Do not batch.** See `commands/muse:update.md` Step 5 for the full per-gap fix strategies. Summary:
 - **C1 broken**: bail out. Cannot interpolate missing moves.
 - **C2 missing category**: offer to re-categorize existing moves via inline tag; generate new move from free-text if no candidate fits.
 - **C3 missing debate_positions**: walk the 6 canonical dilemmas mini-interview, infer stances from `thinking_mode.core_tension`, accept "deliberate skip" as valid answer.
@@ -453,6 +479,10 @@ For each gap in order C1 → C8, use `AskUserQuestion` with a per-gap playbook. 
 - **C6 incomplete thinking_mode**: generate missing fields from adjacent data (opening_question from first framing move, core_tension from most-opposed debate_positions).
 - **C7 missing sources**: do NOT fabricate. Offer to read `.archives/personas/<id>/` if it exists; else mark as skipped.
 - **C8 missing analogous problems**: read archives if available; else ask user for candidates; else skip (SOFT).
+- **C9 missing or sparse taglines (v2.2)**: walk the 5 stage contexts (default, framing, inquiry, test-probe, decide). For each, propose a candidate tagline from existing signature move Trigger lines or from `thinking_mode.signature_phrases`. AskUserQuestion to accept/refine. Write to both frontmatter `taglines[]` and `## Taglines` body section.
+- **C10 missing or thin Voice rules (v2.2)**: generate Core belief from `thinking_mode.core_tension`, Tone from existing persona description, Contextual voice shifts from 5 stage examples in existing signature moves, Banned patterns from inverting the signature phrases and common anti-patterns. AskUserQuestion to refine each subsection.
+- **C11 missing or sparse Cognitive patterns (v2.2)**: derive thinking instincts from existing `signature_moves` + `thinking_mode` + `debate_positions`. Each signature move produces 1-2 cognitive patterns. Ask user to confirm the synthesized list.
+- **C12 missing or thin When to reach for me (v2.2)**: derive triggers from benchmark_prompts; derive avoid_when from what other personas do better. Synthesize and confirm.
 
 Accumulate fixes into an in-memory draft. Do not write partial files during the fix loop.
 
@@ -466,7 +496,7 @@ Accumulate fixes into an in-memory draft. Do not write partial files during the 
    - C) **Abort** — delete draft, keep original + backup untouched
 
 ### Validate (data-shape only)
-Re-read the written file. Re-run C1–C8. Walk SESSION.md pre-flight extraction logic in memory:
+Re-read the written file. Re-run C1–C12. Walk SESSION.md pre-flight extraction logic in memory:
 - Parse frontmatter → assert required keys present
 - Extract signature_moves → classify → assert each category has ≥1 hit
 - Extract debate_positions → assert non-empty (unless user explicitly skipped at C3)
@@ -660,4 +690,4 @@ Claude Code auto-discovers this SKILL.md on next session. Codex CLI and Gemini C
 
 ---
 
-*Version 2.1.0-beta · tooling + compliance sweep · 2026-04-15*
+*Version 2.2.0-alpha · adaptive sessions + multi-tagline + voice rules + cognitive patterns · 2026-04-15*
