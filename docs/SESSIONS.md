@@ -1,8 +1,10 @@
-# Structured sessions (v2.1)
+# Structured sessions (v2.1+, current: v2.3.2-alpha)
 
-New in Muse v2.1. Each of the 8 personas is also available as a **slash command** that runs a structured 5-stage brainstorming session and saves the transcript to a markdown file at `~/.muse/sessions/`. This doc explains what happens during a session, what the saved file looks like, and how to find / read / share / resume past sessions.
+Every installed persona is available as a **slash command** (e.g., `/muse:feynman`, `/muse:socrates`, and any persona you've added locally via `/muse:build`) that runs a structured session and saves the transcript to `~/.muse/sessions/`. The starter pack ships 8 persona slash commands but the set is dynamic — add a persona locally and it gets its own slash command automatically on next `install.sh`. This doc explains what happens during a session, what the saved file looks like, and how to find / read / share / resume past sessions.
 
-For the quick v2.0 conversational mode (free-text `muse:feynman <q>`, no file saved), see `README.md` and `SKILL.md`. This document covers only the v2.1 structured path.
+v2.2 added **adaptive session modes** — Stage 0 detects the shape of your question and picks QUICK / STANDARD / DEEP / CRITIC. The 5-stage flow described below is STANDARD mode; QUICK compresses to 2 stages, DEEP adds Stage 0.5 Premise Challenge and Stage 3.5 Alternative Paths, CRITIC replaces Stage 1 with artifact loading and Stage 3 with prioritized findings.
+
+For the v2.0 free-text conversational mode (`muse:feynman <q>` without slash, no file saved), see [`README.md`](../README.md) and `SKILL.md`. That path still works for Codex CLI / Gemini CLI users. This document covers the structured slash command path used by Claude Code.
 
 ---
 

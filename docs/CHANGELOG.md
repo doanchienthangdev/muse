@@ -13,6 +13,117 @@ Nothing yet.
 
 ---
 
+## [2.3.2-alpha] — 2026-04-16 — Docs refresh: persona runtime + extensibility + v3 catalog vision
+
+### Why
+
+v2.3.1-alpha shipped `/muse:who` — the 18th slash command — and the docs still described muse as if it were a fixed 8-persona tool. README said *"Eight historical thinkers"*. `docs/PERSONAS.md` said *"8 core personas shipped in v2.0"*. `docs/GETTING_STARTED.md` said *"restart Claude Code so it picks up the 8 new slash commands"*. Every surface-level doc reinforced a framing that didn't match the product anymore.
+
+The product reality: muse is a **persona runtime** that ships with a starter pack. The runtime supports arbitrary locally-authored personas today via `/muse:build`, and the long-term direction is a public catalog (similar to agentskills for Claude Code) where users browse and clone individual personas without cloning the whole framework. The docs needed to reflect this so new users don't install muse thinking *"cool, 8 personas, that's the product"*.
+
+v2.3.2-alpha is a comprehensive docs refresh. Zero code changes. Zero persona edits. Zero SKILL.md/SESSION.md changes. Every surface-level messaging change flows from one reframe: **starter pack + extensible runtime**, not fixed 8-persona tool.
+
+### Changed
+
+**`README.md`** (~540 lines, full rewrite):
+
+- **Hero paragraph** reframed: muse is now *"a persona runtime that ships with a curated starter pack of cognitive tools and is designed from day one to be extended"*. The *"eight historical thinkers"* framing is gone.
+- **New § What gets shipped** organized into 🎭 Starter pack (8 personas with a full table showing id, era, domain, tagline) + ⚙️ Runtime (18 slash commands) + 📐 Framework (SESSION.md / SKILL.md / schema / benchmarks docs). Explicit *"Starter pack, not a ceiling"* callout.
+- **New § Discovering the right persona** featuring `/muse:who` as the cold-start entry point with a worked example of the triage output. Three tiers: triage (`/muse:who`), browse (`/muse:list`), direct (`/muse:<id>`).
+- **Enriched § Commands reference** with attribute icons (💬 interactive, 💾 persistent, 🎭 multi-persona, 🔑 requires API key, ⚡ quick). Grouped into 🧭 Triage & navigation (2), 🎭 Persona sessions — starter pack (8), 🎭 Multi-persona orchestration (4), 🛠️ Persona lifecycle (2), 📊 Evaluation (2). Full distinctive-moves summary per persona instead of one-liner.
+- **New § Roadmap** describing the v3 persona catalog vision explicitly: browse, preview, clone individual personas, contribute via PR with automated distinctiveness gates. Cites agentskills as the model. Lists near-term (v2.4+) and long-term (v3+) roadmap items.
+- **Updated § Build your own persona** — emphasizes that starter pack and extension personas are *fully equal* (no special treatment, no second-class status). `/muse:who`, `/muse:benchmark`, `/muse:update` all include local personas automatically.
+- **Updated § Who this is for** — added "Teams with opinionated thinkers" use case.
+- **Updated § How muse is different** — added item 7 on extensibility as a first-class property.
+- **Updated § Credits** — acknowledges agentskills as the catalog model.
+- **Updated § Status** — v2.3.2-alpha entry, version history refreshed through v2.2.0-alpha (every recent release has a one-line summary).
+- **Tagline for the release**: *"18 slash commands · 8 starter-pack personas · extensible runtime"*.
+
+**`docs/PERSONAS.md`** (~280 lines, rewrite):
+
+- Title changed from *"Muse Personas (v2)"* to *"Muse Personas — Starter Pack + Extension Guide (v2.3.2-alpha)"*.
+- Opening paragraph reframed: starter pack as baseline, runtime as the actual product, future catalog as the v3+ direction.
+- **Per-persona descriptions** enriched with signature move category tags `(framing)` / `(inquiry)` / `(test-probe)`, "best for" use cases, and "avoid when" notes for Feynman.
+- **New § How to pick a persona** with three options: (1) `/muse:who` triage, (2) quick-reference table, (3) multi-persona orchestration. The quick-reference table expanded with emotional/identity and abstraction-defining rows.
+- **New § Extending the starter pack** documenting the build flow, explicit *"every extension persona is fully equal to starter-pack personas"* statement, and a **candidate roster for v2.4+** (Shannon, Jacobs, Taleb, Keynes, Weil, Miyazaki, Hopper) with rationale per candidate.
+- **New § v3 persona catalog vision** — 5-point description of browse / preview / clone / update / contribute flow. Load-bearing prerequisites: schema stability, scoring, signing.
+- Explicit call to action: *"In the meantime: share via PR"*.
+
+**`docs/GETTING_STARTED.md`** (~180 lines, rewrite):
+
+- Title bumped to v2.3.2-alpha.
+- Install section lists all 6 `~/.muse/` subdirectories (sessions, chains, debates, critiques, spike, analytics, benchmark-reports) instead of just sessions.
+- **New § 2 — Your first command: /muse:who** as THE recommended cold-start entry point, with a worked triage example.
+- **Renumbered remaining steps** to reflect the new ordering (browse → session → chain → debate → critic → build → benchmark).
+- **New § 9 — Measure persona quality** pointing at `/muse:benchmark` + `--diff` workflow.
+- **New § 10 — Full command reference** with the 18-command table broken into starter-pack (8) + meta (10).
+- **Updated § Troubleshooting** with specific v2.3.2 issues: persona not showing in /muse:list, benchmark grade drop after adding a persona, etc.
+
+**`docs/CONTRIBUTING.md`** (minor edits):
+
+- Opening paragraph reframed: starter pack as baseline, path to expand is local authoring + upstream PRs, catalog is v3+ roadmap.
+- `/muse:build` section expanded: explicit mention of spec review loop (max 3 iterations), C1-C12 validation, distinctiveness check, dry-run + atomic mv. Shows both slash path (Claude Code) and free-text path (Codex/Gemini CLI).
+- **Distinctiveness testing** — now recommends `/muse:benchmark --diff` as the primary path (no API key needed, uses subagent judges) and `/muse:spike` as the scientific-with-human-judges path (still v2.3.0 gather-only, score mode v2.3.1+).
+- **"NOT accepting" section** updated to reflect the v2.4+/v3+ split. Public catalog infrastructure, `--mode=score`, routing-accuracy benchmark, CI integration, continuous dashboards all explicitly listed as deferred with version targets. Auto-improvement loop explicitly marked *"deliberately never"*.
+
+**`docs/ARCHITECTURE.md`** (header + system diagram refresh):
+
+- Title bumped to *"Muse Architecture (v2.3.2-alpha — agentic persona runtime)"*.
+- Preamble expanded with per-minor-version additions (v2.1 structured sessions, v2.2 adaptive modes + enriched schema + build/update/benchmark, v2.3 six new orchestration commands + `/muse:who`).
+- **Starter pack + runtime positioning paragraph** added — explicit statement that the architecture scales from 8 to 80 personas without change.
+- **System diagram** updated: 18 slash commands, v2.0 vs v2.1+ paths labeled for Codex/Gemini vs Claude Code, outputs list includes chains/debates/critiques/spike folders alongside sessions.
+
+**`docs/SESSIONS.md`** (intro refresh):
+
+- Title bumped to *"Structured sessions (v2.1+, current: v2.3.2-alpha)"*.
+- Opening paragraph reframed: every *installed* persona (starter pack OR locally-authored) gets a slash command automatically on next `install.sh`. The set is dynamic, not fixed at 8.
+- v2.2 adaptive modes paragraph added (QUICK/STANDARD/DEEP/CRITIC with brief description).
+
+### Not changed
+
+- **`commands/*.md`** — all 18 slash command files untouched
+- **`personas/*.md`** — all 8 starter pack personas untouched
+- **`SESSION.md`** (load-bearing workflow spec) — untouched
+- **`SKILL.md`** (dispatcher) — untouched
+- **`docs/BENCHMARKS.md`** — already current, shipped in v2.2.3-alpha
+- **`docs/PERSONA_SCHEMA.md`** — schema reference is version-agnostic, no change needed
+- **`install.sh`** — untouched
+- **Benchmark state** — grade A, 24/24 Turing, 100% compliance unchanged (provable via `git diff 3257daf..HEAD --stat -- personas/ SESSION.md SKILL.md` → empty)
+
+### Backward compatibility
+
+100% backward compatible. Zero behavioral changes. Every existing slash command, every existing free-text invocation, every existing session file path still works identically. The docs refresh is pure messaging — the product surface is identical to v2.3.1-alpha.
+
+### Migration
+
+None required. Pull and continue using muse.
+
+```bash
+cd ~/.claude/skills/muse && git pull
+# No install.sh re-run needed — no new commands.
+```
+
+### Total diff
+
+- `README.md`: fully rewritten (~540 lines, was ~420) → +~170 lines net, substantial restructure
+- `docs/PERSONAS.md`: fully rewritten (~280 lines, was ~210) → +~70 lines net
+- `docs/GETTING_STARTED.md`: fully rewritten (~180 lines, was ~160) → +~20 lines net
+- `docs/CONTRIBUTING.md`: minor edits (~15 lines changed)
+- `docs/ARCHITECTURE.md`: preamble + system diagram refresh (~25 lines changed)
+- `docs/SESSIONS.md`: intro refresh (~5 lines changed)
+- `docs/CHANGELOG.md`: +this entry
+- **Net**: ~300 lines added, 0 lines removed from the product surface. Doc-only release.
+
+### Regression safety
+
+- Zero code changes
+- Zero persona edits
+- Zero SKILL.md / SESSION.md changes
+- Benchmark baseline unchanged
+- Provable via `git diff 3257daf..HEAD --stat -- personas/ SESSION.md SKILL.md commands/` → empty
+
+---
+
 ## [2.3.1-alpha] — 2026-04-15 — `/muse:who` persona triage + routing
 
 ### Why

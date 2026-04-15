@@ -1,8 +1,16 @@
-# Muse Architecture (v2 — agentic)
+# Muse Architecture (v2.3.2-alpha — agentic persona runtime)
 
-This document explains the v2 architecture: **agent runtime as runtime, markdown as content, zero external deps**. For v1 historical context, see `docs/archive/CEO-PLAN-v1.md`.
+This document explains the architecture: **agent runtime as runtime, markdown as content, zero external deps**. For v1 historical context, see `docs/archive/CEO-PLAN-v1.md`.
 
-**v2.1 additions**: structured 5-stage session workflow in a new `SESSION.md` spec, 8 slash command launchers in `commands/muse:<persona>.md`, session persistence to `~/.muse/sessions/`. Everything below describes both v2.0 free-text path and v2.1 structured slash path — they coexist, they share the persona content layer, they have separate dispatchers.
+**v2.1 additions**: structured 5-stage session workflow in `SESSION.md`, per-persona slash command launchers in `commands/muse:<persona>.md`, session persistence to `~/.muse/sessions/`.
+
+**v2.2 additions**: adaptive session modes (QUICK/STANDARD/DEEP/CRITIC), enriched persona schema (multi-tagline, voice rules, cognitive patterns, when-to-reach), `/muse:build` + `/muse:update` + `/muse:benchmark` slash commands, spec review loop, blind Turing distinctiveness measurement.
+
+**v2.3 additions**: 6 new orchestration commands (`/muse:chain`, `/muse:all`, `/muse:debate`, `/muse:critic`, `/muse:list`, `/muse:spike`) completing the original v1 CEO plan, plus `/muse:who` cold-start triage in v2.3.1. 18 slash commands total.
+
+**Starter pack + runtime positioning**: muse is a persona runtime. The repo ships with a curated starter pack of 8 personas, but the runtime supports arbitrary locally-authored personas via `/muse:build`, and a future persona catalog (v3+) will let users clone individual personas without cloning the whole framework. Everything in this doc describes runtime behavior that scales from 8 personas to 80 without changing the architecture.
+
+Everything below describes both v2.0 free-text path and v2.1+ structured slash path — they coexist, they share the persona content layer, they have separate dispatchers.
 
 ---
 
@@ -46,21 +54,23 @@ This document explains the v2 architecture: **agent runtime as runtime, markdown
                             │ loads SKILL.md
                             ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│   v2.0 FREE-TEXT PATH        │  v2.1 STRUCTURED SLASH PATH       │
+│   v2.0 FREE-TEXT PATH        │  v2.1+ STRUCTURED SLASH PATH      │
+│   (Codex/Gemini CLI)         │  (Claude Code — preferred)        │
 │                              │                                    │
-│   SKILL.md (dispatcher)      │  commands/muse:<persona>.md       │
-│                              │  (launcher, ~30 lines)             │
-│   Parses `muse:<arg>` free   │          ↓                         │
-│   text. Routes to 8 modes:   │  SESSION.md (5-stage workflow)     │
-│     single persona           │  (load-bearing spec, ~400 lines)  │
-│     all / chain / debate     │          ↓                         │
-│     critic / build / spike   │  Stage 1 FRAME → 2 EXAMINE →       │
-│     list                     │  3 TEST → 4 DECIDE → 5 COMMIT      │
+│   SKILL.md (dispatcher)      │  commands/muse:<id>.md            │
+│   ~830 lines                 │  (18 slash command files)          │
 │                              │          ↓                         │
-│   Output: conversational     │  Output: markdown session file     │
-│   reply, 150-250 words,      │  saved to ~/.muse/sessions/        │
-│   up to 6 rounds,            │  <YYYY-MM-DD-HHMMSS>-<persona>-    │
-│   ephemeral.                 │  <slug>.md                         │
+│   Parses `muse:<arg>` free   │  SESSION.md (5-stage workflow)     │
+│   text. Routes to Mode:      │  (~730 lines, load-bearing)       │
+│     single persona (8)       │          ↓                         │
+│     who / list / build /     │  Stage 0 mode detect → Stage 1/1'  │
+│     update / benchmark /     │  → 2 → 3/3' → 4 → 5                │
+│     chain / all / debate /   │          ↓                         │
+│     critic / spike           │  Output: markdown file saved       │
+│                              │  to ~/.muse/sessions/ (or          │
+│   Output: conversational,    │  ~/.muse/chains/, /debates/,       │
+│   free-form dialogue.        │  /critiques/, /spike/ depending    │
+│                              │  on command)                       │
 │                              │                                    │
 └───────────────────────────┬──────────────────────────────────────┘
                             │
