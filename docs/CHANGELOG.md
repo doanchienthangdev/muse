@@ -13,6 +13,85 @@ Nothing yet.
 
 ---
 
+## [2.2.3-alpha] — 2026-04-15 — Quote-aware B3 matcher + BENCHMARKS.md contributor doc
+
+### Why
+
+v2.2.2-alpha shipped `/muse:benchmark` and produced a 24/24 grade-A first run, but left 4 loose ends that needed cleanup before shipping v2.3.0: (1) the B3 voice-rules matcher had false positives on personas that legitimately quoted user voice in Example fields (Lao Tzu's `*push harder*`, Confucius's `told` substring-matching the `old` banned pattern) and on banned-patterns lists that contained counter-example vocabulary in parentheticals (Dieter Rams's `(he would say *useful*)` — `useful` is what Rams *would* say, not a banned word), (2) the captured baseline.json ran with `--prompts=u01` override so it was a 1-prompt baseline, not the 3-prompt default, (3) the command docstring didn't make the 3-prompt default explicit, (4) there was no contributor-facing methodology doc — `docs/BENCHMARKS.md` didn't exist.
+
+v2.2.3-alpha fixes all four in one patch. Zero persona files edited. The matcher + parser fixes handle all three false-positive categories (quoted user voice, substring collisions, parenthetical counter-examples) in one change. Doc makes the default explicit. BENCHMARKS.md ships as a stand-alone contributor/forker reference.
+
+### Added
+
+- **`docs/BENCHMARKS.md` (new, ~350 lines)**. Contributor-facing methodology explainer covering:
+  - The 4 measurement categories (Static compliance, Static distinctiveness, Blind Turing, Regression detection)
+  - All 11 measures B1-B11 with what-it-scans / what-it-asserts / why-it-matters
+  - The 7 run modes with examples (default, `--baseline`, `--diff`, `--quick`, `--trend`, `--persona=<id>`, `--prompts=<list>`)
+  - How to read the output (grade scale, thresholds, section-by-section)
+  - When to establish/reset the baseline (and when NOT to)
+  - Worked example of interpreting a confusion
+  - Output locations (`~/.muse/benchmark-reports/*`, `baselines/`, `analytics/benchmark-runs.jsonl`)
+  - For contributors (when to run, CI integration future)
+  - For forkers (customizing prompts + thresholds)
+  - Known limitations (paraphrased user attribution, single-run variance, Jaccard ≠ semantics)
+
+### Fixed
+
+- **`commands/muse:benchmark.md` Step 2 / B3 — quote-aware voice-rules matcher**. Three fixes in one:
+
+  1. **Banned-pattern parser fix**: extract only tokens inside `*...*` italics from the LHS-of-em-dash, AND drop everything after ` (` (parenthetical counter-examples). Rams's `(he would say *useful*)` is now excluded — `useful` no longer appears in the banned set. Same logic rescues other personas with parenthetical counter-examples.
+
+  2. **Quote-stripping before matching**: the scan now strips italicized segments, double/single/smart quotes, and user-attribution sentences (from markers `"You said"`, `"You told me"`, `"User says"`, etc. up to the next sentence terminator) before checking for banned patterns. Lao Tzu's Example *"You said you need to push harder"* no longer flags — the user-attribution strip removes it.
+
+  3. **Word-boundary matching**: `\bpattern\b` instead of raw substring. Confucius's legitimate uses of words like `told` no longer trigger the `old` banned pattern. Substring collisions are eliminated.
+
+  Net result: the matcher now flags only real voice violations in the persona's own voice. False positives from quoted user text, substring collisions, and parenthetical counter-examples are all suppressed.
+
+- **`commands/muse:benchmark.md` Step 4 / B8 — clarifying line on 3-prompt default**. The code default was already 3 prompts (u01, u05, u10) but the docstring didn't say so explicitly, and the first baseline was run with `--prompts=u01` override producing an incomplete 1-prompt baseline. Added explicit note: *"Default = 3 prompts when `--prompts` is absent. Single-prompt runs are NOT representative for baseline and should never be used with `--baseline`."*
+
+- **Baseline replaced with post-fix 3-prompt state** (runtime action, not code). `~/.muse/benchmark-reports/baselines/baseline.json` now captures the post-v2.2.3 state: 8/8 grade A, 24/24 Turing, zero regressions. Replaces the pre-fix 1-prompt baseline from the v2.2.2 first run.
+
+### Known limitations (documented in docs/BENCHMARKS.md)
+
+- **Paraphrased user attribution without markers** slips through the quote strip. Example: "I hear you saying you need to grind" — no italics, no quotes, no "You said". The quote-aware matcher won't strip it, and the banned word `grind` would still match. Fix deferred to v2.4+.
+- **B3 over-aggressive strip detection**: if the quote-stripping removes >60% of an Example's chars, `--persona=<id>` deep-dive mode now prints a warning so the user can audit manually. But in practice this requires the deep-dive flag — the default run doesn't surface it.
+- **Subagent-based Turing ≠ scientific eval**. For the human-judged version, see `/muse:spike` (v2.3.0+, MVP gather-only).
+
+### Backward compatibility
+
+- **No persona file edits**. All 8 personas unchanged. The matcher/parser fixes operate on the existing persona files without needing to modify them.
+- **No SESSION.md changes**. Load-bearing file untouched.
+- **No SKILL.md changes** (except version bump in v2.3.0). Mode: benchmark section is unchanged; the Step 2 / B3 / B8 edits are internal to the slash command file.
+- **Existing benchmark reports remain valid**. The pre-fix baseline is preserved as part of analytics history (`~/.muse/benchmark-reports/2026-04-15-212955-benchmark.*`) even though `baselines/baseline.json` is replaced.
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse && git pull && ./install.sh    # Expect "11 slash commands installed" (unchanged from v2.2.2)
+/muse:benchmark --baseline                              # Capture the post-fix 3-prompt baseline
+```
+
+**Verify** the new baseline:
+
+```bash
+cat ~/.muse/benchmark-reports/baselines/baseline.json | jq '.prompts_used'
+# Expect: ["u01", "u05", "u10"]   — not just ["u01"]
+```
+
+### Risks + mitigations
+
+- **R1**: quote-strip may be too aggressive and mask real voice drift. **Mitigation**: deep-dive strip-ratio warning flags over-aggressive stripping at >60% per move.
+- **R2**: parser fix may miss a banned pattern that lives outside italics. **Mitigation**: all 8 shipped personas follow the `*italic comma-separated list* — explanation` convention, so italics-only extraction is reliable. Future personas authored via `/muse:build` are enforced to follow the same convention by Step 6 validation.
+
+### Total diff
+
+- `commands/muse:benchmark.md`: +30 lines (B3 section expanded from 4 → ~30 lines, B8 clarifying line added)
+- `docs/BENCHMARKS.md`: +350 lines (new file)
+- `docs/CHANGELOG.md`: +N lines (this entry)
+- **Net**: ~400 lines added, 0 lines removed, 2 files modified + 1 new
+
+---
+
 ## [2.2.2-alpha] — 2026-04-15 — `/muse:benchmark` + first run + findings + C9 schema mirror fixes
 
 ### Why

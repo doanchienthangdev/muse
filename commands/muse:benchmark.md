@@ -78,10 +78,38 @@ For each persona, extract frontmatter `taglines[].text` values and parse the `##
 
 Binary per persona: `OK | DRIFT`. If DRIFT, list the specific mismatches.
 
-**B3 — Voice rules self-consistency**:
-For each persona, extract `## Voice rules > Banned patterns` list. Then scan the same persona's `## Signature moves > Example:` fields. For each banned pattern, check if it appears in any Example. If yes, INCONSISTENCY — the persona's own documentation violates its own banned patterns.
+**B3 — Voice rules self-consistency** (quote-aware, v2.2.3+):
 
-Report per persona: `{inconsistencies: N, details: [...]}`. Should be 0 across the board.
+For each persona, run this two-step check:
+
+**Step 1 — Parse banned patterns** (LHS-of-em-dash + italics-only, v2.2.3 parser fix):
+
+For each line under `### Banned patterns`:
+1. Drop everything after the em-dash (`—`) — it's explanation, not the pattern.
+2. Also drop everything after ` (` — it's a parenthetical counter-example (e.g., `(he would say *useful*)`), NOT a banned word.
+3. Extract only tokens inside `*...*` italics from the LHS. Split on commas. Strip quotes. Lowercase.
+
+This parser fix avoids mis-extracting counter-example vocabulary. Rams's "useful" lives inside `(he would say *useful*)` — after the parenthesis — so it gets dropped. The banned set only contains what's actually banned.
+
+**Step 2 — Quote-aware scan** on `## Signature moves > Example:` fields:
+
+For each signature_move, extract the text after `**Example**:` (the example body). Then:
+
+1. **Strip quoted user voice** before matching:
+   - Remove italicized segments: `\*[^*]*\*` and `_[^_]*_`
+   - Remove double-quoted segments: `"[^"]*"` and smart quotes `[\u201C][^\u201D]*[\u201D]`
+   - Remove single-quoted segments: `'[^']*'` and `[\u2018][^\u2019]*[\u2019]`
+   - Remove user-attribution sentences: strip from markers `"You said"`, `"You told me"`, `"You claim"`, `"User says"`, `"Client says"`, `"user is doing"`, `"You're"`, `"you're telling me"` up to the next `.`, `!`, or `?`.
+
+2. **Word-boundary match** (`\bpattern\b`, case-insensitive) each remaining banned pattern against the stripped text. Substring-only matches are rejected — this kills the `told`→`old` false positive on Confucius.
+
+3. **Flag only real violations**: if a banned pattern appears in the persona's own voice (after stripping quoted user text and word-boundary matching), flag as INCONSISTENCY with the move name, pattern, and the stripped line where it was found.
+
+**Deep-dive diagnostic** (when `--persona=<id>` is set): also print the stripped-vs-original char count per Example. If strip removed >60% of Example chars for any move, print a warning — the matcher may be over-aggressive on that persona's style and should be audited manually.
+
+Report per persona: `{inconsistencies: N, details: [{move, pattern, stripped_line}], strip_ratio_max: <0-1>}`. Should be 0 across the board.
+
+**Known v2.2.3 limitation**: paraphrased user attribution without markers (e.g., "I hear you saying you need to grind") slips through the strip pass. Documented in `docs/BENCHMARKS.md § Known limitations`.
 
 **B4 — Mandatory sections presence**:
 For each persona, check each required section exists (`## Taglines`, `## Voice rules`, `## Cognitive patterns`, `## When to reach for me`, `## Signature moves`, `## Thinking mode`, `## Debate positions`, `## Sources`, `## On analogous problems`).
@@ -145,6 +173,8 @@ Status: ≥5 OK, 3-4 SOFT-DRIFT, <3 HARD-GAP.
 **B8 — Sample prompt generation**:
 
 Default prompt set (if `--prompts` not specified): `u01` (architecture), `u05` (feature cull), `u10` (quit vs persist). These cover easy/medium/hard difficulty and different categories.
+
+**Default = 3 prompts (u01, u05, u10) when `--prompts` is absent.** Single-prompt runs (e.g., `--prompts=u01`) are NOT representative of overall distinctiveness and should **never** be used with `--baseline` — a valid baseline must exercise all 3 difficulty tiers to measure distinctiveness across question types. Use `--prompts` override only for debugging a specific confusion case, not for baselining.
 
 For each prompt (3 total):
 
