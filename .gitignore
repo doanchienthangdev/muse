@@ -1,0 +1,28 @@
+# Muse - local-only research vault
+.archives/personas/**
+!.archives/personas/.gitkeep
+
+# macOS
+.DS_Store
+
+# Local cache
+~/.muse/
+.muse-cache/
+
+# Test artifacts
+tests/tmp/
+*.tmp.yaml
+*.tmp.json
+coverage/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Spike artifacts (generated per run)
+spike-batch-*.md
+spike-key-*.yaml
+spike-results-*.jsonl
+spike-decision-*.md
+!spike-batch-example.md
