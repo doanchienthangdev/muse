@@ -13,6 +13,103 @@ Nothing yet.
 
 ---
 
+## [2.2.1-alpha] — 2026-04-15 — `/muse:build` + `/muse:update` harden: spec review loop, concrete synthesis recipes, distinctiveness check, dry-run, rollback
+
+### Why
+
+v2.2.0-alpha shipped the adaptive session runtime and the v2.2 persona schema (multi-tagline, voice rules, cognitive patterns, when-to-reach). But the tooling — `/muse:build` and `/muse:update` — knew *about* the new fields without actually knowing *how to produce good output for them*. The C9-C12 fix playbooks said things like *"synthesize 7-12 numbered thinking instincts from signature_moves + thinking_mode + debate_positions"* with zero concrete recipe. The quality of a new persona depended entirely on (a) the user's brainstorm and (b) the LLM's ability to synthesize well in one shot. No safety net.
+
+Garry Tan's `plan-ceo-review` has a spec review loop exactly because first drafts are never good enough. Muse was missing that. Fixing it is the single biggest quality lever available in this sprint.
+
+### Added
+
+- **Spec review loop in both `/muse:build` (Step 5.5) and `/muse:update` (Step 5.5)**. After draft composition or fix accumulation, dispatch an adversarial Agent subagent with a 5-dimension review prompt (distinctiveness, voice specificity, cognitive vs tactical, tagline context fit, debate consistency). Parse score + issues. Apply fixes. Re-dispatch. Maximum 3 iterations. Convergence guard: same issues on consecutive iterations stop the loop. PASS = score ≥8 with no issues. Metrics logged to `~/.muse/analytics/spec-review.jsonl`. Best-effort (Agent failure skips with warning, does not block save).
+
+- **Concrete synthesis recipes for voice_rules and cognitive_patterns** in both commands. Replaces vague *"derive from X"* with explicit step-by-step derivation:
+  - **Core belief**: 1 sentence stance derived from `thinking_mode.core_tension`, rephrased as a direct statement of the persona's relationship to the user. Not a biography, not a philosophy abstract.
+  - **Tone**: 4-6 adjectives derived from persona era + domain + personality, plus 1 connecting sentence.
+  - **Contextual voice shifts**: exactly 5 entries, one per stage type, extracted from existing signature move `Example:` fields (or rewritten to fit the stage if no direct match).
+  - **Banned patterns**: 6-8 entries generated deterministically from 4 sources — (1) inverted `thinking_mode.signature_phrases`, (2) `thinking_mode.anti_pattern` converted to banned phrases, (3) modern AI/startup jargon baseline (crush it, unlock, optimize, 10x, circle back), (4) domain-specific bans.
+  - **Cognitive patterns**: one per signature move (the meta-habit, NOT the move itself), plus 1-2 from `core_tension`, plus 1-2 from strongest `debate_positions`. Constraints: domain-agnostic, habit-shaped, distinct from signature_moves, deduplicated. Target 7-12.
+
+- **Pre-build existing-persona check in `/muse:build` (new Step 1.5)**. Before 15 minutes of interactive brainstorm, ask the user: *"Which existing persona currently handles this use case best? The 8 shipped are: feynman, socrates, ..."* Options: A) None fits (proceed), B) Partial match but gap (proceed with follow-up), C) Describe use case in 1 sentence (fuzzy match against existing `when_to_reach_for_me.triggers[]`), D) Use `/muse:update` on existing one. Prevents accidental duplication.
+
+- **Lightweight distinctiveness check in `/muse:build` (new Step 5.3)**. After draft composition, compute Jaccard token overlap of each new signature move's Trigger + first sentence against every move in the 8 existing personas. WARN on any >60% collision. BLOCK save if >50% of new moves have >60% collisions (clear duplication). Not a full distinctiveness eval (`muse:spike`, still deferred to v2.3+) — a cheap tripwire for gross clones.
+
+- **Pre-save dry-run validation in `/muse:build` (new Step 5.9)**. BEFORE the atomic `mv`, statically walk the in-memory draft through SESSION.md lens selection: Stage 1 framing pick, Stage 2 inquiry pick, Stage 3 test-probe pick, tagline context coverage, canonical dilemma coverage (≥3 of 6), synthetic Stage 4 fork pick. If any step fails, surface via AskUserQuestion with options to fix / accept with limitation / abort. The critical change: run this BEFORE mv, not after — catches silent breakage before it reaches disk.
+
+- **Post-save dry-run re-check in `/muse:build` (new Step 8)**. After the atomic mv, re-read the file from disk and re-walk the same dry-run. Catches any Write-time corruption. If the on-disk file fails dry-run but the in-memory version passed, something went wrong with the write — surface loudly.
+
+- **Dry-run walk in `/muse:update` Step 8 (expanded from static check)**. Previously Step 8 was a static field re-check. Now it also walks SESSION.md lens selection + tagline contexts + canonical coverage + Stage 4 fork pick. If dry-run fails after write, prompts the user to run `/muse:update` again or `/muse:update --rollback`.
+
+- **Rollback helper: `/muse:update <persona-id> --rollback` (new Step 10)**. Short-circuits the compliance check workflow and restores from backup:
+  1. List all `.bak.<ts>` files newest-first.
+  2. AskUserQuestion: which backup to restore? Options include "show diff first".
+  3. Double-backup the current live file as `.bak.pre-rollback.<new-ts>` (safety net).
+  4. Atomic `cp` of selected backup over live (not `mv` — keeps the source backup in place for future rollback).
+  5. Re-run dry-run walk on the restored file.
+  6. Print result with pre-rollback snapshot path.
+  
+  Users can now recover from any bad `/muse:update` accept without manual `mv .bak .md` gymnastics.
+
+- **Schema mirror enforcement in C9 (stricter)**. Previously C9 checked *"taglines[] frontmatter has ≥3 entries AND ## Taglines body section mirrors it"* — but "mirrors it" was aspirational, not enforced. v2.2.1 adds a concrete check: for each entry in frontmatter `taglines[].text`, assert it appears verbatim as a cell in the body `## Taglines` table. And vice versa. Counts must match. Catches schema drift between frontmatter and body.
+
+### Changed
+
+- **`commands/muse:build.md`** rewritten (~170 → ~450 lines). Adds Step 1.5 (pre-build check), Step 5.3 (distinctiveness), Step 5.5 (spec review loop), Step 5.9 (pre-save dry-run), Step 8 (post-save dry-run). Step 4 field 7 (voice rules) and field 8 (cognitive patterns) rewritten with concrete synthesis recipes including worked examples. Step 5 C9-C12 validation bumped to include strict schema mirror. `allowed-tools` adds `Agent` for spec review loop dispatch.
+
+- **`commands/muse:update.md`** rewritten (~330 → ~520 lines). Adds `--rollback` flag to Step 0 parse (short-circuits to Step 10). Adds Step 5.5 (spec review loop, same pattern as build). Expands Step 8 from static field check to full dry-run walk. Adds Step 10 (rollback). C9 validation bumped to strict schema mirror. C10/C11 fix playbooks rewritten with concrete recipes mirroring build's Step 4. `allowed-tools` adds `Agent` for spec review loop.
+
+- **`SKILL.md`** Mode: build and Mode: update sections updated with v2.2.1 mandate pointers + abbreviated reference to the new build/update features. Full details live in `commands/muse:build.md` and `commands/muse:update.md`. For Codex/Gemini CLI users, SKILL.md is the free-text entry point. Version footer bumped to 2.2.1-alpha.
+
+- **`docs/PERSONA_SCHEMA.md`** compliance check table gets v2.2.1 clarifications. New subsection *"v2.2.1 quality gates beyond static compliance checks"* documents the 4 runtime gates: spec review loop, distinctiveness check, pre-save dry-run, rollback helper. Schema version footer bumped to 2.2.1-alpha.
+
+### Backward compatibility
+
+**Zero schema changes.** All v2.2 persona files (the 8 shipped + any user-built) remain unchanged. SESSION.md unchanged. `/muse:feynman <q>` session behavior identical. The 10 slash commands unchanged except for `/muse:build` and `/muse:update`.
+
+Every improvement is additive — if the Agent subagent for spec review is unavailable, the loop is skipped with a warning and the old v2.2.0-alpha behavior is the fallback. If a user does not pass `--rollback`, the update workflow runs unchanged. C9 strict mirror is a SOFT-DRIFT warning (not blocking) in v2.2.0-alpha severity, will promote to HARD-GAP in v2.3+.
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse
+git pull
+./install.sh
+```
+
+Existing v2.2 personas remain valid. Users who want to test the new spec review loop or rollback can try:
+
+```
+/muse:update socrates          # re-runs C1-C12 (already compliant, no-op) — tests idempotence
+/muse:update socrates --check  # prints compliance report, no writes
+/muse:update socrates --rollback  # lists backups, restores one (tests rollback safety net)
+```
+
+### Not in scope (deferred to v2.3+)
+
+- Full distinctiveness eval with API calls (`muse:spike` with human judges) — still requires ANTHROPIC_API_KEY + recruit 5 judges
+- Persona templates (historical philosopher / modern CEO / artist) — would speed up building but adds complexity
+- URL-based research import (Wikipedia → persona draft) — nice-to-have
+- Conversational build (replace 15-field walk with 3 open questions + derivation)
+- Batch auto-fix shortcut for `/muse:update --all` — batch walk one-at-a-time is fine
+- Promoting C9-C12 from SOFT-DRIFT to HARD-GAP — happens in v2.3 after calibration
+- Any schema changes (no new persona fields)
+
+### Known risks
+
+- **R1 — Spec review loop false positives**: the Agent subagent may flag legitimate design decisions as issues. Mitigation: max 3 iterations + convergence guard + user sovereignty at the end (AskUserQuestion with accept-with-concerns option).
+- **R2 — Distinctiveness check false positives**: two thinkers might legitimately have similar moves (e.g., Feynman's simplification test and Einstein's explain-it-to-your-grandmother). Mitigation: WARN threshold at 60%, BLOCK only at >50% collisions across all moves.
+- **R3 — Spec review adds latency**: each iteration dispatches a subagent. 3 iterations × 30s ≈ 90s additional latency per build/update. Mitigation: best-effort (timeouts gracefully skip), users can disable via `--no-spec-review` flag (v2.3 addition, not in this release).
+- **R4 — Rollback doesn't cover pre-build state**: `/muse:build` doesn't create a pre-build backup (the file didn't exist before). If a user wants to delete a newly-built persona, they use `rm personas/<id>.md` manually. Rollback only works for `/muse:update` edits.
+
+### Total diff
+
+- **Modified files**: `commands/muse:build.md` (+280 lines), `commands/muse:update.md` (+190 lines), `SKILL.md` (+60 lines), `docs/PERSONA_SCHEMA.md` (+80 lines), `docs/CHANGELOG.md` (this entry, ~140 lines)
+- **Total**: ~750 net LoC added. All tooling + docs. No personas touched. No SESSION.md changes.
+
+---
+
 ## [2.2.0-alpha] — 2026-04-15 — Adaptive sessions + multi-tagline + voice rules + cognitive patterns
 
 ### Why

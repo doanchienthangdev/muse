@@ -367,12 +367,40 @@ Both `/muse:build` and `/muse:update` run these against every persona file.
 | C6 | `thinking_mode` has `opening_question`, `core_tension`, `anti_pattern` | HARD-GAP |
 | C7 | `## Sources` non-empty AND every source-id referenced resolves | HARD-GAP |
 | C8 | `## On analogous problems` has ≥1 entry | SOFT-DRIFT |
-| **C9** | **`taglines[]` frontmatter has ≥3 entries AND `## Taglines` body mirrors it** | **SOFT-DRIFT** (v2.3+: HARD) |
+| **C9** | **`taglines[]` frontmatter has ≥3 entries AND `## Taglines` body mirrors it verbatim (v2.2.1 stricter)** | **SOFT-DRIFT** (v2.3+: HARD) |
 | **C10** | **`## Voice rules` has Core belief + Tone + Contextual shifts + Banned patterns** | **SOFT-DRIFT** (v2.3+: HARD) |
-| **C11** | **`## Cognitive patterns` has ≥7 numbered thinking instincts** | **SOFT-DRIFT** (v2.3+: HARD) |
+| **C11** | **`## Cognitive patterns` has ≥7 numbered thinking instincts (meta-habits, not signature moves)** | **SOFT-DRIFT** (v2.3+: HARD) |
 | **C12** | **`## When to reach for me` has Triggers ≥4, Avoid-when ≥3, matches frontmatter** | **SOFT-DRIFT** (v2.3+: HARD) |
 
 `/muse:build` refuses to save on any HARD-GAP. `/muse:update` reports all and lets the user fix interactively. Both commands are idempotent — running twice on a compliant persona is a zero-write no-op.
+
+### v2.2.1 quality gates beyond static compliance checks
+
+v2.2.1 adds four runtime quality gates on top of static C1-C12:
+
+**1. Spec review loop (Garry Tan pattern — biggest lever)**: both `/muse:build` (Step 5.5) and `/muse:update` (Step 5.5) dispatch an adversarial Agent subagent with a 5-dimension review prompt after draft composition, before write. Max 3 iterations. Dimensions:
+
+- **Distinctiveness**: are signature moves concretely different from the 8 existing personas?
+- **Voice rules specificity**: banned patterns concrete phrases (good) or generic advice (bad)? Core belief 1 sentence or a paragraph of throat-clearing?
+- **Cognitive patterns vs signature moves**: describe thinking instincts (meta-habits) or repeat the tactical moves?
+- **Taglines context match**: does each tagline actually fit its declared context?
+- **Debate positions vs thinking_mode**: internally consistent?
+
+If the reviewer returns score ≥8 with no issues, PASS. Else iterate with fixes. Convergence guard: if same issues return on consecutive iterations, stop and surface as documented concerns. Metrics logged to `~/.muse/analytics/spec-review.jsonl`. Best-effort, not blocking (Agent failures skip with warning).
+
+**2. Distinctiveness check (lightweight, build only)**: before spec review, compute Jaccard token overlap of each new signature move's Trigger line + first sentence against every signature move in the 8 existing personas. If any new move has >60% overlap, WARN. If >50% of new moves have >60% overlap, BLOCK save. Not a full distinctiveness eval (`muse:spike`, deferred to v2.3+) — a cheap tripwire for gross duplication.
+
+**3. Pre-save dry-run (build) / Dry-run walk (update)**: before atomic `mv`, walk SESSION.md lens selection against the draft:
+- Stage 1 Frame lens pick (framing-category move must exist)
+- Stage 2 Inquiry lens pick (inquiry-category move must exist)
+- Stage 3 Test-probe lens pick (test-probe-category move must exist)
+- Tagline `context: default` must exist; warn on missing contexts
+- Canonical dilemmas: `canonical_mapping` + `deliberate_skips` union ≥3 of 6
+- Synthetic Stage 4 fork: first covered slug has non-trivial stance (≥20 chars)
+
+Failure blocks save (build) or prompts rollback option (update).
+
+**4. Rollback helper (update only)**: `/muse:update <persona-id> --rollback` short-circuits to the rollback workflow. Lists `.bak.<ts>` files newest-first, user picks, double-backup (current saved as `.bak.pre-rollback.<new-ts>`), atomic `cp` of the selected backup over the live file, then re-run dry-run. Recoverable from any bad accept.
 
 ---
 
@@ -412,4 +440,4 @@ The schema is additive — no breaking changes — so v2.1 users upgrade at thei
 
 ---
 
-*Schema version: 2.2.0-alpha · generated 2026-04-15 · source of truth for `/muse:build` and `/muse:update`*
+*Schema version: 2.2.1-alpha · generated 2026-04-15 · source of truth for `/muse:build` and `/muse:update`. v2.2.1 adds runtime quality gates (spec review loop, distinctiveness check, dry-run walk, rollback) on top of the v2.2 schema — no schema fields changed, same backward compatibility guarantees.*
