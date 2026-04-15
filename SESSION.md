@@ -48,10 +48,10 @@ Before Stage 1, the slash command has already told you which persona to load. Re
 
 From the markdown, extract:
 
-- **Frontmatter**: `id`, `name`, `tagline`, `era`, `living_status`, optional `disclaimer`
-- **Signature moves** (all of them — you'll pick the best one per stage)
+- **Frontmatter**: `id`, `name`, `tagline`, `era`, `living_status`, optional `disclaimer`, optional `canonical_mapping` (maps persona-specific debate-position labels → SESSION.md canonical slugs), optional `deliberate_skips` (list of canonical slugs the persona intentionally has no view on — prevents `/muse:update` from re-flagging them as gaps)
+- **Signature moves** (all of them — you'll pick the best one per stage). Each move heading **may** end with an inline category tag: `(framing)`, `(inquiry)`, or `(test-probe)`. **Use these tags first** to route moves to Stage 1/2/3 lens selection. **If a tag is absent**, fall back to keyword heuristic on the move name + Trigger line + Example: framing keywords (simplif, defin, reframe, view from, as little), inquiry keywords (question, why, elench, rectific, assumpt), test-probe keywords (calcul, probe, audit, premeditatio, subtract, invert, cargo cult, emptiness). If neither tagged nor keyword-matched, use the persona's `thinking_mode.opening_question` as Stage 1 last resort.
 - **Thinking mode**: `opening_question`, `core_tension`, `anti_pattern`, optional `signature_phrases`
-- **Debate positions** (dict of stances on recurring dilemmas — used for Stage 4)
+- **Debate positions** (dict of stances on recurring dilemmas — used for Stage 4). If `canonical_mapping` is present in frontmatter, resolve persona-specific labels → canonical slugs via the mapping, then match the user's Stage 3 fork against the resolved canonical slugs. Combined with `deliberate_skips`, the persona should cover ≥3 of the 6 canonical dilemmas (`speed_vs_quality`, `consensus_vs_conviction`, `authority_vs_reason`, `direct_vs_indirect`, `action_vs_patience`, `tradition_vs_innovation`) or Stage 4 silently degrades.
 - **On analogous problems** (for citation grounding in Stage 5)
 - **Sources** (for citation resolution in the session file)
 
