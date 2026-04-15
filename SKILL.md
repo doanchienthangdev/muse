@@ -3,13 +3,15 @@ name: muse
 description: "Think with the greats. Invoke the distinctive cognitive patterns of great thinkers (Feynman, Socrates, Seneca, Marcus Aurelius, Aristotle, Confucius, Lao Tzu, Dieter Rams) as reusable thinking tools. Supports muse:[person] for single persona, muse:all for the default pipeline, muse:chain persona1→persona2 for custom pipelines, muse:debate personA vs personB for tension surfacing, muse:critic for adversarial review of existing work, muse:build for creating v2.1-compliant personas from research, muse:update for upgrading existing personas to v2.1 compliance, and muse:list to see what's installed."
 ---
 
-# Muse — Unified Dispatcher (v2.3.0-alpha)
+# Muse — Unified Dispatcher (v2.3.1-alpha)
 
 This skill applies the distinctive cognitive moves of chosen thinker(s) to the user's problem. It is NOT character acting. It is NOT cosplay. The goal is to apply **reusable cognitive tools**, the specific thinking moves each persona is known for, to help the user think more rigorously about their problem.
 
 **You are the runtime.** You read persona data with the Read tool. You parse markdown natively. No shell tools needed for interactive use. No external binaries required. Everything happens inside your context.
 
-**v2.3.0-alpha** ships the full original CEO plan: 17 slash commands (8 personas + 9 meta commands — build, update, benchmark, chain, all, debate, critic, list, spike). Claude Code users: prefer the slash commands — they have structured step-by-step orchestration, validation, persistence, and analytics. The free-text Mode sections below remain valid for Codex/Gemini CLI and as a fallback.
+**v2.3.1-alpha** adds `/muse:who` — the persona triage entry point. When you don't know which persona to reach for, type `/muse:who <your question>` and the command scores all 8 personas against your input, presents the top 5 with rationales, optionally suggests a chain or debate, and runs the chosen session inline on the same question. 18 slash commands total.
+
+**v2.3.0-alpha** shipped the full original CEO plan: 17 slash commands (8 personas + 9 meta commands — build, update, benchmark, chain, all, debate, critic, list, spike). Claude Code users: prefer the slash commands — they have structured step-by-step orchestration, validation, persistence, and analytics. The free-text Mode sections below remain valid for Codex/Gemini CLI and as a fallback.
 
 ---
 
@@ -31,6 +33,7 @@ When the user invokes this skill, the argument after `muse:` determines the mode
 | `muse:benchmark` | Persona distinctiveness + voice + mode fit benchmark | `/muse:benchmark` | `/muse:benchmark --quick` |
 | `muse:spike` | Scientific eval via real API calls (v2.3.0-alpha MVP gather-only, requires `ANTHROPIC_API_KEY`) | `/muse:spike` | `/muse:spike --personas=feynman,socrates,seneca` |
 | `muse:list` | List installed personas by category | `/muse:list` | `/muse:list --category=design` |
+| `muse:who <user_text>` | Persona triage — score top 5, pick one, run session inline | `/muse:who` | `/muse:who "should I rewrite in Rust?"` |
 
 **17 slash commands total** as of v2.3.0-alpha: 8 persona commands + 9 meta commands (build, update, benchmark, chain, all, debate, critic, list, spike). Claude Code users should prefer slash commands. Codex/Gemini CLI users fall back to the free-text Mode sections below.
 
@@ -84,6 +87,9 @@ Jump to **Mode: spike**.
 
 ### List: `muse:list`
 Jump to **Mode: list**.
+
+### Who: `muse:who <user_text>`
+Jump to **Mode: who**.
 
 ### Empty or unknown
 Print short usage, run `muse:list`.
@@ -675,6 +681,50 @@ When the user returns with answers, read the answers file, parse each judge's re
   - <50% → NO-GO
 
 Write `spike/<batch-id>/spike-decision-<batch-id>.md` with the full decision memo.
+
+---
+
+## Mode: who (v2.3.1-alpha)
+
+> **Claude Code users**: prefer `/muse:who` — structured triage with 0-80 scoring rubric, top 5 pick list, chain/debate/council suggestions, and inline handoff to the chosen persona's 5-stage session. Free-text flow below is for Codex/Gemini CLI.
+
+### Load
+Parse `<user_text>` from the argument. Read SESSION.md + all 8 persona files in parallel. For each persona, extract scoring fields: `tagline`, `categories[]`, `when_to_reach_for_me.triggers[]`, `avoid_when[]`, `session_mode_preferences`, `thinking_mode.opening_question`, `signature_moves` category distribution (framing/inquiry/test-probe).
+
+### Score
+For each persona, compute a 0-80 score using this rubric:
+- Trigger match (0-35): literal or semantic match against `triggers[]`
+- Question-type fit (0-20): question shape matches persona's signature_move categories
+- Domain alignment (0-15): detected domain matches `categories[]`
+- Thinking mode resonance (0-10): `opening_question` feels right for this input
+- Avoid-when penalty (-30 to 0): heavy hit if user_text triggers `avoid_when[]`
+- Mode-fit penalty (-10 to 0): if detected mode is in `weak_at[]`
+
+Floor at 0. Produce a per-persona `{id, score, rationale≤100chars}` record.
+
+### Detect chain/debate opportunities
+- **Chain**: if `top_1.score - top_2.score ≤ 15` AND their primary signature_move categories differ (e.g., framing + test-probe) AND both ≥50, suggest `top_1→top_2`.
+- **Debate**: if top_1 and top_2 take opposing positions on a canonical dilemma (from `canonical_mapping`), suggest `top_1 vs top_2`.
+
+### Present
+Print top 5 with scores + rationales. Add optional chain/debate/council options. Use `AskUserQuestion`:
+- A-E: top 5 personas with score and rationale
+- F: chain suggestion (if detected)
+- G: debate suggestion (if detected)
+- H: /muse:all council
+- I: full 8-persona score table
+- J: abort
+
+### Execute pick
+- **A-E (single persona)**: load the chosen persona + SESSION.md (already in context) and run the 5-stage session inline on the same `user_text`. Same behavior as `/muse:<persona> <user_text>`. Persist to `~/.muse/sessions/<ts>-<id>-<slug>.md`.
+- **F (chain)**: print `/muse:chain <suggestion> <user_text>` and exit. User types the command explicitly.
+- **G (debate)**: print `/muse:debate <suggestion> <user_text>` and exit.
+- **H (council)**: print `/muse:all <user_text>` and exit.
+- **I (full table)**: show all 8 with breakdown, loop back to pick.
+- **J (abort)**: exit cleanly.
+
+### Analytics
+Append `{ts, user_text_slug, top_5_scores, chain_suggested, debate_suggested, picked, duration_s}` to `~/.muse/analytics/who.jsonl`.
 
 ---
 

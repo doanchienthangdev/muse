@@ -13,6 +13,146 @@ Nothing yet.
 
 ---
 
+## [2.3.1-alpha] — 2026-04-15 — `/muse:who` persona triage + routing
+
+### Why
+
+muse v2.3.0-alpha shipped 17 slash commands including 8 distinct personas. That's the strength — 8 genuinely different cognitive frames. It's also the weakness: a new user who installs muse doesn't know which persona to reach for. Reading 8 persona files to figure out "who should help with this question?" is friction. Running `/muse:list` gets you a directory but not a recommendation. Running `/muse:all` fires every persona, which is expensive for a simple question.
+
+The gap was a **triage entry point** — a command that takes the user's question, analyzes it, and suggests the right lens. `/muse:who` closes that gap. Type your question without knowing the persona map, get a ranked pick list with rationales, and the chosen session runs inline on the same input.
+
+This is the "I don't know who to ask" entry point into muse.
+
+### Added
+
+- **`commands/muse:who.md` (~400 lines)** — persona triage + routing command.
+
+  **Syntax**: `/muse:who <user_text>`. Examples:
+  - `/muse:who "should I rewrite this service in Rust?"`
+  - `/muse:who "what do I actually mean by community?"`
+  - `/muse:who review my landing page copy`
+  - `/muse:who should I quit my startup or persist?`
+
+  **Flow**:
+  1. Parse + validate user_text (reject <5 chars, sanitize prompt-injection patterns).
+  2. Load SESSION.md + all 8 persona files in parallel. Extract scoring fields: `categories[]`, `when_to_reach_for_me.triggers[]`, `avoid_when[]`, `session_mode_preferences`, `thinking_mode.opening_question`, `signature_moves` category distribution.
+  3. Score each persona (0-80) using a transparent rubric (see below).
+  4. Detect chain and debate opportunities from the top 2 scores.
+  5. Present top 5 via `AskUserQuestion` with scores + one-line rationales. Options A-E are personas; F/G/H are chain/debate/council suggestions if detected; I is a full 8-persona score table; J is abort.
+  6. On pick (A-E): load the chosen persona + SESSION.md (already in context) and run the 5-stage session inline. Same behavior as `/muse:<picked> <user_text>`.
+  7. On pick F/G/H: print the exact slash command for the user to type (chain/debate/all are deferred to their own slash commands — no inline execution, keeps `/muse:who` ~400 lines instead of ~1000).
+  8. Append analytics to `~/.muse/analytics/who.jsonl`.
+
+### Scoring rubric (transparent, not a black box)
+
+The rubric is documented in full in `commands/muse:who.md` Step 2. Scores 0-80:
+
+| Category | Range | Signal |
+|---|---|---|
+| Trigger match | 0-35 | Literal or semantic match against `triggers[]` |
+| Question-type fit | 0-20 | Question shape matches signature_move categories (framing/inquiry/test-probe) |
+| Domain alignment | 0-15 | Detected domain matches `categories[]` |
+| Thinking mode resonance | 0-10 | `opening_question` feels right for this input |
+| Avoid-when penalty | -30 to 0 | Heavy hit if user_text triggers `avoid_when[]` |
+| Mode-fit penalty | -10 to 0 | If detected mode is in `weak_at[]` |
+
+Floor at 0. Max positive: 80. 70+ = clearly the right persona. 50-69 = strong match. 30-49 = reasonable. <30 = weak — triggers fallback note recommending `/muse:list` or `/muse:all`.
+
+**Inline reasoning, not a classifier**. The main agent reads user_text + each persona's scoring fields and assigns scores with rationales in one reasoning step. Score breakdown is visible in the full-table option (I) and logged to analytics.
+
+### Scoring calibration examples (in the skill file)
+
+Non-normative references for the agent's judgment. The skill file describes what the scoring should look like for 5 known inputs:
+
+- *"should I rewrite in Rust?"* → Feynman 68 (hand calc + first principles), Socrates 55 (define "rewrite"), Marcus Aurelius 40, Seneca 35, Lao Tzu 30.
+- *"what do I actually mean by community?"* → Socrates 78 (pure definition hunting), Confucius 52 (rectification of names), Aristotle 48 (four causes), Feynman 35, Rams 20.
+- *"review my landing page copy"* → Dieter Rams 75 (ten principles + critic frames + design domain), Feynman 40, Socrates 38, Lao Tzu 35, Marcus Aurelius 20.
+- *"should I quit my startup?"* → Marcus Aurelius 70 (dichotomy of control), Seneca 68 (premeditatio malorum), Lao Tzu 60, Socrates 50, Aristotle 42.
+- *"help"* → all <30, fallback to `/muse:list` or `/muse:all`.
+
+These are calibration references, not hardcoded lookups.
+
+### Chain and debate detection
+
+If top 2 scores are within 15 points AND their primary signature_move categories are complementary (e.g., `framing + test-probe`) AND both ≥50, `/muse:who` suggests a chain `top_1 → top_2`. If the top 2 take opposing positions on a canonical dilemma (checked via `canonical_mapping`), a debate is suggested instead.
+
+Chain and debate picks print the exact command for the user to type (e.g., `/muse:chain feynman→socrates "should I rewrite in Rust?"`). `/muse:who` does NOT inline-execute chain/debate — those have their own orchestration in dedicated slash commands. This keeps the triage command lightweight.
+
+### Changed
+
+- **`SKILL.md`**: new routing table row for `muse:who`, new routing dispatch entry (`### Who: muse:who <user_text>`), new `Mode: who` free-text section (for Codex/Gemini CLI), version bumped to v2.3.1-alpha in header with note about the triage entry point.
+- **`README.md`**: command count 17 → 18, new `/muse:who` row at the top of the meta commands table (featured — it's the recommended entry point for new users), updated install welcome message to suggest `/muse:who` first, status section refreshed with v2.3.1-alpha entry and v2.3.0-alpha demoted to version history.
+
+### Architecture decisions
+
+- **Inline scoring, not subagents**. 8 personas × scoring reasoning is ~2000 tokens of main-agent work — fast and no coherence loss. Subagent dispatch would add 5-10 sec latency with no quality gain.
+- **Inline handoff for single-persona picks**. The main agent keeps persona + SESSION.md in context from Step 1 and switches from "scoring mode" to "session mode" when a pick is made. This is the same pattern `/muse:<persona>` slash commands use — they're thin pointers into SESSION.md's 5-stage workflow. Zero duplication.
+- **Chain/debate/council deferred to their own commands**. Instead of inlining chain Step 3-4 (which would add ~150 lines of duplication), `/muse:who` prints the exact slash command for the user to type. Simpler, smaller, and respects the boundary between routing (`/muse:who`) and orchestration (`/muse:chain`).
+- **Transparent rubric**. The scoring breakdown is documented in the skill file so users can audit picks. The full-table option (I) shows sub-scores. The analytics jsonl records everything for future routing-accuracy benchmarks.
+- **Avoid-when is load-bearing**. The -30 penalty is the ONE signal that can demote a persona even with strong trigger matches. Example: Feynman might trigger-match "should I pivot?" (contains "should") but his `avoid_when` says "user needs emotional commitment to a decision" — that pushes him from ~50 to ~20, which is correct.
+
+### Known limitations
+
+- **No persistence of the triage decision itself**. `/muse:who` writes only the analytics jsonl. If the chosen persona session crashes mid-run, the triage decision is lost. Acceptable for v2.3.1 — the rerun cost is low.
+- **Routing accuracy is not benchmarked in v2.3.1**. `/muse:benchmark` measures persona distinctiveness (what happens AFTER routing), not routing accuracy (which persona the triage picks). Adding a routing-accuracy measure requires ground-truth labels on ~20 prompts and is deferred to v2.4+.
+- **Vague inputs produce weak scores**. "help", "hi", single-word questions all score <30 across the board. The fallback is to recommend `/muse:list` or `/muse:all`, but a better long-term answer would be to prompt for more context. Deferred to v2.4+.
+- **Chain/debate/council picks don't chain transitively**. Picking F/G/H prints the command but doesn't run it — slash commands can't invoke each other. The user has to copy-paste. Documented in Step 5b/5c/5d of the skill file.
+
+### Backward compatibility
+
+- **No persona file edits**. All 8 personas unchanged.
+- **No SESSION.md changes**. Load-bearing file untouched.
+- **Existing slash commands unchanged**. `/muse:<persona>`, `/muse:chain`, `/muse:debate`, `/muse:critic`, `/muse:all`, `/muse:list`, `/muse:build`, `/muse:update`, `/muse:benchmark`, `/muse:spike` all work exactly as before.
+- **`install.sh` unchanged**. Glob-based registration picks up `commands/muse:who.md` automatically. Count goes from 17 → 18.
+- **Existing sessions, benchmark reports, and analytics are not invalidated**. v2.3.1 adds `~/.muse/analytics/who.jsonl` without touching existing files.
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse && git pull && ./install.sh
+# Expect: "Installed 18 slash commands to ~/.claude/commands/"
+```
+
+Smoke tests:
+
+```bash
+/muse:who "should I rewrite this service in Rust?"
+# Expect: Feynman top with ~68/80, rationale mentioning hand calculation + first principles
+# Expect: Socrates second with ~55/80, rationale mentioning definition of "rewrite"
+
+/muse:who "what do I actually mean by community?"
+# Expect: Socrates top with ~78/80, rationale mentioning definition hunting
+
+/muse:who "review my landing page copy"
+# Expect: Dieter Rams top with ~75/80, rationale mentioning ten principles + design domain
+
+/muse:who help
+# Expect: all personas <30, fallback note recommending /muse:list or /muse:all
+
+/muse:who
+# Expect: interactive prompt "What's on your mind?"
+
+/muse:benchmark --diff
+# Expect: 0 regressions (zero persona/SESSION.md edits in this release)
+```
+
+### Risks + mitigations
+
+- **R1**: scoring inconsistency across runs (LLM non-determinism). **Mitigation**: rubric is transparent and documented in the skill file; sub-scores are visible in the full-table option (I). If a pick feels wrong, user inspects the breakdown and overrides.
+- **R2**: chain/debate suggestions feel like dead ends because they require copy-paste. **Mitigation**: the printed command is ready to copy. Future improvement: v2.4+ may add `--auto-execute` flag that runs the chain inline.
+- **R3**: top 5 might miss a persona that a human would pick. **Mitigation**: option I (full table) shows all 8 with scores, and option J (abort) always exits cleanly. The pick list is a recommendation, not a gate.
+- **R4**: avoid-when signal might be too aggressive. **Mitigation**: rubric caps the penalty at -30 (out of 80 positive), so even a direct avoid-when hit can't zero out a persona with strong trigger + domain match. Sub-scores visible for audit.
+
+### Total diff
+
+- `commands/muse:who.md`: +430 lines (new file)
+- `SKILL.md`: +60 lines (routing row + dispatch entry + Mode: who section + version bump + announcement paragraph)
+- `README.md`: +~20 lines, -~15 lines net (meta commands table row, count 17→18, install message, status section refresh, personas list bump to 10 meta commands)
+- `docs/CHANGELOG.md`: +this entry
+- **Net**: ~550 lines added, 1 new file, 3 files modified
+
+---
+
 ## [2.3.0-alpha] — 2026-04-15 — Ship 6 missing slash commands (chain, all, debate, critic, list, spike MVP) — original CEO plan complete
 
 ### Why

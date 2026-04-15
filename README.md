@@ -37,14 +37,14 @@ Each session saves a markdown file to `~/.muse/sessions/` that you can re-read, 
 
 ## What gets shipped
 
-**Version 2.3.0-alpha**. ~5,000 lines of content, zero lines of shell tooling. Breakdown:
+**Version 2.3.1-alpha**. ~5,400 lines of content, zero lines of shell tooling. Breakdown:
 
 - **8 personas** — Feynman, Socrates, Seneca, Marcus Aurelius, Aristotle, Confucius, Lao Tzu, Dieter Rams. Each ~300 lines of structured markdown: multi-tagline, voice rules (core belief + banned patterns), 7-12 cognitive patterns, signature moves with inline category tags, debate positions on canonical dilemmas, documented analogous problems with citations.
 - **`SESSION.md`** (~730 lines) — the load-bearing workflow spec. Defines 4 adaptive session modes (QUICK, STANDARD, DEEP, CRITIC), mode detection heuristic, stage graphs per mode, tagline selection, voice rules extraction, quality bars.
-- **`SKILL.md`** (~770 lines) — the dispatcher for free-text invocations. Routes `muse:<anything>` to the right mode (single, chain, debate, critic, build, update, benchmark, spike, list).
-- **17 slash commands** (`commands/muse:*.md`) — Claude Code entry points. Breakdown:
+- **`SKILL.md`** (~830 lines) — the dispatcher for free-text invocations. Routes `muse:<anything>` to the right mode (single, chain, debate, critic, build, update, benchmark, spike, list, who).
+- **18 slash commands** (`commands/muse:*.md`) — Claude Code entry points. Breakdown:
   - **8 persona commands** — `/muse:feynman`, `/muse:socrates`, `/muse:seneca`, `/muse:marcus-aurelius`, `/muse:aristotle`, `/muse:confucius`, `/muse:lao-tzu`, `/muse:dieter-rams`
-  - **9 meta commands** — `/muse:build`, `/muse:update`, `/muse:benchmark`, `/muse:chain`, `/muse:all`, `/muse:debate`, `/muse:critic`, `/muse:list`, `/muse:spike`
+  - **10 meta commands** — `/muse:who`, `/muse:list`, `/muse:build`, `/muse:update`, `/muse:benchmark`, `/muse:chain`, `/muse:all`, `/muse:debate`, `/muse:critic`, `/muse:spike`
 - **`docs/PERSONA_SCHEMA.md`** (~600 lines) — canonical schema reference for anyone building new personas.
 - **`docs/BENCHMARKS.md`** (~350 lines) — methodology explainer for `/muse:benchmark` (4 categories, 11 measures, 7 run modes, baseline management).
 - **`docs/`** — architecture, contributing, getting started, sessions walkthrough, changelog.
@@ -73,7 +73,7 @@ Zero dependencies. Zero shell scripts. Zero build step. The agent is the runtime
 curl -fsSL https://raw.githubusercontent.com/doanchienthangdev/muse/main/install.sh | sh
 ```
 
-That's it. No dependencies. No build. No package manager. The installer clones the repo to `~/.claude/skills/muse/`, copies all 17 slash commands to `~/.claude/commands/`, and creates `~/.muse/sessions/` for your session artifacts. Restart Claude Code once and start typing `/muse:feynman`.
+That's it. No dependencies. No build. No package manager. The installer clones the repo to `~/.claude/skills/muse/`, copies all 18 slash commands to `~/.claude/commands/`, and creates `~/.muse/sessions/` for your session artifacts. Restart Claude Code once and start typing `/muse:who "what's on your mind?"` — the triage command will find the right persona for you.
 
 If you prefer git clone:
 
@@ -222,7 +222,7 @@ See [`docs/PERSONA_SCHEMA.md`](docs/PERSONA_SCHEMA.md) for the full schema and C
 
 ---
 
-## Commands reference (17 total — v2.3.0-alpha)
+## Commands reference (18 total — v2.3.1-alpha)
 
 ### Persona commands (8)
 
@@ -239,10 +239,11 @@ See [`docs/PERSONA_SCHEMA.md`](docs/PERSONA_SCHEMA.md) for the full schema and C
 
 Each persona runs Stage 0 mode detection and picks QUICK / STANDARD / DEEP / CRITIC before running its 5-stage session.
 
-### Meta commands (9)
+### Meta commands (10)
 
 | Command | What it does |
 |---|---|
+| `/muse:who <user_text>` | **Persona triage** — score top 5 personas by fit, present picks + optional chain/debate, run chosen session inline |
 | `/muse:list [--category=<tag>]` | List installed personas grouped by category |
 | `/muse:build <persona-id>` | Interactive persona builder (spec review loop, C1-C12 validation) |
 | `/muse:update <persona-id>` | Upgrade an existing persona to the current schema |
@@ -340,10 +341,11 @@ This is the agentic pattern. Ship markdown, enforce at the content layer, let th
 
 ## Status
 
-**v2.3.0-alpha** — Original v1 CEO plan complete. 17 slash commands: 8 personas + 9 meta commands (build, update, benchmark, chain, all, debate, critic, list, spike). Measurement-backed distinctiveness (grade A, 24/24 blind Turing, 0 regressions).
+**v2.3.1-alpha** — Persona triage. `/muse:who <question>` scores all 8 personas against a user's input, presents the top 5 with rationales, optionally suggests a chain or debate, then runs the chosen session inline. Solves the "I don't know who to ask" problem for new users. 18 slash commands total. Measurement-backed distinctiveness (grade A, 24/24 blind Turing, 0 regressions since v2.2.3 baseline).
 
 Version history:
-- **v2.3.0-alpha** (this release): 6 new slash commands (chain, all, debate, critic, list, spike MVP) + SKILL.md routing + dual README refresh. Completes the original v1 CEO plan — `/muse:spike` gather mode is the last piece. 17 commands total. ~2,000 net LoC added.
+- **v2.3.1-alpha** (this release): `/muse:who` triage command with 0-80 scoring rubric, top 5 pick list, chain/debate/council suggestions, inline handoff. 1 new command, ~400 lines. Zero persona edits.
+- **v2.3.0-alpha**: 6 new slash commands (chain, all, debate, critic, list, spike MVP) + SKILL.md routing + dual README refresh. Completes the original v1 CEO plan — `/muse:spike` gather mode is the last piece. 17 commands total. ~2,000 net LoC added.
 - **v2.2.3-alpha**: Quote-aware B3 matcher (kills false positives on Lao Tzu "push harder", Confucius old/told, Rams useful) + banned-pattern parser fix (LHS-of-em-dash + italics-only) + `docs/BENCHMARKS.md` contributor doc + post-fix 3-prompt baseline.
 - **v2.2.2-alpha**: `/muse:benchmark` — persona distinctiveness + voice + mode-fit regression detector. Subagent-based blind Turing simulation + Jaccard matrix + C1-C12 compliance + baseline comparison.
 - **v2.2.1-alpha**: `/muse:build` + `/muse:update` hardened with spec review loop (max 3 iterations), concrete synthesis recipes, distinctiveness check, dry-run + rollback.
