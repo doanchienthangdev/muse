@@ -3,11 +3,12 @@
 **Think with the greats.** An agentic skill for Claude Code, Codex CLI, and Gemini CLI that lets you invoke the distinctive cognitive patterns of great thinkers as reusable thinking tools.
 
 ```
-muse:feynman why is my code slow?
-muse:socrates what do I actually mean by "community"?
-muse:chain feynman→confucius→dieter-rams why is our product confusing?
-muse:debate aristotle vs lao-tzu ship fast or ship polished?
-muse:critic plan.md --persona=marcus-aurelius
+/muse:feynman why is my code slow?                           # v2.1 — deep 5-stage session, saves a file
+/muse:socrates what do I actually mean by "community"?        # v2.1 — slash command
+/muse:dieter-rams my landing page isn't converting            # v2.1 — slash command
+muse:chain feynman→confucius→dieter-rams why is our product confusing?   # free-text
+muse:debate aristotle vs lao-tzu ship fast or ship polished?  # free-text
+muse:critic plan.md --persona=marcus-aurelius                 # free-text
 ```
 
 Muse applies the **specific cognitive moves** each thinker is known for — Feynman's simplification test, Socrates's definition hunting, Rams's ten principles, Lao Tzu's value-of-emptiness — to your actual problem. Not character AI. Not a prompt template library. A thinking assistant that thinks WITH you using structured mental models.
@@ -48,6 +49,42 @@ Muse is an **agentic skill framework**. The agent (Claude, Codex, Gemini) is the
 | `muse:list` | List installed personas, grouped |
 
 All commands run **inside** your agent session. No separate CLI to install. No shell tooling to maintain.
+
+---
+
+## Structured sessions (v2.1)
+
+New in v2.1: each persona is also available as a **slash command** that runs a structured 5-stage brainstorming session and saves the transcript to `~/.muse/sessions/`.
+
+```
+/muse:feynman why is my database query slow?
+/muse:socrates what do I actually mean by "product-market fit"?
+/muse:dieter-rams my onboarding flow has 12 steps, which can I cut?
+```
+
+Each session walks through 5 fixed stages, with the persona applying their distinctive cognitive moves as lenses at each one:
+
+| Stage | What it does | STOP type |
+|---|---|---|
+| **1. Frame** | Persona reframes your question, strips jargon, forces you to pick which framing best matches what you actually feel | AskUserQuestion (4 options) |
+| **2. Examine** | Persona surfaces the hidden assumption underneath the framing | Free-text follow-up |
+| **3. Test** | Persona applies their distinctive probe (simplification test, inversion, subtraction, etc.) and offers concrete experiments | AskUserQuestion (4 options) |
+| **4. Decide** | Persona forces a choice on the real fork. Always includes a "tell them they're wrong" escape hatch | AskUserQuestion (4 options, D=escape) |
+| **5. Commit** | Collapse to ONE concrete next action, save the session file | Accept / refine |
+
+Target duration: **10-15 minutes**. Output: a markdown file at `~/.muse/sessions/<YYYY-MM-DD-HHMMSS>-<persona>-<slug>.md` with the full stage-by-stage record, your choices at each STOP, key insights, and citations. Re-openable, searchable with `grep`, shareable with `cat`.
+
+Slash commands (v2.1):
+
+```
+/muse:feynman            /muse:socrates         /muse:seneca
+/muse:marcus-aurelius    /muse:aristotle        /muse:confucius
+/muse:lao-tzu            /muse:dieter-rams
+```
+
+Free-text invocation (`muse:feynman <q>`, no slash) still works and runs the faster v2.0 conversational path — use it for quick gut-checks when you don't want a 15-minute session or a saved artifact.
+
+See [`docs/SESSIONS.md`](docs/SESSIONS.md) for the full workflow walkthrough, session file format, and how to grep / share / resume sessions.
 
 ---
 

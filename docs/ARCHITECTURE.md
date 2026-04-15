@@ -2,6 +2,8 @@
 
 This document explains the v2 architecture: **agent runtime as runtime, markdown as content, zero external deps**. For v1 historical context, see `docs/archive/CEO-PLAN-v1.md`.
 
+**v2.1 additions**: structured 5-stage session workflow in a new `SESSION.md` spec, 8 slash command launchers in `commands/muse:<persona>.md`, session persistence to `~/.muse/sessions/`. Everything below describes both v2.0 free-text path and v2.1 structured slash path — they coexist, they share the persona content layer, they have separate dispatchers.
+
 ---
 
 ## Guiding principles
@@ -44,19 +46,22 @@ This document explains the v2 architecture: **agent runtime as runtime, markdown
                             │ loads SKILL.md
                             ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              SKILL.md (dispatcher)                    │
-│                                                                   │
-│   Parses the arg after `muse:`                                    │
-│   Routes to one of 8 modes                                        │
-│                                                                   │
-│   Mode: single persona    → loads personas/<id>.md                │
-│   Mode: chain             → loads chains/<name>.md + personas/*   │
-│   Mode: debate            → loads personas/<a>.md + <b>.md        │
-│   Mode: critic            → loads personas/<id>.md + target file  │
-│   Mode: build             → interactive, reads src folder         │
-│   Mode: spike             → runs eval via curl + Anthropic API    │
-│   Mode: list              → globs personas/*.md                   │
-│                                                                   │
+│   v2.0 FREE-TEXT PATH        │  v2.1 STRUCTURED SLASH PATH       │
+│                              │                                    │
+│   SKILL.md (dispatcher)      │  commands/muse:<persona>.md       │
+│                              │  (launcher, ~30 lines)             │
+│   Parses `muse:<arg>` free   │          ↓                         │
+│   text. Routes to 8 modes:   │  SESSION.md (5-stage workflow)     │
+│     single persona           │  (load-bearing spec, ~400 lines)  │
+│     all / chain / debate     │          ↓                         │
+│     critic / build / spike   │  Stage 1 FRAME → 2 EXAMINE →       │
+│     list                     │  3 TEST → 4 DECIDE → 5 COMMIT      │
+│                              │          ↓                         │
+│   Output: conversational     │  Output: markdown session file     │
+│   reply, 150-250 words,      │  saved to ~/.muse/sessions/        │
+│   up to 6 rounds,            │  <YYYY-MM-DD-HHMMSS>-<persona>-    │
+│   ephemeral.                 │  <slug>.md                         │
+│                              │                                    │
 └───────────────────────────┬──────────────────────────────────────┘
                             │
                             ▼

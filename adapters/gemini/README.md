@@ -1,6 +1,8 @@
 # Muse adapter: Gemini CLI (Google)
 
-Gemini CLI can run Muse **via manual invocation** in v2.0. Auto-discovery adapter is v2.1+ roadmap.
+Gemini CLI can run Muse **via manual invocation**. Auto-discovery adapter is v2.2+ roadmap.
+
+**Note on v2.1**: The structured 5-stage session workflow added in v2.1 is exposed via Claude Code slash commands (`/muse:feynman`, `/muse:socrates`, etc.) that live in `~/.claude/commands/`. Gemini CLI doesn't consume those slash command files, so `/muse:*` syntax doesn't work there natively. The v2.0 free-text invocation pattern below continues to work in Gemini — it routes through `SKILL.md` Mode: single persona as before.
 
 ---
 

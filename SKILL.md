@@ -78,6 +78,8 @@ Print short usage, run `muse:list`.
 
 ## Mode: single persona
 
+> **v2.1 tip**: For a deep **structured 5-stage session** that persists to a file at `~/.muse/sessions/`, use the slash command `/muse:<persona> <question>` instead of free-text invocation. The slash command path follows a different workflow (`SESSION.md`) and produces a reviewable artifact. Free-text invocation — the mode described below — remains the quick-conversational path (ephemeral, 150-250 words, up to 6 rounds). Use slash for depth, use free-text for speed.
+
 ### Load
 Read `MUSE_DIR/personas/<id>.md` with the Read tool.
 
@@ -541,4 +543,4 @@ Claude Code auto-discovers this SKILL.md on next session. Codex CLI and Gemini C
 
 ---
 
-*Version 2.0.0 · radical agentic refactor · 2026-04-15*
+*Version 2.1.0-alpha · structured sessions + slash commands · 2026-04-16*

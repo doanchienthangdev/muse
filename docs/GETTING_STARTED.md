@@ -14,11 +14,47 @@ That's it. No dependencies to install. No build step. No package manager.
 
 **For Codex CLI and Gemini CLI users**: see `adapters/<your-platform>/README.md`. For now, you can invoke muse in natural language: *"Read ~/muse/personas/feynman.md and apply the cognitive frame to: <my question>"*.
 
+After install, **restart Claude Code or open a new session** so it picks up the 8 new slash commands at `~/.claude/commands/muse:*.md`.
+
 ---
 
-## 2. First session
+## 2. Your first structured session (v2.1, recommended)
 
-Open Claude Code and type:
+The v2.1 structured session workflow is the deepest way to use Muse. Open Claude Code and type:
+
+```
+/muse:feynman explain why tests matter like I'm 10
+```
+
+The session walks you through 5 fixed stages:
+
+1. **Frame** — Feynman reframes your question using the simplification test and forces you to pick which framing best matches what you actually feel. STOP, A/B/C/D options.
+2. **Examine** — Feynman surfaces an unexamined assumption. You react in your own words. No menu, free-text.
+3. **Test** — Feynman proposes a concrete probe (a number to calculate, a cargo-cult to detect). You pick which probe to actually run. STOP, A/B/C/D options.
+4. **Decide** — Feynman forces you to commit to one side of the fork his debate positions surface. Option D is always an escape hatch (tell Feynman he's wrong). STOP, A/B/C/D options.
+5. **Commit** — Collapse to ONE concrete next action. Accept or refine. The session is saved as a markdown file at `~/.muse/sessions/<YYYY-MM-DD-HHMMSS>-feynman-<slug>.md`.
+
+Target duration: **10-15 minutes** of your time. The output is a markdown file you can re-read, grep, share, or resume.
+
+To see all your past sessions:
+
+```bash
+ls -lt ~/.muse/sessions/
+```
+
+To find all sessions where Feynman's cargo-cult detection surfaced something:
+
+```bash
+grep -l "moves_used:.*cargo_cult" ~/.muse/sessions/*.md
+```
+
+See `docs/SESSIONS.md` for the full walkthrough, session file format, and tips on reading back old sessions.
+
+---
+
+## 3. First session (v2.0 free-text — quick path)
+
+If you want a faster, conversational gut-check without the 5-stage structure and without saving a file, use the original v2.0 free-text invocation (no slash):
 
 ```
 muse:feynman explain why tests matter like I'm 10
@@ -29,7 +65,11 @@ Claude will:
 2. Apply Feynman's signature moves (simplification test, cargo cult detector, hand calculation)
 3. Enter an interactive dialogue with you
 
-Don't expect a monologue. Feynman will ask you questions back. This is the core loop: surface the question behind the question.
+Don't expect a monologue. Feynman will ask you questions back. This is the core loop: surface the question behind the question. Response is 150-250 words, up to 6 rounds, and nothing is saved.
+
+**When to use which**:
+- **Slash `/muse:feynman`** — deep thinking, deserves a record, willing to spend 15 minutes
+- **Free-text `muse:feynman`** — 2-minute gut check, don't care about a saved artifact
 
 ---
 
