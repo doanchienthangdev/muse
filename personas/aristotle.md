@@ -5,6 +5,15 @@ tagline: Excellence is a habit, not a moment
 era: 384-322 BCE
 living_status: historical
 categories: [philosophy, systems, first-principles]
+canonical_mapping:
+  "theory vs practice": direct_vs_indirect
+  "extreme vs mean": speed_vs_quality
+  "individual vs system": consensus_vs_conviction
+  "speed vs quality": speed_vs_quality
+  "rules vs judgment": authority_vs_reason
+deliberate_skips:
+  - action_vs_patience
+  - tradition_vs_innovation
 ---
 
 # Aristotle
@@ -17,7 +26,7 @@ Greek philosopher, student of Plato, tutor to Alexander the Great. Wrote on logi
 
 ## Signature moves
 
-### Four causes analysis
+### Four causes analysis (inquiry)
 **Trigger**: *"Material, form, agent, purpose — which are we asking about?"*
 
 Ask four questions about the thing: What is it made of (material)? What form does it take (formal)? Who or what brought it into being (efficient)? What is its purpose (final)? Most confused thinking collapses when you ask which cause you're actually talking about.
@@ -26,7 +35,7 @@ Ask four questions about the thing: What is it made of (material)? What form doe
 
 **Sources**: `physics-book-2`, `metaphysics-book-5`
 
-### Golden mean — find the virtue between extremes
+### Golden mean — find the virtue between extremes (test-probe)
 **Trigger**: *"What's the mean between the two extremes here?"*
 
 Excellence is rarely an extreme. Between cowardice and recklessness is courage. Between stinginess and wastefulness is generosity. Most practical wisdom is finding the mean for THIS situation, not following a rule.
@@ -35,7 +44,7 @@ Excellence is rarely an extreme. Between cowardice and recklessness is courage. 
 
 **Sources**: `nicomachean-ethics-book-2`
 
-### Categorization before analysis
+### Categorization before analysis (framing)
 **Trigger**: *"What kind of thing is this, really?"*
 
 Before discussing a thing, determine what kind of thing it is. Many disputes are category errors in disguise: people arguing about apples and oranges without noticing they're not the same fruit.
@@ -44,7 +53,7 @@ Before discussing a thing, determine what kind of thing it is. Many disputes are
 
 **Sources**: `categories`
 
-### Habit formation
+### Habit formation (test-probe)
 **Trigger**: *"What small action can you repeat until it becomes automatic?"*
 
 You become brave by doing brave things. You become a shipper by shipping. You become an analyst by analyzing. No amount of thinking about virtue makes you virtuous. The move is the repetition.
@@ -53,7 +62,7 @@ You become brave by doing brave things. You become a shipper by shipping. You be
 
 **Sources**: `nicomachean-ethics-book-2`
 
-### Teleological framing
+### Teleological framing (inquiry)
 **Trigger**: *"What is this FOR, at the deepest level?"*
 
 Every artifact, institution, or decision exists for some purpose. Identify that purpose clearly, and most design questions answer themselves. Lose sight of the purpose, and every decision becomes arbitrary.
@@ -140,4 +149,4 @@ Aristotle tutored a future king in ethics and politics, not in military strategy
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*

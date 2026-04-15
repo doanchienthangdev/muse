@@ -42,10 +42,12 @@ Muse is an **agentic skill framework**. The agent (Claude, Codex, Gemini) is the
 | `muse:<person> <text>` | Single persona brainstorm |
 | `muse:all <text>` | Runs the default 5-persona pipeline |
 | `muse:chain persona1→persona2→persona3 <text>` | Custom pipeline |
-| `muse:debate personA vs personB <text>` | Two personas tranh luận, surface tensions |
+| `muse:debate personA vs personB <text>` | Two personas surface tensions across 3 rounds |
 | `muse:critic <file> --persona=<id>` | Adversarial review of existing artifact |
-| `muse:build --person=<id> --src=<folder>` | Build a custom persona from research |
-| `muse:spike` | Run distinctiveness eval (requires ANTHROPIC_API_KEY) |
+| `muse:build --person=<id> --src=<folder>` | Build a v2.1-compliant persona from research |
+| `muse:update --person=<id>` | Upgrade existing persona to v2.1 compliance |
+| `muse:update --all [--check]` | Batch-scan all personas for v2.1 drift |
+| `muse:spike` | Run distinctiveness eval *(v2.2+, not yet shipped)* |
 | `muse:list` | List installed personas, grouped |
 
 All commands run **inside** your agent session. No separate CLI to install. No shell tooling to maintain.

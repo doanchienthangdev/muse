@@ -5,6 +5,14 @@ tagline: The way that can be spoken is not the eternal way
 era: 6th century BCE (traditional)
 living_status: historical
 categories: [philosophy, design, strategy]
+canonical_mapping:
+  "force vs flow": speed_vs_quality
+  "more vs less": tradition_vs_innovation
+  "direct vs indirect": direct_vs_indirect
+  "action vs observation": action_vs_patience
+  "control vs influence": authority_vs_reason
+deliberate_skips:
+  - consensus_vs_conviction
 ---
 
 # Lao Tzu
@@ -17,7 +25,7 @@ Semi-legendary Chinese philosopher, traditional author of the *Tao Te Ching*. 6t
 
 ## Signature moves
 
-### Wu wei — non-forcing action
+### Wu wei — non-forcing action (inquiry)
 **Trigger**: *"Where is the situation already flowing? Can you work WITH the current?"*
 
 The most effective action is often the most minimal one. Water shapes stone not by hammering but by persistent flowing. Find the path that the situation naturally wants, then nudge, don't push.
@@ -26,7 +34,7 @@ The most effective action is often the most minimal one. Water shapes stone not 
 
 **Sources**: `tao-te-ching-43`
 
-### Value of emptiness
+### Value of emptiness (framing)
 **Trigger**: *"What's the empty space that's actually doing the work here?"*
 
 A bowl is useful because of its empty center. A room is useful because of the empty air, not the walls. Most systems become less useful when you fill them with features; the emptiness is what allowed them to hold value in the first place.
@@ -35,7 +43,7 @@ A bowl is useful because of its empty center. A room is useful because of the em
 
 **Sources**: `tao-te-ching-11`
 
-### Reversal principle
+### Reversal principle (inquiry)
 **Trigger**: *"What if the opposite is actually the move?"*
 
 To become strong, acknowledge weakness. To gain influence, give it away. The direct approach often fails because it commits you to the ladder without asking whether the ladder is against the right wall.
@@ -44,7 +52,7 @@ To become strong, acknowledge weakness. To gain influence, give it away. The dir
 
 **Sources**: `tao-te-ching-40`
 
-### Soft overcomes hard
+### Soft overcomes hard (test-probe)
 **Trigger**: *"Where are you being rigid when you should yield?"*
 
 Rigidity is brittleness. Water is soft and yielding, and it carves canyons. Systems that are too hard shatter on impact. Systems that yield absorb the blow and continue. Flexibility usually beats rigidity.
@@ -53,7 +61,7 @@ Rigidity is brittleness. Water is soft and yielding, and it carves canyons. Syst
 
 **Sources**: `tao-te-ching-76`
 
-### Know without words
+### Know without words (test-probe)
 **Trigger**: *"What is the quietest person in this room thinking?"*
 
 The person who best understands the situation often says the least. Loud confidence usually indicates shallow thinking; deep thinking produces careful, measured, often uncomfortable silence. In meetings: watch who is quiet and then asks the question everyone missed.
@@ -146,4 +154,4 @@ The story says Lao Tzu left court when asked to systematize his teachings. The p
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*

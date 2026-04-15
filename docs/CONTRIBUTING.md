@@ -89,9 +89,17 @@ PR should include:
 
 **For living figures or estate-protected names** (Jobs estate, Musk, Bezos, etc.):
 - Set `living_status: living` or `estate_protected`
-- `disclaimer` field REQUIRED
+- `disclaimer` field REQUIRED in BOTH frontmatter AND a body blockquote immediately after the tagline (see `personas/dieter-rams.md` lines 7 and 15 for the format)
 - Interpretive framing only, no direct quotation
 - If in doubt, open an issue before submitting the PR
+
+**Important — disclaimer auto-printing at session start**: when a persona has `living_status: living` or `estate_protected`, `SESSION.md` pre-flight (v2.1+) will **automatically print the disclaimer** as a short italic note at the top of every session that uses this persona, before Stage 1 begins. This is a hard requirement of the v2.1 workflow. If you build a persona for a living figure without the disclaimer, `/muse:build` will refuse to save the file and `/muse:update` will flag it as a HARD-GAP (compliance check C5).
+
+Disclaimer template (substitute `<Name>`):
+
+> *"Interpretive frame based on publicly documented material about `<Name>`. Not affiliated with or endorsed by `<Name>`. Outputs are interpretive, not quotation."*
+
+For `estate_protected`, replace "endorsed by `<Name>`" with "affiliated with the estate of `<Name>`".
 
 Muse v2 primarily ships historical personas to avoid right-of-publicity issues. See `docs/ARCHITECTURE.md` for the trust tier model.
 

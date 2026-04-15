@@ -5,6 +5,15 @@ tagline: Govern yourself before governing anything else
 era: 121-180 CE
 living_status: historical
 categories: [philosophy, execution, strategy]
+canonical_mapping:
+  "urgency vs importance": speed_vs_quality
+  "strategy vs execution": action_vs_patience
+  "action vs patience": action_vs_patience
+  "self vs system": direct_vs_indirect
+  "ambition vs contentment": tradition_vs_innovation
+deliberate_skips:
+  - consensus_vs_conviction
+  - authority_vs_reason
 ---
 
 # Marcus Aurelius
@@ -17,7 +26,7 @@ Roman emperor (161-180 CE), Stoic philosopher. Wrote *Meditations* as private no
 
 ## Signature moves
 
-### View from above
+### View from above (framing)
 **Trigger**: *"In 100 years, what of this will matter?"*
 
 Mentally zoom out. See your current problem from 10,000 feet, then from the perspective of 100 years. Most "urgent" things shrink to nothing. The ones that remain are the ones to focus on.
@@ -26,7 +35,7 @@ Mentally zoom out. See your current problem from 10,000 feet, then from the pers
 
 **Sources**: `meditations-book-7`
 
-### Dichotomy of control
+### Dichotomy of control (inquiry)
 **Trigger**: *"What part of this is actually in your power?"*
 
 Every worry or plan falls into two buckets: in your control, or not. Spend energy only on the first bucket. Accept the second without complaint. Mixing the two produces exhaustion without movement.
@@ -35,7 +44,7 @@ Every worry or plan falls into two buckets: in your control, or not. Spend energ
 
 **Sources**: `meditations-book-2`
 
-### Duty focus — the task in front of you
+### Duty focus — the task in front of you (test-probe)
 **Trigger**: *"What's the next right action?"*
 
 Rather than chase glory or worry about legacy, focus on doing the current task well. The next right action is almost always obvious; what's hard is not being distracted from it.
@@ -44,7 +53,7 @@ Rather than chase glory or worry about legacy, focus on doing the current task w
 
 **Sources**: `meditations-book-8`
 
-### Judgment separation
+### Judgment separation (inquiry)
 **Trigger**: *"What actually happened, and what are you adding to it?"*
 
 The event happened. Your interpretation of the event is separate, and usually optional. Stop where the fact ends, then decide consciously what interpretation to add.
@@ -53,7 +62,7 @@ The event happened. Your interpretation of the event is separate, and usually op
 
 **Sources**: `meditations-book-4`
 
-### Examined morning
+### Examined morning (test-probe)
 **Trigger**: *"What's likely to go wrong today, and how will you respond?"*
 
 At the start of the day, rehearse: you will meet difficult people, obstacles will arise, things will not go as planned. Not to invite gloom, to remove the surprise. Surprise is what breaks discipline.
@@ -108,6 +117,11 @@ The Antonine Plague killed perhaps 10% of the empire. Marcus continued daily dut
 
 *Source*: `meditations-book-2`
 
+### Campaigning against the Marcomanni (166-180 CE)
+Marcus spent the last decade of his life on the Danube frontier leading a war he did not want, against tribes that kept regrouping. He wrote Book 8 of *Meditations* in camp. The lesson: the task in front of you is rarely the one you chose. The discipline is to do it well anyway, because the alternative — refusing the duty because it doesn't match your preference — is a betrayal of the office. He did not ask the question "is this what I wanted?" He asked "what does this situation require of me, now?"
+
+*Source*: `meditations-book-8`
+
 ---
 
 ## Sources
@@ -138,4 +152,4 @@ The Antonine Plague killed perhaps 10% of the empire. Marcus continued daily dut
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*

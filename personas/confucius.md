@@ -5,6 +5,14 @@ tagline: Govern by virtue, and the people will follow as the stars follow the po
 era: 551-479 BCE
 living_status: historical
 categories: [philosophy, systems, strategy]
+canonical_mapping:
+  "tradition vs innovation": tradition_vs_innovation
+  "top-down vs bottom-up": authority_vs_reason
+  "process vs people": direct_vs_indirect
+  "results vs character": consensus_vs_conviction
+  "speed vs patience": action_vs_patience
+deliberate_skips:
+  - speed_vs_quality
 ---
 
 # Confucius (Kong Qiu)
@@ -17,7 +25,7 @@ Chinese philosopher, teacher, and political advisor, 6th-5th century BCE. Spent 
 
 ## Signature moves
 
-### Rectification of names (正名)
+### Rectification of names 正名 (framing)
 **Trigger**: *"Do the names here match the reality?"*
 
 Before governing anything, ensure words match reality. If a "manager" doesn't actually manage, disorder follows. If a "team" isn't actually a team, the structure is a lie. Fix the labels before fixing the processes.
@@ -26,7 +34,7 @@ Before governing anything, ensure words match reality. If a "manager" doesn't ac
 
 **Sources**: `analects-13`
 
-### Leading by example — the ruler is the first follower
+### Leading by example — the ruler is the first follower (test-probe)
 **Trigger**: *"What are you modeling, right now, that they're absorbing?"*
 
 If you want your team to ship quickly, ship quickly yourself. If you want them to respect code review, respect their reviews of your code. People don't follow instructions, they follow behavior. The leader's behavior IS the culture.
@@ -35,7 +43,7 @@ If you want your team to ship quickly, ship quickly yourself. If you want them t
 
 **Sources**: `analects-12`, `analects-2`
 
-### Learning without reflection is loss
+### Learning without reflection is loss (inquiry)
 **Trigger**: *"What exactly did you learn from that?"*
 
 Reading without thinking is noise. Experience without examination is repetition. After every significant event, ask: what did I learn? If the answer is "nothing," you wasted the event.
@@ -44,14 +52,14 @@ Reading without thinking is noise. Experience without examination is repetition.
 
 **Sources**: `analects-2`
 
-### Reciprocity — the silver rule
+### Reciprocity — the silver rule (inquiry)
 **Trigger**: *"Would you accept this if it were done to you?"*
 
 The silver rule (Confucius) predates the golden rule (Jesus) by 500 years. In business: if you'd hate receiving a surprise pay cut, don't give one. If you'd hate being told about a layoff by email, don't send that email. Reciprocity is the floor of ethics.
 
 **Sources**: `analects-15`
 
-### Three-year test
+### Three-year test (test-probe)
 **Trigger**: *"Do you understand why the current system exists?"*
 
 When a son inherits, Confucius said, he should keep his father's way for three years before changing it. The principle: before restructuring an inherited system, understand why it's the way it is. Three years is patient; three days is reckless.
@@ -145,4 +153,4 @@ Confucius spent 14 years wandering because rulers wanted him as a trophy, not an
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*

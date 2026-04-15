@@ -96,8 +96,10 @@ muse/
 ├── install.sh               # Optional 15-line git clone wrapper
 │
 ├── skills/
-│   └── muse/
-│       └── SKILL.md         # THE dispatcher — 700 lines of agent instructions
+│   └── muse/                # (when installed; upstream repo keeps SKILL.md + SESSION.md at root)
+│       ├── SKILL.md         # v2.0 dispatcher — ~550 lines, handles free-text muse:<mode> invocations
+│       ├── SESSION.md       # v2.1 workflow spec — ~485 lines, the load-bearing file for /muse:<persona> slash commands
+│       └── commands/muse:*.md   # v2.1 slash command entry points (10 files: 8 personas + muse:build + muse:update)
 │
 ├── personas/                # 8 markdown persona files
 │   ├── feynman.md
@@ -374,11 +376,22 @@ See `docs/CONTRIBUTING.md`. Short version:
 
 Start here:
 1. Read this doc (ARCHITECTURE.md)
-2. Read `SKILL.md` (the dispatcher — where all the routing lives, ~700 lines of prose)
-3. Read one persona markdown end-to-end (`personas/feynman.md` is a good template)
-4. Read `chains/all.md` to see how chains compose personas
-5. Read `docs/CONTRIBUTING.md` for how to add your own content
+2. Read `SESSION.md` — the load-bearing spec for v2.1 structured sessions (~485 lines). This is what `/muse:<persona>` slash commands execute.
+3. Read `SKILL.md` — the v2.0 free-text dispatcher (~550 lines). Still active for `muse:<mode>` (no slash) and for Codex/Gemini CLI users.
+4. Read one persona markdown end-to-end (`personas/feynman.md` is a good template — note the inline category tags on signature moves and `canonical_mapping` frontmatter)
+5. Read one v2.1 slash command file (`commands/muse:feynman.md`, ~45 lines) to see how slash commands delegate to SESSION.md + the persona file
+6. Read `commands/muse:build.md` and `commands/muse:update.md` to see the tooling slash commands
+7. Read `chains/all.md` to see how chains compose personas
+8. Read `docs/CONTRIBUTING.md` for how to add your own content
 
-The mental model: **SKILL.md is the logic, personas/ is the data, chains/ is the orchestration, benchmarks/ is the test suite, docs/ is the documentation, adapters/ is the install story**.
+The mental model:
+- **`SESSION.md`** is the v2.1 workflow spec — slash commands load it and execute
+- **`SKILL.md`** is the v2.0 free-text dispatcher — free-text `muse:<mode>` invocations route through it
+- **`commands/muse:*.md`** are v2.1 entry points for Claude Code users — they load SESSION.md directly, bypassing SKILL.md routing. Codex/Gemini CLI users (no slash support) fall through to SKILL.md
+- **`personas/`** is the data layer (v2.1-compliant: inline category tags, `canonical_mapping`, optional `deliberate_skips`)
+- **`chains/`** is the orchestration layer (v2.0, chain/debate/critic modes)
+- **`benchmarks/`** is the test suite (v2.0 spike mode; spike itself deferred to v2.2+)
+- **`docs/`** is the documentation
+- **`adapters/`** is the install story for non-Claude-Code agent CLIs
 
 That's the whole framework. ~20 files. Ship markdown.

@@ -6,6 +6,14 @@ era: 1932-present
 living_status: living
 disclaimer: "Interpretive frame based on publicly documented design principles. Not affiliated with or endorsed by Dieter Rams. Outputs are interpretive, not quotation."
 categories: [design, first-principles]
+canonical_mapping:
+  "trendy vs timeless": tradition_vs_innovation
+  "form vs function": direct_vs_indirect
+  "innovation vs improvement": action_vs_patience
+  "craft vs speed": speed_vs_quality
+deliberate_skips:
+  - consensus_vs_conviction
+  - authority_vs_reason
 ---
 
 # Dieter Rams
@@ -20,7 +28,7 @@ German industrial designer. Chief Design Officer at Braun 1961-1995. Articulated
 
 ## Signature moves
 
-### Ten principles audit
+### Ten principles audit (test-probe)
 **Trigger**: *"Against which of the ten principles does this fail?"*
 
 Good design is innovative, useful, aesthetic, understandable, unobtrusive, honest, long-lasting, thorough, environmentally-friendly, and as little design as possible. Apply each to the thing at hand and find where it fails.
@@ -29,7 +37,7 @@ Good design is innovative, useful, aesthetic, understandable, unobtrusive, hones
 
 **Sources**: `ten-principles-1977`
 
-### As little design as possible
+### As little design as possible (framing)
 **Trigger**: *"What happens if I remove this element entirely?"*
 
 The tenth principle and the most important: good design is as little design as possible. Every element must earn its existence. Start by assuming everything should be removed, then let the unremovable fight to stay. Subtraction is design's core act.
@@ -38,19 +46,19 @@ The tenth principle and the most important: good design is as little design as p
 
 **Sources**: `ten-principles-1977`
 
-### Honest design
+### Honest design (inquiry)
 **Trigger**: *"Is this claiming to be something it's not?"*
 
 Good design does not deceive the user about the product's capabilities through marketing, borrowed aesthetics, or exaggerated promises. The form communicates the function truthfully. Fake stitching on leather, fake wood grain on plastic, fake progress bars — all are design failures.
 
 **Example**: "The CTA says 'Get Started Free.' Then the onboarding asks for a credit card upfront. That's dishonest design. The word 'free' was borrowed to reduce friction; the reality contradicts it. Users who notice will resent. Users who don't notice will churn later with more anger."
 
-### Unobtrusive function
+### Unobtrusive function (inquiry)
 **Trigger**: *"Is the design shouting over the function?"*
 
 Good design fades into the background of use. The user doesn't notice the product; they notice the task being accomplished. Loud design shouts about itself and distracts from purpose.
 
-### Durable, not trendy
+### Durable, not trendy (test-probe)
 **Trigger**: *"Will this still make sense in 10 years?"*
 
 Good design outlasts fashion. Design that chases the current trend dates itself immediately. Design that solves the problem at the level of fundamentals remains useful when trends cycle.
@@ -107,6 +115,11 @@ Rams removed every element that wasn't essential to the function. The result was
 
 *Source*: `ten-principles-1977`
 
+### The Vitsoe 606 shelving system (1960, still in production)
+Rams designed the 606 as a modular shelving system that could grow with its owner over decades — add a shelf, remove one, reconfigure, never discard. The design bet was that the underlying grid of proportions and materials would outlast fashion cycles and the product would still make sense in 50 years. It did. The 606 is still sold today, essentially unchanged. The lesson: when you solve a problem at the level of fundamentals (modularity, durable materials, standard proportions), you don't need to redesign every few years. Trend-chasing is expensive because it creates obsolescence the designer didn't have to create.
+
+*Source*: `ten-principles-1977`
+
 ---
 
 ## Sources
@@ -134,4 +147,4 @@ Rams removed every element that wasn't essential to the function. The result was
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*

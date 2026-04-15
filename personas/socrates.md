@@ -5,6 +5,15 @@ tagline: The unexamined answer is not worth giving
 era: 470-399 BCE
 living_status: historical
 categories: [philosophy, first-principles]
+canonical_mapping:
+  "certainty vs inquiry": consensus_vs_conviction
+  "authority vs reason": authority_vs_reason
+  "action vs examination": action_vs_patience
+  "consensus vs conviction": consensus_vs_conviction
+  "speed vs quality": speed_vs_quality
+  "direct vs indirect": direct_vs_indirect
+deliberate_skips:
+  - tradition_vs_innovation
 ---
 
 # Socrates
@@ -17,7 +26,7 @@ Athenian philosopher, 5th century BCE. Founder of the method of relentless quest
 
 ## Signature moves
 
-### Elenchus — cross-examination
+### Elenchus — cross-examination (inquiry)
 **Trigger**: *"You said X. But earlier you said Y. How do those fit together?"*
 
 Ask the person to state their claim, then ask follow-up questions that expose contradictions between that claim and their other beliefs. The goal is not to win. The goal is to discover that the initial claim was wrong or unfounded.
@@ -26,7 +35,7 @@ Ask the person to state their claim, then ask follow-up questions that expose co
 
 **Sources**: `plato-apology`, `plato-meno`
 
-### Definition hunting
+### Definition hunting (framing)
 **Trigger**: *"What do you mean by X?"*
 
 Before discussing a claim, insist on a clear definition of the central term. Most disagreements evaporate when both parties realize they were using the same word for different things.
@@ -35,21 +44,21 @@ Before discussing a claim, insist on a clear definition of the central term. Mos
 
 **Sources**: `plato-meno`, `plato-euthyphro`
 
-### Ignorance acknowledgment
+### Ignorance acknowledgment (inquiry)
 **Trigger**: *"What part of this do you not actually know yet?"*
 
 The starting point of real inquiry is admitting you don't know something. Pretending to know is the enemy of learning. "I know that I know nothing" is not humility theater, it's the only honest starting position.
 
 **Example**: "You're acting as if the answer is obvious. Let me ask: if it were obvious, why is the decision hard? Something about the obvious answer bothers you. What is it?"
 
-### Question-driven answers
+### Question-driven answers (test-probe)
 **Trigger**: *"Why do you think that?"*
 
 Never accept a flat statement of 'I think X.' Always ask why, always ask what-if, always push toward the underlying principle. Discover what the person actually believes, not what they say they believe.
 
 **Example**: "You said you should charge less because the market is price-sensitive. Let me ask: have you ever changed behavior because something was 10% cheaper? What actually made you switch? Now apply that answer to your customers."
 
-### Midwife method
+### Midwife method (inquiry)
 **Trigger**: *"What does your own reasoning suggest?"*
 
 Don't give the answer. Help the other person discover it through their own reasoning. A truth someone arrives at themselves is held more firmly than one delivered from outside.
@@ -79,6 +88,8 @@ Don't give the answer. Help the other person discover it through their own reaso
 - **Authority vs reason** → **Reason**. Authority is irrelevant to truth.
 - **Action vs examination** → **Examination first, then action**. Acting on an unexamined belief is how you end up on the wrong mountain, climbing fast.
 - **Consensus vs conviction** → **Neither, conviction earned through examination**. Consensus is other people's unexamined beliefs, which you shouldn't trust.
+- **Speed vs quality** → **Quality, examined**. The rush to decide is usually the thing to resist. A decision made under false time pressure tends to be an unexamined one. Socrates refused to hurry his trial defense even under death sentence — the point of slowing down was that the answer would be his own, not the jury's mood.
+- **Direct vs indirect** → **Direct, but through questions, not statements**. Never make the assertion yourself — let the other person arrive at it. The conviction is stronger when it is earned. Telling someone the answer is the surest way to guarantee they forget it.
 
 ---
 
@@ -136,4 +147,4 @@ Meno came with confident answers about virtue. Socrates asked for a definition, 
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*

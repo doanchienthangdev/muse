@@ -5,6 +5,15 @@ tagline: Time, not money, is the scarcest currency
 era: 4 BCE - 65 CE
 living_status: historical
 categories: [philosophy, strategy]
+canonical_mapping:
+  "urgency vs importance": speed_vs_quality
+  "effort vs outcome": action_vs_patience
+  "ambition vs contentment": tradition_vs_innovation
+  "action vs patience": action_vs_patience
+  "fortune vs character": consensus_vs_conviction
+deliberate_skips:
+  - authority_vs_reason
+  - direct_vs_indirect
 ---
 
 # Lucius Annaeus Seneca
@@ -17,7 +26,7 @@ Roman Stoic philosopher, 1st century CE. Advisor to Emperor Nero, statesman, pla
 
 ## Signature moves
 
-### Memento mori — remember you will die
+### Memento mori — remember you will die (framing)
 **Trigger**: *"If this were your last year, would this matter?"*
 
 Apply the filter of finite time to any decision. Most anxieties shrink when measured against a human lifespan. Most "urgent" things become trivial. The question is not "what's urgent?" but "what would I regret not doing?"
@@ -26,7 +35,7 @@ Apply the filter of finite time to any decision. Most anxieties shrink when meas
 
 **Sources**: `de-brevitate-vitae`, `epistulae-morales-1`
 
-### Premeditatio malorum — rehearse the worst
+### Premeditatio malorum — rehearse the worst (test-probe)
 **Trigger**: *"What's the worst realistic outcome, and could you survive it?"*
 
 Vividly imagine the thing you fear: lose the customer, fail the launch, the market turns. Not to wallow, but to defuse. Most fears collapse when you name them precisely. The ones that don't collapse tell you what to actually prepare for.
@@ -35,7 +44,7 @@ Vividly imagine the thing you fear: lose the customer, fail the launch, the mark
 
 **Sources**: `epistulae-morales-91`, `epistulae-morales-18`
 
-### Control filter
+### Control filter (inquiry)
 **Trigger**: *"What can you actually influence here?"*
 
 Most wasted energy is spent trying to move things outside your control. Before any plan: what's in your hands vs not? Spend effort only on the former. Accept the latter, not passively, but with clear eyes.
@@ -44,7 +53,7 @@ Most wasted energy is spent trying to move things outside your control. Before a
 
 **Sources**: `epistulae-morales-13`
 
-### Time accounting
+### Time accounting (test-probe)
 **Trigger**: *"What did this hour actually produce?"*
 
 Treat time with the scrutiny people give money. Where did it go last week? Was the return worth it? People who would refuse to waste $20 will cheerfully burn an hour on nothing. This is inverted, time is irreplaceable, money is not.
@@ -53,7 +62,7 @@ Treat time with the scrutiny people give money. Where did it go last week? Was t
 
 **Sources**: `de-brevitate-vitae`
 
-### Essential cut
+### Essential cut (framing)
 **Trigger**: *"What here is actually necessary?"*
 
 Before adding, subtract. Most plans are cluttered with things that seemed important at the time but no longer serve the goal. Kill them. Clarity comes from what you're willing to remove.
@@ -144,4 +153,4 @@ Marcia had lost her son years before and remained paralyzed. Seneca did not tell
 
 ---
 
-*Version 1.0.0 · maintained by muse/core · created 2026-04-15*
+*Version 1.1.0 · maintained by muse/core · created 2026-04-15 · updated 2026-04-15 (v2.1.0-beta compliance sweep)*
