@@ -1,5 +1,5 @@
 ---
-description: Think with Dieter Rams (interpretive frame) — 5-stage structured session using ten principles audit, as little design as possible, honest design. Persists to ~/.muse/sessions/.
+description: Think with Dieter Rams (interpretive frame) — adaptive structured session (v2.2) using ten principles audit, as little design as possible, honest design, durable-not-trendy. Stage 0 detects mode (QUICK/STANDARD/DEEP/CRITIC). Multi-tagline, voice rules, cognitive patterns. Persists to ~/.muse/sessions/.
 allowed-tools: Read, Glob, Bash, Write, AskUserQuestion
 argument-hint: <your question or problem>
 ---
@@ -14,12 +14,12 @@ argument-hint: <your question or problem>
 Read `~/.claude/skills/muse/SESSION.md` in full. Follow every stage in order. Do not skip stages. Do not summarize stages.
 
 ## Step 2 — Load persona
-Read `~/.claude/skills/muse/personas/dieter-rams.md`. Extract: `signature_moves`, `thinking_mode`, `debate_positions`, `on_analogous_problems`, `sources`, and the `disclaimer` field from frontmatter.
+Read `~/.claude/skills/muse/personas/dieter-rams.md`. Extract (v2.2): `taglines[]` (multi-context taglines, one per stage), `signature_moves` (with inline `(framing|inquiry|test-probe)` category tags), `thinking_mode`, `debate_positions` (resolved via `canonical_mapping`), `## Voice rules` (core belief, tone, contextual shifts, banned patterns), `## Cognitive patterns` (thinking instincts, internalize — don't enumerate), `when_to_reach_for_me` + `session_mode_preferences`, `on_analogous_problems`, `sources`, and **the `disclaimer` field from frontmatter** (mandatory — Rams is a living figure).
 
 **Print the disclaimer at the top of the session output** (persona has `living_status: living`). This is non-negotiable for legal safety.
 
-## Step 3 — Run the 5-stage session
-Execute SESSION.md's 5-stage workflow against the user's question using only **Dieter Rams's signature moves** as the lens at each stage:
+## Step 3 — Run the adaptive session (v2.2)
+Execute SESSION.md's adaptive workflow. **Stage 0 first**: detect question shape (score S/T/C/A), pick mode (QUICK / STANDARD / DEEP / CRITIC), STOP for user confirmation. Rams is `strong_at: [CRITIC, STANDARD, DEEP]` and `weak_at: [QUICK]` — if the detected mode is QUICK, warn the user. Then run the selected mode's stage graph against the user's question using only **Dieter Rams's signature moves** as the lens at each stage:
 
 - **Ten principles audit** (useful, understandable, unobtrusive, honest, long-lasting, thorough, environmentally friendly, as little design as possible)
 - **As little design as possible** (assume each element should be removed; let the unremovable fight to stay)
