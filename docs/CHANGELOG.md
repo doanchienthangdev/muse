@@ -13,6 +13,105 @@ Nothing yet.
 
 ---
 
+## [2.2.0-alpha] — 2026-04-15 — Adaptive sessions + multi-tagline + voice rules + cognitive patterns
+
+### Why
+
+User feedback on v2.1.0-beta: the persona system felt flat, and the session workflow felt rigid. Three specific pain points:
+
+1. **Single tagline per persona**. Real thinkers have many memorable lines, each appropriate to a different context. Feynman's *"Explain it simply"* is great as a default, but his *"The first principle is you must not fool yourself"* is better when inquiry is the move, and *"If it doesn't agree with experiment, it's wrong"* is better when probing a claim. Encoding one tagline per persona = a caricature.
+
+2. **Persona descriptions were under-specified**. v2.1 personas had `thinking_mode` with 3 fields (opening_question, core_tension, anti_pattern) — roughly 50 words of voice guidance per persona. Compared to Garry Tan's gstack skills (plan-ceo-review, plan-eng-review, etc.) which encode 200+ lines of voice discipline per persona, muse was a tenth the density. The voice wasn't flat — it was unencoded.
+
+3. **5-stage workflow was rigid**. Every question went through Frame → Examine → Test → Decide → Commit regardless of shape. A quick gut-check on *"which font should I pick"* got the same 10-15 min ceremony as a bet-the-company decision. A request to critique an existing plan didn't need Frame or Examine at all.
+
+v2.2.0-alpha addresses all three, by borrowing patterns from Garry Tan's gstack skill encoding: multi-tagline with context, explicit voice rules (core belief + tone + banned patterns + contextual shifts), cognitive patterns as thinking instincts (not tactical moves), and adaptive session modes (QUICK / STANDARD / DEEP / CRITIC) selected at Stage 0 based on question shape.
+
+### Added
+
+- **`SESSION.md` Stage 0 — Mode Detection**. At the start of every session, score the user's question on 4 axes: S (stake), T (time pressure), C (concreteness), A (artifact presence). Pick one of four modes: QUICK (3-5 min, A=0 and T≥4 and S≤3), STANDARD (10-15 min, default — the v2.1 5-stage flow unchanged), DEEP (20-30 min, S≥4 and T≤3, adds Stage 0.5 Premise Challenge + Stage 3.5 Alternative Paths + 3-year retrospective at Stage 5), CRITIC (5-10 min, A≥3, replaces Frame/Examine with Load-Artifact and Prioritize-Findings). AskUserQuestion confirms or overrides the detected mode. Each mode runs a different stage graph.
+
+- **`SESSION.md` Stage 0.5 — Premise Challenge (DEEP only)**. Before accepting the user's question at face value, steel-man the current framing and propose 2-3 alternative framings. AskUserQuestion lets the user pick. Modeled on Garry Tan's `plan-ceo-review` Section 0A.
+
+- **`SESSION.md` Stage 3.5 — Alternative Paths (DEEP only)**. Before committing to a decision, surface at least 2 paths the user hasn't considered (10x version, ruthless-cut version, do-nothing version). Each characterized with cost/win/lose.
+
+- **`SESSION.md` Stages 1' and 3' — CRITIC mode specialized stages**. Stage 1' loads an existing artifact and applies the persona's critic frames to produce a structured findings inventory. Stage 3' prioritizes findings by severity + leverage + fix cost.
+
+- **`SESSION.md` Quality bars section**. Persona distinctiveness bar, mode fit bar, voice discipline bar, concreteness bar, citation bar. Mirrors Garry Tan's Completeness Principle pattern.
+
+- **Persona schema v2.2 (additive, backward-compatible)**:
+  - `taglines[]` frontmatter — array of `{text, context, situation, source}` with contexts `default / framing / inquiry / test-probe / decide / commit`. SESSION.md picks the tagline matching the current stage.
+  - `when_to_reach_for_me` frontmatter — object with `triggers[]` and `avoid_when[]` lists for persona routing.
+  - `session_mode_preferences` frontmatter — `strong_at[]` and `weak_at[]` subsets of {QUICK, STANDARD, DEEP, CRITIC}. Stage 0 warns if detected mode is in `weak_at`.
+  - `## Taglines` body section — human-readable table mirroring frontmatter `taglines[]`.
+  - `## Voice rules` body section — Core belief (1 paragraph), Tone (adjectives + short description), Contextual voice shifts (5 situational examples), Banned patterns (6-8 phrases this persona NEVER uses).
+  - `## Cognitive patterns` body section — 7-12 numbered thinking instincts. Garry's framing: "not checklist items — thinking instincts, internalize don't enumerate."
+  - `## When to reach for me` body section — Triggers + Avoid-when + Session mode fit explanation.
+
+- **`docs/PERSONA_SCHEMA.md`** — NEW canonical schema reference (~600 lines). Full v2.2 schema with required and optional fields, compliance checks C1-C12, migration notes, rationale. Single source of truth for persona file format.
+
+### Changed
+
+- **All 8 personas rewritten to v2.2 schema**. Each grew from ~150 lines to ~280-340 lines. New sections added: `## Taglines`, `## Voice rules`, `## Cognitive patterns`, `## When to reach for me`. Frontmatter gained `taglines[]` (3-5 entries per persona), `when_to_reach_for_me`, `session_mode_preferences`. Version footers bumped to 1.2.0. No existing signature move content was rewritten — all v2.2 additions are metadata enrichment.
+
+- **`SKILL.md` Mode: build and Mode: update rewritten for C9-C12**. The compliance validation now runs C1-C12. C9 (multi-tagline), C10 (voice rules), C11 (cognitive patterns), C12 (when-to-reach) are SOFT-DRIFT in v2.2.0-alpha — they do not block save, but they are reported so the user sees the gap. v2.3+ will promote them to HARD-GAP.
+
+- **`SKILL.md` single-persona mode tip** updated to reference v2.2 adaptive modes instead of v2.1 5-stage structure.
+
+- **All 10 slash commands updated for v2.2**. Description fields bumped to mention adaptive modes (QUICK/STANDARD/DEEP/CRITIC), multi-tagline, voice rules, cognitive patterns. Step 2 (Load persona) extraction list now includes the new v2.2 fields. Step 3 header changed from "Run the 5-stage session" to "Run the adaptive session (v2.2)" with instructions to run Stage 0 Mode Detection first.
+
+- **`SESSION.md` pre-flight** (from v2.1.0-beta) was already teaching the runtime to prefer inline category tags over keyword heuristic for Stage 1/2/3 routing. v2.2 extends pre-flight to also extract: `taglines[]`, `## Voice rules`, `## Cognitive patterns`, `when_to_reach_for_me`, `session_mode_preferences`, and apply them as output constraints throughout the session.
+
+- **`SKILL.md` version footer** bumped to 2.2.0-alpha.
+
+### Backward compatibility
+
+**Additive schema only.** Existing v2.1 personas without `taglines[]`, `## Voice rules`, `## Cognitive patterns`, or `## When to reach for me` still load and run — SESSION.md v2.2 pre-flight falls back to v2.1 behavior (primary `tagline` field only, `thinking_mode` as the voice source, no cognitive-pattern extraction). Every v2.1 invocation that worked before still works identically. `/muse:feynman <q>` → STANDARD mode by default, which IS the v2.1 5-stage flow.
+
+v2.0 free-text invocations (`muse:feynman <q>`, `muse:chain`, `muse:build`, `muse:update`, etc., no slash) unchanged. The v2.2 schema extension flows through `muse:build` (new personas get v2.2 fields) and `muse:update` (existing personas get migrated on demand). For Codex CLI and Gemini CLI users without slash support, SKILL.md Mode: build and Mode: update both teach the v2.2 fields.
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse
+git pull
+./install.sh
+```
+
+To upgrade existing personas to v2.2 schema (applies to user-built personas only — the 8 shipped personas were upgraded in this release):
+
+```
+/muse:update --all
+```
+
+Interactive walk through C9-C12 gaps per persona. Idempotent on v2.2-compliant files.
+
+### Not in scope (deferred to v2.3+)
+
+- Promote C9-C12 from SOFT-DRIFT to HARD-GAP (v2.3 — requires a stabilization period on v2.2.0-alpha)
+- `/muse:chain`, `/muse:debate`, `/muse:critic`, `/muse:all`, `/muse:spike`, `/muse:list` as slash commands (still deferred from v2.1.0-beta — these need custom workflows)
+- Persona marketplace / plugin system
+- Cross-persona session blending (one session using multiple personas sequentially — adjacent to but distinct from `muse:chain`)
+- Auto-learning from session history + escape-hatch analytics
+- Running `muse:spike` distinctiveness eval on the v2.2 persona set (requires ANTHROPIC_API_KEY + human judges)
+
+### Known gaps / risks
+
+- **R1 — SOFT-DRIFT warnings are advisory, not enforced**. Contributors may build personas that pass v2.1 checks but fail C9-C12 and still save. v2.2.0-alpha is intentionally lenient to allow calibration; v2.3 will enforce.
+- **R2 — `canonical_mapping` interpretive decisions**. Different contributors may disagree on the best mapping (e.g., Confucius's "top-down vs bottom-up" → `authority_vs_reason` is one reading; others are possible). The escape hatch is `deliberate_skips`.
+- **R3 — Mode detection is heuristic**. The S/T/C/A scoring is based on keyword/phrase signals and may misclassify. User override via AskUserQuestion at Stage 0 is the safety net. Log the override rate for future tuning.
+- **R4 — Voice rules risk being too restrictive**. If a persona's banned-patterns list is too aggressive, ordinary session output may trip it. Each persona is limited to 6-8 banned patterns; the core belief is the primary voice signal, not the ban list.
+- **R5 — Cognitive patterns risk feeling like a checklist**. SESSION.md explicitly instructs the runtime to "internalize, don't enumerate." If persona outputs start to read like "here are my 9 cognitive patterns numbered...", the instruction is being violated — the fix is in SESSION.md, not per-persona.
+- **R6 — Persona file length**. Each file grew to ~280-340 lines. Still under Garry's gstack skill files (1000+ lines). Acceptable.
+
+### Total diff
+
+- **New files**: `docs/PERSONA_SCHEMA.md` (~600 lines)
+- **Modified files**: `SESSION.md` (near-total rewrite, ~485 → ~730 lines), `SKILL.md` (Mode: build C1→C12, Mode: update C1→C12, ~90 lines of additions), 8 personas (each +130-190 lines = ~1200 net), 10 slash commands (~15 lines each = ~150 net), `docs/CHANGELOG.md` (this entry, ~100 lines)
+- **Total**: ~2400 net LoC added. Mostly data + spec.
+
+---
+
 ## [2.1.0-beta] — 2026-04-15 — v2.1 tooling + compliance sweep
 
 ### Why
