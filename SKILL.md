@@ -312,7 +312,17 @@ Interactive persona builder from research material. Produces personas validated 
 
 > **Claude Code users**: prefer the slash command `/muse:build <persona-id>` which runs this same workflow as a structured interactive session with per-field STOP discipline. This free-text mode exists for Codex CLI / Gemini CLI users.
 
-**v2.1 compliance mandate**: every persona produced by this mode MUST pass compliance checks C1–C8 against `SESSION.md` before being saved. The brainstorm fields, validation step, and save guard below enforce this — you cannot save a persona that would silently degrade in a structured session.
+**v2.2.1 compliance mandate**: every persona produced by this mode MUST pass compliance checks C1–C12 against `SESSION.md` before being saved. The brainstorm fields, distinctiveness check, spec review loop (max 3 iterations), pre-save dry-run, and save guard below enforce this — you cannot save a persona that would silently degrade in a structured session.
+
+**v2.2.1 additions to the free-text build flow** (for Codex/Gemini CLI users — mirrors `/muse:build` slash command v2.2.1):
+- **Pre-build existing-persona check**: before 15 minutes of brainstorm, ask the user which of the 8 existing personas currently handles the use case. If one does, recommend `/muse:update` instead of building new.
+- **Concrete synthesis recipes for voice_rules and cognitive_patterns**: replace vague "derive from X" with explicit step-by-step derivation (see `commands/muse:build.md` Step 4 fields 7-8 for the full recipes).
+- **Distinctiveness check**: after composing draft, Jaccard token overlap against 8 existing personas' signature moves. If >50% of new moves have >60% overlap, BLOCK save.
+- **Spec review loop**: dispatch adversarial Agent subagent with 5-dimension review (distinctiveness, voice specificity, cognitive vs tactical, tagline context fit, debate consistency). Max 3 iterations. Log to `~/.muse/analytics/spec-review.jsonl`.
+- **Pre-save dry-run**: statically walk SESSION.md lens selection (Stage 1/2/3 pick, tagline contexts, canonical coverage) BEFORE atomic mv. Catches silent breakage before it reaches disk.
+- **Post-save dry-run re-check**: read the saved file from disk and re-walk to catch any Write-time corruption.
+
+For non-slash (Codex CLI / Gemini CLI) users: read `commands/muse:build.md` for the full v2.2.1 workflow. This SKILL.md section is the abbreviated reference.
 
 ### Validate
 - `--person=<id>` must match `^[a-z][a-z0-9-]{0,30}$`
@@ -438,9 +448,18 @@ Fields in order (compliance-ordered):
 
 ## Mode: update
 
-Interactive persona v2.2 compliance upgrader. Detects gaps against `SESSION.md` (C1–C12), fixes them interactively with user approval, writes with backup + draft + diff + confirm.
+Interactive persona v2.2.1 compliance upgrader. Detects gaps against `SESSION.md` (C1–C12), fixes them interactively with concrete synthesis recipes, runs spec review loop (max 3 iterations), writes with backup + draft + diff + confirm. Supports `--rollback` flag to restore from backup.
 
 > **Claude Code users**: prefer the slash command `/muse:update <persona-id>` which runs this same workflow as a structured interactive session. This free-text mode exists for Codex CLI / Gemini CLI users.
+
+**v2.2.1 additions to the free-text update flow** (mirrors `/muse:update` slash command):
+- **Concrete synthesis recipes for C9, C10, C11 fix playbooks**: C9 (taglines) walks 5 contexts with candidate sources in priority order. C10 (voice rules) has a 4-subsection recipe: core_tension → 1-sentence core belief, biography → tone adjectives, signature move Examples → 5 contextual shifts, inverted signature_phrases + modern jargon baseline → 6-8 banned patterns. C11 (cognitive patterns) derives 1 meta-habit per signature move + 1-2 from core_tension + 1-2 from strongest debate positions, constrained to domain-agnostic habits.
+- **C9 schema mirror enforcement (v2.2.1 stricter)**: assert frontmatter `taglines[]` text values mirror `## Taglines` body table verbatim. Catches drift.
+- **Spec review loop (Step 5.5)**: after fix accumulation, dispatch Agent subagent with 5-dimension adversarial review. Max 3 iterations. Same pattern as `/muse:build`.
+- **Dry-run walk in Step 8 (expanded from static check)**: re-read saved file, walk SESSION.md lens selection + tagline contexts + canonical coverage + Stage 4 fork pick. Catches silent breakage.
+- **Rollback helper (`--rollback` flag)**: short-circuit to Step 10. Lists `.bak.<ts>` files, user picks, double-backup current live (as `.bak.pre-rollback.<new-ts>`), atomic `cp` (not `mv` — keeps the source backup), then re-validate. Users can recover from any bad accept.
+
+For full v2.2.1 details: `commands/muse:update.md`. This SKILL.md section is the abbreviated reference.
 
 ### Validate
 - `--person=<id>` must match `^[a-z][a-z0-9-]{0,30}$`
@@ -690,4 +709,4 @@ Claude Code auto-discovers this SKILL.md on next session. Codex CLI and Gemini C
 
 ---
 
-*Version 2.2.0-alpha · adaptive sessions + multi-tagline + voice rules + cognitive patterns · 2026-04-15*
+*Version 2.2.1-alpha · build/update harden: spec review loop + concrete synthesis recipes + distinctiveness check + dry-run + rollback · 2026-04-15*

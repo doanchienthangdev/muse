@@ -1,25 +1,30 @@
 ---
-description: Upgrade an existing persona to v2.2 compliance. Detects gaps against SESSION.md (C1–C12 checks including multi-tagline, voice rules, cognitive patterns, when-to-reach), proposes fixes interactively, writes with backup + draft + diff + confirm. Supports --check for dry-run and --all for batch scan.
-allowed-tools: Read, Glob, Bash, Write, Edit, AskUserQuestion
-argument-hint: <persona-id> [--check] | --all [--check]
+description: Upgrade an existing persona to v2.2 compliance. Detects gaps against SESSION.md (C1–C12 checks), proposes fixes interactively with concrete synthesis recipes, runs spec review loop (max 3 iterations), writes with backup + draft + diff + confirm. Supports --check (dry-run), --all (batch scan), and --rollback (restore from most recent backup).
+allowed-tools: Read, Glob, Bash, Write, Edit, AskUserQuestion, Agent
+argument-hint: <persona-id> [--check | --rollback] | --all [--check]
 ---
 
-# muse:update — persona v2.2 compliance upgrader
+# muse:update — persona v2.2.1 compliance upgrader
 
 **Args**: $ARGUMENTS
 
 ## Step 0 — Parse arguments
 
-Parse `$ARGUMENTS` into `(persona_id, check_only, all_mode)`. Order-independent:
+Parse `$ARGUMENTS` into `(persona_id, check_only, all_mode, rollback_mode)`. Order-independent:
 
 - `/muse:update socrates` → single, interactive fix + write
 - `/muse:update socrates --check` → single, detection only, no writes
+- `/muse:update socrates --rollback` → restore from most recent .bak file (v2.2.1 NEW)
 - `/muse:update --all` → batch scan, print matrix, then walk each non-compliant persona
 - `/muse:update --all --check` → batch matrix only, no writes
 
 **Validate**:
 - `persona_id` (if present) matches `^[a-z][a-z0-9-]{0,30}$`
 - Reject `..`, `/`, symlinks, shell metacharacters
+- `--rollback` requires `persona_id` (no `--all --rollback`)
+- `--check` and `--rollback` are mutually exclusive
+
+**If `--rollback` is set**, short-circuit to **Step 10 (Rollback)** below — skip the compliance check and fix workflow entirely.
 
 ## Step 1 — Load the v2.2 spec
 
@@ -38,7 +43,7 @@ Read `~/.claude/skills/muse/SESSION.md` in full. This is the source of truth for
 - **`taglines[]` frontmatter**: ≥3 entries with `{text, context, situation, source}` fields. Contexts: `default`, `framing`, `inquiry`, `test-probe`, `decide`, optional `commit`.
 - **`when_to_reach_for_me` frontmatter**: object with `triggers[]` and `avoid_when[]` lists.
 - **`session_mode_preferences` frontmatter**: object with `strong_at[]` and `weak_at[]` from {QUICK, STANDARD, DEEP, CRITIC}.
-- **`## Taglines` body section**: human-readable table mirroring frontmatter `taglines[]`.
+- **`## Taglines` body section**: human-readable table mirroring frontmatter `taglines[]` **exactly** (v2.2.1 stricter enforcement — each tagline text must appear verbatim in both locations).
 - **`## Voice rules` body section**: Core belief + Tone + Contextual voice shifts + Banned patterns.
 - **`## Cognitive patterns` body section**: ≥7 numbered thinking instincts.
 - **`## When to reach for me` body section**: Triggers (≥4) and Avoid-when (≥3) lists with session mode fit explanation.
@@ -98,10 +103,16 @@ For each persona, evaluate:
 - `SOFT-DRIFT` if absent (Stage 5 citation grounding thinner but session still runs)
 - Never HARD-GAP
 
-**C9 — taglines[] multi-context (v2.2 NEW)**
-- `PASS` if `taglines[]` frontmatter has ≥3 entries AND each has `{text, context, situation, source}` fields AND `## Taglines` body section mirrors the frontmatter
-- `SOFT-DRIFT` if `taglines[]` has 1-2 entries OR body section missing
-- Never HARD-GAP in v2.2.0-alpha (will be HARD-GAP in v2.3+)
+**C9 — taglines[] multi-context + schema mirror (v2.2, stricter in v2.2.1)**
+
+Check three sub-conditions:
+- (a) `taglines[]` frontmatter has ≥3 entries with all 4 fields (`text`, `context`, `situation`, `source`)
+- (b) `## Taglines` body section exists
+- (c) **Schema mirror** (v2.2.1): for each entry in frontmatter `taglines[]`, assert entry.text appears verbatim as a cell in the body `## Taglines` table. For each row in the body table, assert the tagline text appears in frontmatter `taglines[].text` values. Counts must match.
+
+- `PASS` if (a), (b), and (c) all hold
+- `SOFT-DRIFT` if (a) partial (1-2 entries) OR (b) missing OR (c) partial mismatch
+- Never HARD-GAP in v2.2.0-alpha (HARD-GAP in v2.3+)
 
 **C10 — Voice rules body section (v2.2 NEW)**
 - `PASS` if `## Voice rules` body section has all 4 subsections: Core belief, Tone, Contextual voice shifts, Banned patterns
@@ -138,7 +149,7 @@ v2.1 baseline:
 [status] C8  on_analogous_problems: <N> entries
 
 v2.2 new:
-[status] C9  taglines[]: <N> entries, contexts=<list>, body section <present | missing>
+[status] C9  taglines[]: <N> entries, contexts=<list>, body mirrors=<yes|no>
 [status] C10 Voice rules: <complete | missing: <subsections>>
 [status] C11 Cognitive patterns: <N> numbered instincts
 [status] C12 When to reach for me: triggers=<N>, avoid_when=<N>, frontmatter <matches | missing>
@@ -217,28 +228,86 @@ Ask: *"Missing analogous problems section. Options:"*
 - B) Point me at `.archives/personas/<id>/` to extract from
 - C) Skip (Stage 5 citation grounding will be thinner)
 
-### C9 missing or sparse taglines (v2.2 NEW)
+### C9 missing or sparse taglines + schema drift (v2.2, stricter recipes in v2.2.1)
+
 Walk the 5 stage contexts (default, framing, inquiry, test-probe, decide). For each missing context:
-1. Propose a candidate tagline by reading: (a) existing signature move Trigger lines; (b) `thinking_mode.signature_phrases`; (c) `## On analogous problems` entries; (d) existing primary `tagline` field.
-2. `AskUserQuestion`: A) Accept proposed, B) Pick different candidate, C) I'll write my own, D) Skip this context.
-3. Record `{text, context, situation, source}` for each accepted tagline.
-4. Write to both frontmatter `taglines[]` AND `## Taglines` body table.
 
-### C10 missing or thin Voice rules (v2.2 NEW)
-For each missing subsection:
-- **Core belief missing**: Generate from `thinking_mode.core_tension` + `## Signature moves` summary. Show user, refine, confirm.
-- **Tone missing**: Derive adjectives from the persona's biographical sketch + signature phrases. Show user, refine.
-- **Contextual voice shifts missing**: Generate 5 stage-specific examples by scanning existing signature move Example fields and matching them to stage categories. Confirm each.
-- **Banned patterns missing**: Generate 6-8 forbidden phrases by inverting the persona's signature language (e.g., if persona is Socrates who asks questions, "you should..." is banned). Confirm list.
+1. Propose a candidate tagline by reading, in order:
+   - (a) existing signature move Trigger lines (extract the `*"..."*` quoted part)
+   - (b) `thinking_mode.signature_phrases` list
+   - (c) `## On analogous problems` entries (first memorable sentence)
+   - (d) existing primary `tagline` field (fallback)
+2. `AskUserQuestion`: A) Accept proposed candidate, B) Pick a different candidate from the list, C) I'll write my own (free-text), D) Skip this context (leave stage with primary tagline fallback).
+3. Record `{text, context, situation, source}` for each accepted tagline. The `situation` field is derived from the signature move's trigger explanation. The `source` field is the source ID the move cites.
+4. **Write to both** frontmatter `taglines[]` AND `## Taglines` body table. The text must match verbatim between the two locations.
 
-### C11 missing or sparse Cognitive patterns (v2.2 NEW)
-1. Derive 7-12 thinking instincts from the existing fields:
-   - 1 pattern per signature move (the meta-habit behind the move)
-   - 1-2 patterns from `thinking_mode.core_tension`
-   - 1-2 patterns from the persona's strongest `debate_positions` stances
-   - 1-2 patterns from `## On analogous problems` (what mental move does each case illustrate?)
-2. Present as a numbered list via AskUserQuestion: A) Accept all, B) Remove some, C) Add more, D) Skip.
-3. **Critical**: Do NOT duplicate signature moves verbatim. Signature moves are tactical tools; cognitive patterns are thinking instincts. A signature move is *"run the hand calculation"*; a cognitive pattern is *"self-deception is the primary enemy"*.
+**If the current persona has frontmatter/body drift** (frontmatter has taglines the body doesn't, or vice versa), offer:
+- A) Use frontmatter as source of truth — regenerate body table from frontmatter
+- B) Use body as source of truth — regenerate frontmatter from body
+- C) Manually resolve each conflict
+
+On A/B, auto-regenerate and confirm final content. On C, walk each conflicting entry.
+
+### C10 missing or thin Voice rules (v2.2.1 CONCRETE RECIPES)
+
+For each missing or thin subsection, use these explicit derivation recipes (same as `/muse:build` Step 4 field 7):
+
+**Core belief missing or too long (>2 sentences)**:
+- Read `thinking_mode.core_tension`. Rephrase as a **1-sentence stance toward the user** (not a philosophy abstract, not a biography).
+- Examples:
+  - core_tension = "Certainty vs inquiry" → *"The person in front of you came with answers. Your job is to return them to the questions those answers depend on."*
+  - core_tension = "Rigor vs intuition" → *"You cannot understand something until you can explain it simply. The first principle is: do not fool yourself."*
+- Show the candidate, `AskUserQuestion`: A) Accept, B) Refine, C) Write own, D) Keep existing (leave as SOFT-DRIFT).
+
+**Tone missing or weak**:
+- Derive from persona's biographical sketch + `thinking_mode.signature_phrases` + era. Generate 4-6 comma-separated adjectives + 1 sentence connecting them.
+- Example: *"Patient, questioning, direct about contradictions, confident in not-knowing. Where others assert, this voice asks."*
+- Show, AskUserQuestion A/B/C/D.
+
+**Contextual voice shifts missing or thin (<5 entries)**:
+- For each of the 5 stage types (discussing definitions / surfacing contradictions / probing certainty / forcing the fork / committing), extract a matching `Example:` field from an existing `signature_moves` entry and use it or rewrite it to fit the stage.
+- The 5 stage types mapped to signature move categories:
+  - Stage 1 framing → "discussing definitions" — use framing-category move Example
+  - Stage 2 inquiry → "surfacing contradictions" — use inquiry-category move Example
+  - Stage 3 test-probe → "probing certainty" — use test-probe-category move Example
+  - Stage 4 decide → "forcing the fork" — derive from debate_positions
+  - Stage 5 commit → "committing to action" — short/brief imperative
+- Show 5 candidates, AskUserQuestion: A) Accept all, B) Refine one (which?), C) Regenerate all, D) Keep existing.
+
+**Banned patterns missing or thin (<6 entries)**:
+- Generate deterministically from 4 sources:
+  1. **Invert signature_phrases**: for each persona signature phrase, flip it (if persona asks "what do you mean?", then "you should..." is banned).
+  2. **From `thinking_mode.anti_pattern`**: convert each anti-pattern into 1-2 banned phrases.
+  3. **Modern AI/startup jargon baseline** (pick 3-5 of): *"crush it", "unlock", "optimize", "10x", "circle back", "value-add", "synergy", "best practices", "next-level", "move the needle"* — these are banned for every historical persona.
+  4. **Domain-specific bans**: phrases the persona's era/domain would never use. E.g., Socrates would never say "KPI" or "conversion funnel"; Feynman would never use "synergy".
+- Target 6-8 total. Show list, AskUserQuestion A/B/C/D.
+
+### C11 missing or sparse Cognitive patterns (v2.2.1 CONCRETE RECIPE)
+
+Derive 7-12 thinking instincts deterministically from existing fields. Same algorithm as `/muse:build` Step 4 field 8:
+
+1. **One pattern per signature_move** — the meta-habit behind the move. Not the move itself. Example:
+   - Move = "Hand calculation — back-of-envelope math" 
+     → Pattern = *"Self-deception is the primary enemy. You are the easiest person to fool, so assume your gut is biased toward the flattering answer and actively look for the counter-evidence."* 
+     (NOT *"Run a hand calculation to check the number"* — that's the move)
+   - Move = "Definition hunting" 
+     → Pattern = *"Definition before analysis. Most disagreements collapse when both parties realize they meant different things."*
+2. **1-2 patterns from `thinking_mode.core_tension`** — the stance embedded in the tension. E.g., core_tension "Rigor vs intuition" → pattern *"Rigor without formalism. Start intuitive, verify formally. If they disagree, one of them is lying."*
+3. **1-2 patterns from the strongest `debate_positions`** — the convictions anchoring the stances.
+
+**Constraints** (all must hold):
+- **Domain-agnostic**: pattern applies regardless of what user asks
+- **Habit-shaped**: a mental stance, not a tactic
+- **Distinct from signature_moves**: patterns are the WHY, moves are the WHAT
+- **Deduplicated**: if two derived patterns say the same thing, merge them
+
+Target 7-12 numbered entries. Present list, AskUserQuestion:
+- A) Accept all (Recommended if derivation looks clean)
+- B) Refine: one feels too tactical (point at which one)
+- C) Refine: one duplicates another (point at which pair)
+- D) Regenerate from a different derivation source
+
+**Critical**: Do NOT duplicate signature moves verbatim. Signature moves are tactical tools; cognitive patterns are thinking instincts. A signature move is *"run the hand calculation"*; a cognitive pattern is *"self-deception is the primary enemy"*.
 
 ### C12 missing or thin When to reach for me (v2.2 NEW)
 1. Derive **Triggers** (≥4) from: (a) benchmark_prompts (each prompt implies a trigger); (b) contexts where `thinking_mode.opening_question` would land naturally; (c) user states this persona uniquely addresses.
@@ -247,10 +316,37 @@ For each missing subsection:
 4. Present synthesized list via AskUserQuestion: A) Accept all, B) Refine triggers, C) Refine avoid_when, D) I'll rewrite all.
 5. Write to BOTH `when_to_reach_for_me` frontmatter AND `## When to reach for me` body section.
 
+## Step 5.5 — Spec review loop (v2.2.1 NEW, biggest lever)
+
+After all accepted fixes are accumulated in the in-memory draft but before the backup + write, run adversarial review. Garry Tan's CEO plan pattern. Maximum 3 iterations.
+
+**Iteration loop**: same as `/muse:build` Step 5.5. Dispatch Agent subagent with the same 5-dimension adversarial prompt (distinctiveness, voice rules specificity, cognitive patterns vs signature moves, taglines context match, debate positions vs thinking_mode consistency). Parse score + issues. Apply fixes. Re-dispatch. Stop on PASS (score ≥8, no issues), convergence (same issues on consecutive iterations), or max 3 iterations.
+
+**Log metrics** to `~/.muse/analytics/spec-review.jsonl`:
+
+```bash
+mkdir -p ~/.muse/analytics
+jq -n \
+  --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --arg persona "$persona_id" \
+  --arg source "update" \
+  --argjson iterations $iterations \
+  --argjson issues_found $issues_found \
+  --argjson issues_fixed $issues_fixed \
+  --argjson remaining $remaining \
+  --argjson final_score $score \
+  '{ts:$ts,persona:$persona,source:$source,iterations:$iterations,issues_found:$issues_found,issues_fixed:$issues_fixed,remaining:$remaining,final_score:$final_score}' \
+  >> ~/.muse/analytics/spec-review.jsonl 2>/dev/null || true
+```
+
+**Report to user**: same summary format as `/muse:build`. If the loop exits with remaining issues, surface via AskUserQuestion with options: A) Accept with documented concerns, B) Manually fix now (loop back to Step 5), C) Abort.
+
+**Error handling**: if Agent subagent fails or times out, skip spec review with a warning *"Spec review unavailable — proceeding without adversarial check."* The spec review loop is best-effort, not blocking.
+
 ## Step 6 — Backup, draft, diff, confirm
 
 1. **Backup**: via Bash, `cp "$MUSE_DIR/personas/<id>.md" "$MUSE_DIR/personas/<id>.md.bak.$(date +%Y-%m-%d-%H%M%S)"`. Print the backup path.
-2. **Draft**: Write the assembled in-memory version to `personas/<id>.md.draft` via the Write tool.
+2. **Draft**: Write the assembled in-memory version (post-spec-review) to `personas/<id>.md.draft` via the Write tool.
 3. **Diff**: via Bash, `diff -u "$MUSE_DIR/personas/<id>.md.bak.<ts>" "$MUSE_DIR/personas/<id>.md.draft" | head -200`. Print output inline.
    - If diff is >200 lines, print a section-level summary: *"+12 lines in `## Debate positions`, +3 lines in frontmatter, +5 lines in signature moves. See <draft path> for full content."*
 4. **Confirm** via `AskUserQuestion`:
@@ -262,37 +358,88 @@ For each missing subsection:
 
 Via Bash: `mv "$MUSE_DIR/personas/<id>.md.draft" "$MUSE_DIR/personas/<id>.md"`. Atomic on POSIX.
 
-## Step 8 — Validate (data-shape only, no real session)
+## Step 8 — Validate with dry-run walk (v2.2.1 EXPANDED from static check)
 
-Re-Read the freshly-written file. Re-run C1–C12. Walk SESSION.md pre-flight extraction logic in memory:
+Re-read the freshly-written file from disk. Run C1-C12 static checks AND walk SESSION.md pre-flight extraction logic as a dry-run:
 
+**Static re-check** (mirrors Step 3):
 1. Parse frontmatter → assert all required keys present
-2. Extract signature_moves → assert ≥3, classify each into category, assert each of 3 categories has ≥1 hit
-3. Extract debate_positions → assert non-empty unless user deliberately picked C3 option B
-4. Extract thinking_mode.{opening_question, core_tension, anti_pattern} → assert present
-5. Compute lens candidates for Stage 1/2/3 → assert each is non-null
+2. C1-C12 re-run
 
-**Do NOT invoke AskUserQuestion in this step** — that would start a real session.
+**Dry-run walk (v2.2.1 NEW)**:
+
+1. **Stage 1 Frame lens pick**: scan for `(framing)` tag or keyword match. Assert a move was picked. Else FAIL.
+2. **Stage 2 Inquiry lens pick**: same with `(inquiry)`. Assert non-null. Else FAIL.
+3. **Stage 3 Test-probe lens pick**: same with `(test-probe)`. Assert non-null. Else FAIL.
+4. **Tagline context walk**: assert `taglines[]` has `context: default` entry. For framing / inquiry / test-probe / decide: warn if missing (not fail).
+5. **Canonical dilemma coverage**: parse `canonical_mapping` + `deliberate_skips`, assert union ≥3 of 6 slugs. Else FAIL.
+6. **Synthetic Stage 4 fork**: pick first covered slug, assert the persona has a non-trivial stance (≥20 chars in `## Debate positions`). Else FAIL.
+
+**Do NOT invoke AskUserQuestion in this step** — that would start a real session. This is a static data-shape + lens-walk check.
 
 Print:
 
 ```
 Validation: PASS
   - C1–C12 all pass (or: <N> acceptable soft-drifts listed above)
-  - Pre-flight extraction: OK
-  - Stage 1 lens candidate: <move-name> (tagline: <tagline>)
-  - Stage 2 lens candidate: <move-name> (tagline: <tagline>)
-  - Stage 3 lens candidate: <move-name> (tagline: <tagline>)
-  - Voice rules loaded: <N> banned patterns, <N> contextual shifts
-  - Cognitive patterns: <N> thinking instincts
+  - Dry-run walk: Stage 1 → <move> / Stage 2 → <move> / Stage 3 → <move>
+  - Tagline contexts covered: <list>
+  - Canonical dilemmas: <N>/6 covered
+  - Spec review: <N> iterations, final score <X>/10
 
 Updated: personas/<id>.md
 Backup:  personas/<id>.md.bak.<ts>
 ```
 
+**If any step fails**, print the failure loudly and tell the user: *"Dry-run validation FAILED after write. The persona is on disk but will degrade at session runtime. Options: A) Run `/muse:update <id>` again to fix the gap, B) Run `/muse:update <id> --rollback` to restore from the backup I just created, C) Inspect manually."*
+
 ## Step 9 — Close
 
-Print one line: `Persona <id> upgraded to SESSION.md v2.2 compliance.` Stop.
+Print one line: `Persona <id> upgraded to SESSION.md v2.2.1 compliance.` Stop.
+
+---
+
+## Step 10 — Rollback (triggered by --rollback flag, v2.2.1 NEW)
+
+If `$ARGUMENTS` contains `--rollback`, the workflow short-circuits here from Step 0 — skip all compliance checks and fix logic.
+
+**Rollback workflow**:
+
+1. **Find backups**: via Bash, `ls -t "$MUSE_DIR/personas/<persona_id>.md.bak."*`. List all backups sorted newest-first.
+2. **No backups found**: STOP and tell the user: *"No backups exist for personas/<id>.md. There is nothing to rollback to. If the persona is broken, restore it manually from git history: `cd ~/.claude/skills/muse && git log -- personas/<id>.md`."*
+3. **One or more backups found**: print the list with human-readable timestamps. Example:
+   ```
+   Backups for personas/socrates.md:
+     [1] personas/socrates.md.bak.2026-04-15-201730  (most recent, 12 minutes ago)
+     [2] personas/socrates.md.bak.2026-04-15-180033  (2 hours 30 minutes ago)
+     [3] personas/socrates.md.bak.2026-04-15-094512  (11 hours ago)
+   ```
+4. **AskUserQuestion**: *"Which backup to restore?"*
+   - A) Most recent (#1) — Recommended
+   - B) Second most recent (#2)
+   - C) Show diff between current live and backup #1 before deciding
+   - D) Abort rollback
+
+   On C: run `diff -u personas/<id>.md personas/<id>.md.bak.<ts>`, print, then re-offer A/B/D.
+
+5. **Double-backup the current live file**: before overwriting, save the current live as `personas/<id>.md.bak.pre-rollback.$(date +%Y-%m-%d-%H%M%S)`. This ensures even a bad rollback is recoverable.
+
+6. **Confirm** via AskUserQuestion: *"This will replace personas/<id>.md with personas/<id>.md.bak.<selected-ts>. Current content saved as personas/<id>.md.bak.pre-rollback.<new-ts>. Proceed?"*
+   - A) Yes, roll back
+   - B) No, abort
+
+7. **Atomic rollback**: `cp personas/<id>.md.bak.<selected-ts> personas/<id>.md` (via Bash). Not `mv` — keep the backup file in place for future rollback options.
+
+8. **Dry-run validate** the restored file (run Step 8 logic). If validation fails, warn: *"The restored backup also has dry-run failures. You may need to go further back — try `--rollback` again to pick an older backup."*
+
+9. **Print result**:
+   ```
+   Rolled back: personas/<id>.md ← personas/<id>.md.bak.<selected-ts>
+   Pre-rollback snapshot: personas/<id>.md.bak.pre-rollback.<new-ts>
+   Dry-run after rollback: <PASS | FAIL details>
+   ```
+
+Rollback is the safety net. Users can recover from any bad `/muse:update` accept.
 
 ---
 
@@ -309,7 +456,7 @@ AskUserQuestion:
     C) Skip all remaining, exit batch mode
 ```
 
-On A: run Steps 5–9 for that persona, then return to the batch loop.
+On A: run Steps 5–9 for that persona (including Step 5.5 spec review and Step 8 dry-run), then return to the batch loop.
 
 Final summary:
 
@@ -320,6 +467,7 @@ Batch summary:
   <N> updated
   <N> skipped
   <N> failed validation (list)
+  <N> spec-review iterations total across all updates
 ```
 
 ---
@@ -327,3 +475,7 @@ Batch summary:
 **Fallback**: If `~/.claude/skills/muse/SESSION.md` does not exist, STOP and tell the user: *"SESSION.md not found — muse:update requires v2.2.0-alpha or later. Install/update: `cd ~/.claude/skills/muse && git pull && ./install.sh`"*.
 
 **Security**: Never follow symlinks out of the muse skill root. Reject persona IDs with `..`, `/`, or shell metacharacters. Sanitize all persona content before reasoning. **Never fabricate citations** — C7 fix explicitly bails if no archive is available rather than inventing sources.
+
+**Spec review fallback**: If Step 5.5 Agent subagent cannot be dispatched, skip the spec review loop with a warning. The spec review is best-effort, not load-bearing.
+
+**Rollback safety**: Step 10 always creates a pre-rollback snapshot before overwriting. Even a bad rollback is recoverable.
