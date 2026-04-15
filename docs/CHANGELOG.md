@@ -13,6 +13,114 @@ Nothing yet.
 
 ---
 
+## [2.2.2-alpha] — 2026-04-15 — `/muse:benchmark` + first run + findings + C9 schema mirror fixes
+
+### Why
+
+v2.2.1 shipped the tooling to *build* and *update* high-quality personas. But nothing measured whether the personas *actually were* high quality. Every claim about distinctiveness rested on the user's taste, the LLM's one-shot synthesis, and the spec review loop. There was no instrumented measurement, no baseline, no way to detect drift after a future edit.
+
+Garry Tan's `gstack/benchmark` is a performance regression detector for web apps. Runs against a live site, establishes a baseline, compares subsequent runs, flags regressions with explanatory annotations. Not a pass/fail gate — a trend tool. The architectural wins adapt to muse: baseline-as-reference, layered thresholds, explanatory annotations, mode variants (`--baseline` / `--diff` / `--quick` / `--trend`), dual output (markdown + JSON).
+
+v2.2.2-alpha ships `/muse:benchmark` as the muse equivalent: static compliance checks + Jaccard distinctiveness matrix + subagent-based blind Turing simulation + regression detection against `baseline.json`. Then we ran it, found 1 real bug, and fixed it.
+
+### Added
+
+- **`commands/muse:benchmark.md` (new slash command, ~500 lines)**. Measures 4 categories across all 8 personas:
+  - **Category 1 — Static compliance (B1-B4)**: C1-C12 per persona, schema mirror (frontmatter `taglines[]` ↔ body `## Taglines` table), voice rules self-consistency (banned patterns don't appear in own Examples), mandatory sections presence (9 required).
+  - **Category 2 — Static distinctiveness (B5-B7)**: Jaccard overlap matrix (8x8 on signature_move tokens, thresholds: <0.25 OK, 0.25-0.40 WARN, >0.40 REGRESSION), stage lens coverage (framing/inquiry/test-probe), canonical dilemma coverage (≥3 of 6).
+  - **Category 3 — Blind Turing simulation (B8-B10)**: generate persona-flavored responses to sample prompts from `benchmarks/universal.md` (u01/u05/u10), dispatch Agent judge subagent with blind-labeled responses, score match rate. 100% = A grade, 50-62% = D (flag for improvement), ≤37.5% = F (critical).
+  - **Category 4 — Regression detection (B11)**: compare current run to `~/.muse/benchmark-reports/baselines/baseline.json`, flag drift per measure with `git log` annotations pointing at likely root-cause commits.
+- **Modes**: default (full run), `--baseline` (save as new baseline), `--diff` (emphasize regressions), `--quick` (static only, ~5 sec), `--trend` (historical table from last 10 runs), `--persona=<id>` (deep-dive one persona), `--prompts=u01,u05` (override default prompt selection).
+- **Outputs**: `~/.muse/benchmark-reports/<ts>-benchmark.md` (human report), `~/.muse/benchmark-reports/<ts>-benchmark.json` (metrics), `~/.muse/benchmark-reports/baselines/baseline.json` (golden reference), `~/.muse/analytics/benchmark-runs.jsonl` (append-only trend log).
+- **SKILL.md Mode: benchmark section** (for Codex/Gemini CLI users without slash command support).
+- **SKILL.md commands table** gets `muse:benchmark` row.
+- **First baseline captured**: `~/.muse/benchmark-reports/baselines/baseline.json` (from run 2026-04-15-212955).
+
+### First run findings
+
+Ran `/muse:benchmark` against v2.2.1-alpha personas. Results:
+
+**Overall grade**: A- (highly distinctive, 1 schema bug)
+
+- **Static compliance**: 7/8 personas full pass. 4 had B2 schema mirror DRIFT (aristotle, confucius, dieter-rams, feynman — all B+ grade).
+- **Static distinctiveness**: avg Jaccard **0.026** (target <0.25 — far below, excellent). Max pair: feynman ↔ lao-tzu at **0.081** (below 0.25 WARN threshold). 2nd: marcus-aurelius ↔ seneca at 0.080 (expected — both stoic).
+- **Stage lens coverage**: 8/8 at 3/3.
+- **Canonical dilemma coverage**: 8/8 at 6/6.
+- **Blind Turing simulation (u01 architecture prompt)**: **8/8 match rate, 100%, A grade**. Every response matched its actual persona with high confidence. Judge subagent cited exact signature moves and verbatim phrases ("'Where is the situation already flowing?' verbatim", "explicitly names the four causes", "'father's way' Confucian idiom").
+
+**Top finding**: schema mirror drift on 4 personas. Frontmatter `taglines[].text` values are full canonical quotes (e.g., Feynman's *"It doesn't matter how beautiful your theory is. If it doesn't agree with experiment, it's wrong"*) but body `## Taglines` table had shortened versions (*"If it doesn't agree with experiment, it's wrong"*). v2.2.1's strict C9 check catches this.
+
+**Root cause**: during v2.2.0-alpha persona migration, I used shortened tagline text in the body table (to fit the markdown column width) while keeping full quotes in frontmatter for citation fidelity. C9 was defined loosely at that point. v2.2.1 added strict enforcement but didn't re-run on existing personas.
+
+### Fixed
+
+**4 personas synced** (body `## Taglines` table now matches frontmatter `taglines[].text` verbatim):
+
+- **aristotle**: 2 fixes — "It is the mark of an educated mind to be able to entertain a thought without accepting it" + "We are what we repeatedly do. Excellence, then, is not an act, but a habit"
+- **confucius**: 1 fix — "Learning without thought is labor lost; thought without learning is perilous"
+- **dieter-rams**: 2 fixes — "Indifference towards people and the reality in which they live is actually the one and only cardinal sin in design" + "Good design is long-lasting. It avoids being fashionable and therefore never appears antiquated"
+- **feynman**: 1 fix — "It doesn't matter how beautiful your theory is. If it doesn't agree with experiment, it's wrong"
+
+**Source of truth**: frontmatter (preserves the citation; body table must match). Preferred over shortening frontmatter because sources should be verbatim.
+
+**Post-fix verification**: re-ran B2 schema mirror check. All 8 personas now OK. All 8 at grade A (was 4 A + 4 B+).
+
+### Known limitations documented
+
+- **B3 voice rules self-consistency has false positives**. Current naive substring matching flags legitimate user-state quotations. Examples from the first run: Confucius's banned word "old" appears in an Example describing the anti-pattern Confucius rejects; Dieter Rams's word "useful" is literally one of the Ten Principles; Lao Tzu's phrases "push harder" / "more effort" appear in Examples where Lao Tzu quotes the user's own words before inverting them. Not persona bugs — check bug. Deferred to v2.2.3+ (quote-aware matcher).
+- **Only 1 Turing prompt run this sprint**. Default is 3 prompts (u01 + u05 + u10) but v2.2.2-alpha shipped with 1 for first-run proof. Run with `--prompts=u05,u10` to extend. Follow-up sprint will make 3 prompts the default.
+
+### Not fixed (deferred to v2.3+)
+
+- Full scientific `muse:spike` with API calls + human judges (still deferred)
+- CI integration (auto-run benchmark on PRs)
+- Continuous benchmarking with trend dashboards
+- Auto-improvement loop (fix persona if score drops)
+- Quote-aware B3 matcher
+- Default 3-prompt Turing (currently 1)
+- Cross-persona chain benchmarks (`muse:chain` + `muse:debate` mode evaluation)
+
+### Backward compatibility
+
+Zero breaking changes. No schema changes. `/muse:feynman <q>` session behavior identical. The 4 persona fixes only change the body `## Taglines` table text — frontmatter `taglines[].text` values were already correct. SESSION.md tagline selection uses frontmatter, so runtime behavior was already correct pre-fix; the fix is purely about internal consistency.
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse
+git pull
+./install.sh
+```
+
+After install, verify 11 slash commands (up from 10 — new `/muse:benchmark`):
+
+```bash
+ls ~/.claude/commands/muse:*.md | wc -l   # expect 11
+```
+
+Run first benchmark:
+
+```
+/muse:benchmark --quick        # static only, ~5 sec, establishes no baseline
+/muse:benchmark --baseline     # full run with Turing, saves as baseline
+```
+
+Establish baseline via `--baseline` to enable regression detection on future runs.
+
+### Risks
+
+- **R1 — Subagent Turing judge could be unreliable**. Single judge, no inter-rater reliability. Mitigation: the judge is explicitly told "your best guess, no refusal." First run came back 8/8 with clean JSON. If future runs show judge confusion, the benchmark itself needs calibration.
+- **R2 — Jaccard tokenization is naive**. Just split on words, lowercase, stopword filter. Legitimate synonyms ("simplify" vs "reduce") score as distinct even though they're semantically close. Mitigation: this is fine for catching gross clones (>0.40 overlap); it's not meant to be a scientific semantic eval.
+- **R3 — Benchmark adds complexity users don't need**. Mitigation: it's purely opt-in. `/muse:feynman` sessions don't depend on it.
+
+### Total diff
+
+- **New files**: `commands/muse:benchmark.md` (~500 lines), `docs/CHANGELOG.md` entry (this, ~180 lines), first baseline in `~/.muse/benchmark-reports/` (local, not in repo)
+- **Modified files**: `SKILL.md` (+85 lines — Mode: benchmark section + commands table row + routing), 4 persona files (+2-4 lines each — body `## Taglines` table sync)
+- **Total**: ~780 net LoC added to tooling + docs + 4 tiny persona fixes.
+
+---
+
 ## [2.2.1-alpha] — 2026-04-15 — `/muse:build` + `/muse:update` harden: spec review loop, concrete synthesis recipes, distinctiveness check, dry-run, rollback
 
 ### Why

@@ -66,7 +66,7 @@ Chinese philosopher, teacher, and political advisor, 6th-5th century BCE. Spent 
 |---|---|---|
 | `default` | *"Govern by virtue, and the people will follow as the stars follow the pole"* | General invocation |
 | `framing` (Stage 1) | *"When words lose their meaning, people lose their liberty"* | User is using a label that doesn't match reality |
-| `inquiry` (Stage 2) | *"Learning without thought is labor lost"* | User is experiencing without examining |
+| `inquiry` (Stage 2) | *"Learning without thought is labor lost; thought without learning is perilous"* | User is experiencing without examining |
 | `test-probe` (Stage 3) | *"The superior man is modest in his speech, but exceeds in his actions"* | User is issuing directives while behaving differently |
 | `decide` (Stage 4) | *"Real knowledge is to know the extent of one's ignorance"* | User is deciding without understanding the current state |
 

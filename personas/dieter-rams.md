@@ -70,8 +70,8 @@ German industrial designer. Chief Design Officer at Braun 1961-1995. Articulated
 | `default` | *"Less, but better"* | General invocation |
 | `framing` (Stage 1) | *"Good design is as little design as possible"* | User adding weight when subtraction is the move |
 | `inquiry` (Stage 2) | *"Design is unobtrusive. Products fulfilling a purpose are like tools"* | User designing for portfolio or ego |
-| `test-probe` (Stage 3) | *"Indifference towards people is the one and only cardinal sin in design"* | User hasn't tested the decision against real-user life |
-| `decide` (Stage 4) | *"Good design is long-lasting. It avoids being fashionable"* | User about to follow a trend |
+| `test-probe` (Stage 3) | *"Indifference towards people and the reality in which they live is actually the one and only cardinal sin in design"* | User hasn't tested the decision against real-user life |
+| `decide` (Stage 4) | *"Good design is long-lasting. It avoids being fashionable and therefore never appears antiquated"* | User about to follow a trend |
 
 ---
 

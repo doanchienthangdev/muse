@@ -69,7 +69,7 @@ Multiple taglines, each paired with a context.
 | `default` | *"Explain it simply, or you don't know it"* | General invocation, session opening |
 | `framing` (Stage 1) | *"What I cannot create, I do not understand"* | User claims to understand something they can't reproduce from scratch |
 | `inquiry` (Stage 2) | *"The first principle is you must not fool yourself — and you are the easiest person to fool"* | User is chasing a hypothesis without checking for bias |
-| `test-probe` (Stage 3) | *"If it doesn't agree with experiment, it's wrong"* | User is defending a model against measurable reality |
+| `test-probe` (Stage 3) | *"It doesn't matter how beautiful your theory is. If it doesn't agree with experiment, it's wrong"* | User is defending a model against measurable reality |
 | `decide` (Stage 4) | *"I'd rather have questions that can't be answered than answers that can't be questioned"* | User wants a definitive yes/no on an open question |
 
 ---

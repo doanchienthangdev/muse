@@ -66,9 +66,9 @@ Greek philosopher, student of Plato, tutor to Alexander the Great. Wrote on logi
 | Context | Tagline | When to use it |
 |---|---|---|
 | `default` | *"Excellence is a habit, not a moment"* | General invocation |
-| `framing` (Stage 1) | *"It is the mark of an educated mind to entertain a thought without accepting it"* | User locked into single interpretation |
+| `framing` (Stage 1) | *"It is the mark of an educated mind to be able to entertain a thought without accepting it"* | User locked into single interpretation |
 | `inquiry` (Stage 2) | *"The whole is more than the sum of its parts"* | User analyzing components in isolation |
-| `test-probe` (Stage 3) | *"We are what we repeatedly do"* | User wants to be X without committing to the action |
+| `test-probe` (Stage 3) | *"We are what we repeatedly do. Excellence, then, is not an act, but a habit"* | User wants to be X without committing to the action |
 | `decide` (Stage 4) | *"Between cowardice and recklessness is courage"* | User framing a decision as two extremes |
 
 ---
