@@ -13,6 +13,132 @@ Nothing yet.
 
 ---
 
+## [2.4.0-alpha] — 2026-04-16 — First starter-pack extension: `elon-musk` interpretive persona + 9-persona benchmark grade A
+
+### Why
+
+v2.3.2-alpha reframed muse as a **persona runtime + starter pack**, and the README roadmap promised the starter pack would grow. v2.4.0-alpha is the first actual extension: the `elon-musk` persona joins the roster as the 9th cognitive frame. This is also the first time muse ships a persona for a **still-active, still-litigious public figure** — which stress-tests the right-of-publicity safeguards the framework has had in place since v2.1 but has only exercised on Dieter Rams until now.
+
+The decision to ship Musk publicly (not local-only) was made with clear eyes: muse is a **cognitive-tool framework**, not a character-simulation framework, and Musk's reasoning patterns (first-principles cost decomposition, the 5-step algorithm, manufacturing reality checks, physics-as-the-only-constraint) are among the most distinctive and most publicly documented operator methods of the 21st century. They are worth having as a reusable lens. But they come with legal surface area. The disclaimer is extensive, the interpretive framing is mandatory, and every session saved under this persona carries the disclaimer forward.
+
+### Added
+
+- **`personas/elon-musk.md` (~370 lines)** — new starter-pack persona.
+
+  **Cognitive signature**:
+  - **First principles decomposition at atomic cost** — break any cost claim down to raw materials at commodity prices + energy + human time. The gap vs market price is margin or bad engineering — both fixable.
+  - **The algorithm** — documented verbatim by Walter Isaacson (pp. 284-285): (1) Question every requirement and name the human who made it, (2) delete any part or process you can, (3) simplify what survives, (4) accelerate cycle time, (5) automate LAST. Order matters. Automating before deleting is how teams ship garbage fast.
+  - **Manufacturing reality check** — "prototypes are easy, the factory is the product". Plans that don't survive scale=10,000x are demos, not plans.
+  - **Name the requirement-maker** — any requirement attributable only to "the legal department" or "the safety department" is an orphan. Find the human or delete it.
+  - **Physics as the only constraint** — the only inviolable rules are the laws of physics. Budget, schedule, industry practice, "best effort" are all recommendations to be tested.
+
+  **Voice rules**: dry, impatient with process, patient with physics. Specific numeric references. Self-deprecating about timeline misses. Dismisses analogical reasoning. Banned patterns include "best practices", "let's form a committee", "consultants", "outsource it", "comfortable timeline", and management-speak.
+
+  **Session mode fit**: strong at STANDARD, CRITIC, QUICK. Weak at DEEP — impatient with Stage 0.5 Premise Challenge, wants to ship before the philosophy session ends.
+
+- **`commands/muse:elon-musk.md` (~60 lines)** — slash command wrapper following the v2.2 persona-command pattern. Includes the mandatory disclaimer as a body blockquote, routes through SESSION.md's 5-stage adaptive workflow, and prints the full disclaimer at the top of every saved session file. If Stage 0 detects DEEP mode, warns the user that Musk is a poor fit for premise challenges.
+
+### Distinctiveness guarantee (9-persona benchmark run)
+
+Ran a 9-persona blind Turing test on two prompts (u01 architecture monolith-vs-microservices, u09 CI pipeline process cull — the latter being Elon's strongest surface and the former being the hardest "first principles collision" case with Feynman).
+
+**Result: 18/18 match rate (100%). Zero confusions. Zero low-confidence matches.**
+
+The judge subagent (fresh context, no conversation history, 9 one-line persona summaries as reference) correctly identified all 9 persona responses on both prompts. Specifically, the judge noted that Elon and Feynman are **clearly distinguishable** despite both claiming "first principles":
+
+> "u01-B (elon-musk) and u01-F (feynman) both use hand calculation, but were clearly distinct: B runs THE ALGORITHM in exact numbered order with 'question every requirement/delete/simplify/accelerate/automate LAST' and 'physics doesn't care', while F leads with the 12-year-old jargon test, cargo cult detection, and frames the math as a back-of-envelope sanity check rather than a cost-decomposition-plus-algorithm sequence." — judge subagent
+
+The benchmark grade A baseline (set in v2.2.3-alpha with 8 personas, 24/24 blind Turing) holds with 9 personas. No persona regression. The algorithm + name-the-requirement-maker + physics-as-constraint vector produced outputs distinct enough from Feynman's simplification + cargo cult + hand calculation vector that the judge never confused them.
+
+### Changed
+
+- **`SKILL.md`**: v2.3.1-alpha → v2.4.0-alpha header bump. New announcement paragraph for Elon Musk persona. Invocation table row updated: "(8 personas)" → "(9 personas — 7 historical + 2 interpretive)". Running total: "17 slash commands" → "19 slash commands". New living-figure-disclaimer reminder paragraph explaining that two interpretive personas now carry mandatory disclaimers.
+- **`README.md`** (14+ edits across the file): starter pack table 8 rows → 9 rows (elon-musk added with interpretive marker), § Discovering the right persona triage example shows Elon top-pick at 72/80 for "should I rewrite in Rust?", § Commands reference table persona sessions section (8) → (9), § Build your own persona "9th" → "10th", all "18 slash commands" references → "19 slash commands", § Legal & privacy expanded with Musk-specific disclaimer paragraph, § Status updated with v2.4.0-alpha entry, Version header "2.3.2-alpha ~5,400 lines" → "2.4.0-alpha ~5,800 lines".
+- **`docs/PERSONAS.md`**: v2.3.2 → v2.4.0 header. Starter pack count 8 → 9. New § "First Principles + Execution + Engineering" category with full Elon Musk entry. "How to pick a persona" quick-reference table adds 3 new rows for Elon's use cases (process bloat, cost claims, comfortable timelines).
+- **`docs/GETTING_STARTED.md`**: v2.3.2 → v2.4.0 header. All "18 slash commands" → "19". Triage example updated to 9 personas. "Starter pack ships with 8" → "9 as of v2.4.0-alpha".
+- **`install.sh`**:
+  - **Persona count made dynamic** (previously deferred from v2.3.1 as R7 known limitation). Added a `persona_count` calculation via `find $TARGET/personas -maxdepth 1 -name '*.md'`. Welcome message reads "($cmd_count slash commands, $persona_count personas)" — stays accurate as the starter pack grows.
+  - Welcome message rewrite: removed the hardcoded 8-persona listing. New message leads with `/muse:who` as the recommended first command, then shows 4 example invocations including `/muse:elon-musk` with the `(interpretive)` marker, then points at `/muse:list` for the full set.
+
+### Legal + interpretive framing (new, load-bearing)
+
+**The Elon Musk persona carries the most extensive interpretive disclaimer in the muse repo** because Musk's company surface area is the largest of any figure in the starter pack. The disclaimer is present in three places:
+
+1. **Frontmatter `disclaimer:` field** in `personas/elon-musk.md` — ~150 words. Enumerates the sources (Isaacson 2023, Vance 2015, Wait But Why 2015, Tesla master plans, TED 2022, IAC 2016, podcast transcripts), names every Musk-connected entity it is NOT affiliated with (Tesla, SpaceX, X Corp, Neuralink, The Boring Company, xAI), and explicitly says the outputs are NOT direct quotation, NOT predictions of what he would say on any specific matter, and NOT claims about his views.
+2. **Body blockquote** immediately below the tagline in `personas/elon-musk.md`. Repeats the disclaimer verbatim. SESSION.md pre-flight auto-prints this before Stage 1 of every `/muse:elon-musk` session.
+3. **Slash command file** `commands/muse:elon-musk.md` has a shortened disclaimer in the body. Step 4 of the skill instructs the agent to write the **full disclaimer** into every saved session file — every `~/.muse/sessions/<ts>-elon-musk-*.md` will carry the disclaimer forward so that if the user shares the session, the interpretive framing travels with it.
+
+**Interpretive framing is non-negotiable**. Outputs from this persona:
+- Are cognitive-tool commentary on publicly documented reasoning patterns
+- Are NOT direct quotation
+- Are NOT predictions of what Elon Musk would actually say on any specific matter
+- Are NOT claims about his views, politics, companies, or products
+- Must NOT be shared publicly as "what Elon Musk thinks about X"
+
+The persona is a **lens for first-principles engineering and process-simplification decisions**, not a simulation of the person.
+
+### Not changed
+
+- All other 8 personas: untouched
+- `SESSION.md`: untouched
+- Benchmark skill: untouched
+- Other 17 slash commands: untouched
+- `docs/BENCHMARKS.md` + `docs/PERSONA_SCHEMA.md` + `docs/CONTRIBUTING.md` + `docs/ARCHITECTURE.md` + `docs/SESSIONS.md`: untouched
+- Codex/Gemini CLI adapters: untouched (free-text fallback picks up the new persona automatically via SESSION.md pre-flight)
+
+### Backward compatibility
+
+- Every existing slash command works identically
+- Every existing free-text invocation works identically
+- Every existing session file is valid
+- The benchmark baseline still holds — 24/24 Turing result from v2.2.3 is NOT invalidated; the v2.4 run adds a 9-persona verification layer on top
+- `install.sh` dynamic-count change is backward-compatible (if `personas/` is missing, falls back to `persona_count=0` gracefully)
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse && git pull && ./install.sh
+# Expect: "Installed 19 slash commands to ~/.claude/commands/"
+# Expect welcome message to read "(19 slash commands, 9 personas)"
+```
+
+Try the new persona:
+
+```bash
+/muse:elon-musk our CI pipeline takes 40 minutes
+/muse:elon-musk should we build our own auth or use Auth0
+/muse:elon-musk my team says this feature will take 3 months
+/muse:who should I rewrite this service in Rust
+# Expect elon-musk to score top-3 (alongside Feynman) on the last one
+```
+
+### Known limitations
+
+- **Routing accuracy benchmark still not implemented**. `/muse:benchmark` measures persona distinctiveness (post-routing), not routing accuracy (pre-routing). Deferred to v2.4.1+.
+- **DEEP mode warning is advisory, not enforced**. If a user insists on DEEP mode with `/muse:elon-musk`, the command runs it with a warning.
+- **The algorithm is stated as a 5-step mantra, not a forced sequence**. Nothing in the skill file mechanically enforces step-ordering in session output. Benchmark run confirmed the agent respected the order on both test prompts.
+
+### Risks + mitigations
+
+- **R1 (legal)**: Musk or his entities could object. **Mitigation**: disclaimer explicitly disclaims affiliation, outputs are interpretive commentary (fair-use educational use), no direct quotation, no prediction of views, no claims of endorsement. All sources are mainstream-published books, published blog posts, and public keynotes/interviews. If a legal issue arises, the persona can be removed in a patch release.
+- **R2 (distinctiveness)**: Elon could confuse with Feynman on first-principles questions. **Mitigation**: benchmark run on the hardest collision prompt (u01) showed zero confusion. Judge explicitly distinguished them.
+- **R3 (voice accuracy)**: The persona could mis-attribute reasoning patterns. **Mitigation**: every signature move cites Isaacson 2023 (with page numbers), Vance 2015, Wait But Why 2015, or Tesla's own published master plans. The algorithm is documented verbatim in Isaacson pp. 284-285.
+- **R4 (inappropriate use)**: A user could invoke `/muse:elon-musk` on emotional questions where his reasoning is a bad fit. **Mitigation**: `avoid_when` list explicitly includes emotional/interpersonal judgment, values/meaning/identity, regulated domains. `/muse:who` routes these questions to Marcus Aurelius, Socrates, or Confucius.
+
+### Total diff
+
+- `personas/elon-musk.md`: +370 lines (new file)
+- `commands/muse:elon-musk.md`: +60 lines (new file)
+- `SKILL.md`: +15 lines net
+- `README.md`: +40 lines net
+- `docs/PERSONAS.md`: +50 lines net
+- `docs/GETTING_STARTED.md`: ~10 lines changed
+- `install.sh`: +10 lines net
+- `docs/CHANGELOG.md`: +this entry
+- **Net**: ~560 lines added, 2 new files, 5 files modified
+
+---
+
 ## [2.3.2-alpha] — 2026-04-16 — Docs refresh: persona runtime + extensibility + v3 catalog vision
 
 ### Why

@@ -69,6 +69,14 @@ else
   echo "      v2.1 requires the commands/ directory in the muse repo."
 fi
 
+# Count installed personas (used by the welcome message below)
+if [ -d "$TARGET/personas" ]; then
+  persona_count=$(find "$TARGET/personas" -maxdepth 1 -name '*.md' -type f 2>/dev/null | wc -l | tr -d ' ')
+else
+  persona_count=0
+fi
+cmd_count="${cmd_count:-0}"
+
 # Create sessions directory — always, idempotent
 mkdir -p "$SESSIONS_DIR"
 session_count=$(find "$SESSIONS_DIR" -maxdepth 1 -name '*.md' -type f 2>/dev/null | wc -l | tr -d ' ')
@@ -88,21 +96,24 @@ cat <<EOF
    ╚══════════════════════════════════╝
 
 Installed at: $TARGET
-Commands:     $COMMANDS_DIR/muse:*.md (8 personas)
+Commands:     $COMMANDS_DIR/muse:*.md ($cmd_count slash commands, $persona_count personas)
 Sessions:     $SESSIONS_DIR/
 
-=== v2.1 — Structured Sessions ===
+=== Muse — cognitive tools from great thinkers ===
 
-Try a deep 5-stage session in Claude Code (saves a markdown file to $SESSIONS_DIR/):
+Start with /muse:who if you don't know which persona to reach for:
+
+    /muse:who should I rewrite this service in Rust?
+
+Or invoke a specific persona directly:
 
     /muse:feynman why is my code slow?
     /muse:socrates what do I actually mean by "community"?
-    /muse:dieter-rams my landing page isn't converting
+    /muse:dieter-rams my landing page isn't converting  (interpretive)
+    /muse:elon-musk our CI pipeline is 40 minutes        (interpretive)
 
-All 8 personas available as slash commands:
-    /muse:feynman         /muse:socrates        /muse:seneca
-    /muse:marcus-aurelius /muse:aristotle       /muse:confucius
-    /muse:lao-tzu         /muse:dieter-rams
+All installed personas are listed by:
+    /muse:list
 
 === v2.0 — Quick free-text (still works) ===
 

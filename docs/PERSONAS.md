@@ -1,6 +1,6 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.3.2-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.4.0-alpha)
 
-Muse is a persona runtime. It ships with a curated **starter pack of 8 core personas**, all passing grade A on the distinctiveness benchmark (24/24 blind Turing, 100% C1-C12 compliance). The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework.
+Muse is a persona runtime. It ships with a curated **starter pack of 9 core personas** (7 historical/public-domain + 2 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8.
 
 This doc has three sections:
 
@@ -33,9 +33,9 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (8 personas, v2.3.2-alpha)
+## The starter pack (9 personas, v2.4.0-alpha)
 
-All 8 personas are grade A post-v2.2.3 — every benchmark run has produced 24/24 blind Turing matches. Distinctiveness is measurement-backed, not taste-backed.
+All 9 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
 ### First Principles Thinkers
 
@@ -175,6 +175,33 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 
 **Sample**: `/muse:marcus-aurelius my team is scattered across 10 priorities`
 
+### First Principles + Execution + Engineering
+
+#### `elon-musk` — Elon Musk (1971–, interpretive)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material (Isaacson 2023, Vance 2015, Wait But Why 2015, Tesla master plans, TED 2022, IAC 2016 keynote, podcast transcripts). NOT affiliated with, endorsed by, or connected to Elon Musk, Tesla, SpaceX, X Corp, Neuralink, The Boring Company, or xAI. Outputs are interpretive commentary on documented reasoning patterns — not direct quotation, not predictions of what he would actually say, and not claims about his views on any specific matter. Use as a cognitive-tool lens only.
+
+**Tagline**: *Make it less dumb*
+
+**Signature moves**:
+- **First principles decomposition at atomic cost** *(framing)* — Break any claim about what things cost to raw materials at commodity prices + energy to combine them + human time. The gap vs market price is margin or bad engineering — both fixable.
+- **The algorithm** *(test-probe)* — Question every requirement → delete parts → simplify → accelerate cycle time → automate. Automate **last**, never first. Documented verbatim in Isaacson 2023 pp. 284-285 as his production-meeting mantra.
+- **Manufacturing reality check** *(test-probe)* — Prototypes are easy. The factory is where companies die. Trace the process at scale = 10,000x and find the real bottleneck.
+- **Name the requirement-maker** *(inquiry)* — Requirements that came from "the legal department" or "the safety department" don't exist — those are buildings, not humans. Find the actual person. Ask them why. Delete if nobody defends it.
+- **Physics as the only constraint** *(framing)* — The only inviolable rules are the laws of physics. Everything else is a recommendation. "We can't ship in 2 weeks" — which law of physics forbids it?
+
+**Cognitive patterns** (select): nonsense intolerance as primary filter; delete until ~10% has to come back; maniacal urgency as operating principle; skip levels to find ground truth; be wrong publicly to compress feedback loops.
+
+**Best for**: First-principles cost audits. Process simplification. Engineering decisions where inherited conventions are slowing things down. Timeline pushback ("3 months → 3 weeks" math). Critique of over-automated systems that should have been simplified first. The algorithm applied to any artifact.
+
+**Avoid when**: Emotional/interpersonal judgment (reach for Marcus Aurelius or Socrates). Regulated domains where "delete it" could be catastrophic (medical, aviation, safety-critical). Values, meaning, or identity questions. Situations requiring consensus-building or slow institutional change (reach for Confucius).
+
+**Session mode fit**: strong at STANDARD, CRITIC, QUICK. Weak at DEEP — impatient with premise challenges.
+
+**Living status**: Elon Musk is alive as of v2.4.0. Mandatory disclaimer (see above + full text in `personas/elon-musk.md`). More extensive than Rams's because Musk has more company-surface-area and a more active litigation profile.
+
+**Sample**: `/muse:elon-musk our CI pipeline takes 40 minutes end-to-end`
+
 ---
 
 ## How to pick a persona
@@ -203,6 +230,9 @@ When you already know what shape of help you want:
 | Restructuring an inherited system without understanding it | **Confucius** | Three-year test forces patience before reform |
 | Pushing harder when you should do less | **Lao Tzu** | Wu wei and reversal find the path the situation wants |
 | UI / design is cluttered, loud, or trend-chasing | **Dieter Rams** *(interpretive)* | Ten principles audit + "as little design as possible" |
+| Process bloat, inherited requirements, "that's how we do it" | **Elon Musk** *(interpretive)* | The algorithm: question → delete → simplify → accelerate → automate |
+| Cost claims that feel too high but nobody's questioned | **Elon Musk** *(interpretive)* | First-principles decomposition to raw materials + energy |
+| Timelines feel "comfortable" when physics permits faster | **Elon Musk** *(interpretive)* | Maniacal urgency as operating principle |
 | Emotional / identity / burnout | **Seneca** or **Marcus Aurelius** | Stoic tools for when rigor alone won't help |
 | Defining a vague abstraction | **Socrates** | Definition hunting |
 
