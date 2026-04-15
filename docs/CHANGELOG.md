@@ -24,7 +24,7 @@ v2 is the correction: pure content + one SKILL.md dispatcher. Zero dependencies.
 - **20 shell files**: `bin/muse`, `bin/muse-lib.sh`, `bin/muse-install`, `bin/muse-update`, `bin/muse-doctor`, `bin/muse-list`, `bin/muse-eval`, `bin/muse-eval-harness`, `bin/muse-spike-prepare`, `bin/muse-spike-score`
 - **4 bats test files**: `tests/muse-lib.bats`, `tests/persona-schema.bats`, `tests/spike-scripts.bats`, `tests/test_helper.bash`
 - **2 CI workflows**: `.github/workflows/ci.yaml`, `.github/workflows/release.yaml` (shellcheck matrix, bats test runner)
-- **2 skill files merged into unified**: `skills/muse-build/SKILL.md`, `skills/muse-critic/SKILL.md` (now handled by `skills/muse/SKILL.md` internally)
+- **2 skill files merged into unified**: `skills/muse-build/SKILL.md`, `skills/muse-critic/SKILL.md` (now handled by `SKILL.md` internally)
 - **Deprecated schema**: `personas/schema.json` (markdown is self-documenting)
 - **Deprecated docs**: `docs/PERSONA_SCHEMA.md` (no YAML schema to document)
 - **Heavy installer**: `install.sh` (225 lines → 15 lines optional wrapper)
@@ -40,7 +40,7 @@ Total removed: ~6,000 lines of scaffolding.
 Why markdown: agents parse it natively, humans read it easily, no schema tool needed, git diffs are cleaner.
 
 ### Rewritten
-- `skills/muse/SKILL.md` — unified dispatcher (700 lines) handling ALL muse:* commands internally: single persona, all, chain, debate, critic, build, spike, list
+- `SKILL.md` — unified dispatcher (700 lines) handling ALL muse:* commands internally: single persona, all, chain, debate, critic, build, spike, list
 - `README.md` — agent-first install story, agentic architecture explanation
 - `docs/ARCHITECTURE.md` — v2 agentic model documented end-to-end
 - `docs/GETTING_STARTED.md` — "git clone, done"

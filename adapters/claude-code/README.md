@@ -10,7 +10,7 @@ Muse is designed around Claude Code's skill system. This is the **primary adapte
 git clone https://github.com/doanchienthangdev/muse ~/.claude/skills/muse
 ```
 
-That's it. Claude Code auto-discovers the skill at `~/.claude/skills/muse/SKILL.md` on next session.
+That's it. Claude Code auto-discovers the skill at `~/.claude/SKILL.md` on next session.
 
 **Alternative**: use the install script wrapper (identical effect):
 
@@ -24,7 +24,7 @@ curl -fsSL https://raw.githubusercontent.com/doanchienthangdev/muse/main/install
 
 Claude Code scans `~/.claude/skills/*/SKILL.md` at session start. Each directory under `~/.claude/skills/` with a `SKILL.md` file becomes an available skill.
 
-Muse clones into `~/.claude/skills/muse/`, and the dispatcher lives at `~/.claude/skills/muse/SKILL.md`. The skill's frontmatter declares:
+Muse clones into `~/.claude/skills/muse/`, and the dispatcher lives at `~/.claude/SKILL.md`. The skill's frontmatter declares:
 
 ```yaml
 ---
@@ -60,7 +60,7 @@ Claude will parse the argument, route to the right internal mode, and load the r
 ```
 ~/.claude/skills/muse/
 ├── SKILL.md                  # The dispatcher Claude discovers
-├── skills/muse/SKILL.md      # Same file (symlink), for path compatibility
+├── SKILL.md      # Same file (symlink), for path compatibility
 ├── personas/                 # 8 persona markdown files
 ├── chains/                   # 3 preset chains
 ├── benchmarks/               # 2 benchmark files
@@ -106,7 +106,7 @@ If you used the optional `.archives/personas/<id>/` research vault, those files 
 
 **"muse is not being discovered"**
 - Exit Claude Code completely and start a new session. Skill discovery happens at session start.
-- Verify install path: `ls ~/.claude/skills/muse/SKILL.md` should exist.
+- Verify install path: `ls ~/.claude/SKILL.md` should exist.
 
 **"muse:feynman returns generic output"**
 - Check that `~/.claude/skills/muse/personas/feynman.md` exists and has content.

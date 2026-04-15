@@ -10,7 +10,7 @@ This document explains the v2 architecture: **agent runtime as runtime, markdown
 
 2. **Markdown is the content format.** Personas, chains, benchmarks, and documentation are all markdown. The agent parses markdown natively — no yq, no jq, no schema validators.
 
-3. **One SKILL.md to rule them all.** Everything dispatches through `skills/muse/SKILL.md`. No per-persona skill files, no per-command skill files. One entry point, internal routing.
+3. **One SKILL.md to rule them all.** Everything dispatches through `SKILL.md`. No per-persona skill files, no per-command skill files. One entry point, internal routing.
 
 4. **Install is git clone.** No dependencies to resolve. No build step. No installer script (well, optional 15-line wrapper).
 
@@ -44,7 +44,7 @@ This document explains the v2 architecture: **agent runtime as runtime, markdown
                             │ loads SKILL.md
                             ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│              skills/muse/SKILL.md (dispatcher)                    │
+│              SKILL.md (dispatcher)                    │
 │                                                                   │
 │   Parses the arg after `muse:`                                    │
 │   Routes to one of 8 modes                                        │
@@ -139,7 +139,7 @@ muse/
 
 ## What each thing does
 
-### `skills/muse/SKILL.md`
+### `SKILL.md`
 
 The dispatcher. Single file, ~700 lines of markdown instructions telling the agent how to behave when the user types `muse:<anything>`. It:
 
@@ -191,7 +191,7 @@ Platform-specific install notes. v2.0 ships:
 User types:  muse:feynman why is my code slow?
     │
     ▼
-Claude Code loads skills/muse/SKILL.md (auto-discovery)
+Claude Code loads SKILL.md (auto-discovery)
     │
     ▼
 Dispatcher parses arg = "feynman"
@@ -348,7 +348,7 @@ See `docs/CONTRIBUTING.md`. Short version:
 
 2. **Add a preset chain**: Write `chains/<name>.md` with ordered persona list and synthesis prompt.
 
-3. **Add to SKILL.md**: If you want a new `muse:<command>`, add a section to the dispatcher in `skills/muse/SKILL.md`. Keep the parser logic simple.
+3. **Add to SKILL.md**: If you want a new `muse:<command>`, add a section to the dispatcher in `SKILL.md`. Keep the parser logic simple.
 
 ---
 
@@ -369,7 +369,7 @@ See `docs/CONTRIBUTING.md`. Short version:
 
 Start here:
 1. Read this doc (ARCHITECTURE.md)
-2. Read `skills/muse/SKILL.md` (the dispatcher — where all the routing lives, ~700 lines of prose)
+2. Read `SKILL.md` (the dispatcher — where all the routing lives, ~700 lines of prose)
 3. Read one persona markdown end-to-end (`personas/feynman.md` is a good template)
 4. Read `chains/all.md` to see how chains compose personas
 5. Read `docs/CONTRIBUTING.md` for how to add your own content
