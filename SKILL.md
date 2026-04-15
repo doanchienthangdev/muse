@@ -3,11 +3,13 @@ name: muse
 description: "Think with the greats. Invoke the distinctive cognitive patterns of great thinkers (Feynman, Socrates, Seneca, Marcus Aurelius, Aristotle, Confucius, Lao Tzu, Dieter Rams) as reusable thinking tools. Supports muse:[person] for single persona, muse:all for the default pipeline, muse:chain persona1→persona2 for custom pipelines, muse:debate personA vs personB for tension surfacing, muse:critic for adversarial review of existing work, muse:build for creating v2.1-compliant personas from research, muse:update for upgrading existing personas to v2.1 compliance, and muse:list to see what's installed."
 ---
 
-# Muse — Unified Dispatcher
+# Muse — Unified Dispatcher (v2.3.0-alpha)
 
 This skill applies the distinctive cognitive moves of chosen thinker(s) to the user's problem. It is NOT character acting. It is NOT cosplay. The goal is to apply **reusable cognitive tools**, the specific thinking moves each persona is known for, to help the user think more rigorously about their problem.
 
 **You are the runtime.** You read persona data with the Read tool. You parse markdown natively. No shell tools needed for interactive use. No external binaries required. Everything happens inside your context.
+
+**v2.3.0-alpha** ships the full original CEO plan: 17 slash commands (8 personas + 9 meta commands — build, update, benchmark, chain, all, debate, critic, list, spike). Claude Code users: prefer the slash commands — they have structured step-by-step orchestration, validation, persistence, and analytics. The free-text Mode sections below remain valid for Codex/Gemini CLI and as a fallback.
 
 ---
 
@@ -17,17 +19,20 @@ When the user invokes this skill, the argument after `muse:` determines the mode
 
 | Pattern | Mode | Example |
 |---|---|---|
-| `muse:<person>` | Single persona brainstorm | `muse:feynman why is my code slow?` |
-| `muse:all` | Default 5-persona chain | `muse:all should I pivot?` |
-| `muse:chain <p1>→<p2>→<p3>` | Custom chain | `muse:chain feynman→socrates→dieter-rams` |
-| `muse:debate <pA> vs <pB>` | Debate mode | `muse:debate aristotle vs lao-tzu ship fast vs polished?` |
-| `muse:critic <file> --persona=<id>` | Adversarial review | `muse:critic roadmap.md --persona=dieter-rams` |
-| `muse:build --person=<id> --src=<folder>` | v2.1-compliant persona builder | `muse:build --person=jane-jacobs --src=.archives/personas/jane-jacobs` |
-| `muse:update --person=<id>` | Upgrade existing persona to v2.2 compliance | `muse:update --person=socrates` |
-| `muse:update --all [--check]` | Batch-scan all personas for v2.2 drift | `muse:update --all --check` |
-| `muse:benchmark` | Persona distinctiveness + voice + mode fit benchmark (v2.2.2) | `muse:benchmark --quick` |
-| `muse:spike` | Full scientific distinctiveness eval with human judges *(v2.3+, still deferred)* | `muse:spike` (not yet shipped) |
-| `muse:list` | List installed personas | `muse:list` |
+| Pattern | Mode | Slash | Example |
+|---|---|---|---|
+| `muse:<person>` | Single persona brainstorm | `/muse:<person>` (8 personas) | `/muse:feynman "why is my code slow?"` |
+| `muse:all` | Default 5-persona Council chain | `/muse:all` | `/muse:all "should I pivot?"` |
+| `muse:chain <p1>→<p2>→<p3>` | Custom sequential chain | `/muse:chain` | `/muse:chain feynman→socrates→dieter-rams "question"` |
+| `muse:debate <pA> vs <pB>` | 2 personas × 3 rounds + synthesis | `/muse:debate` | `/muse:debate aristotle vs lao-tzu "ship fast or polish?"` |
+| `muse:critic <file>` | Adversarial review via critic_frames | `/muse:critic` | `/muse:critic roadmap.md --persona=dieter-rams` |
+| `muse:build <id>` | v2.2-compliant persona builder from research | `/muse:build` | `/muse:build jane-jacobs --src=.archives/personas/jane-jacobs` |
+| `muse:update <id>` | Upgrade existing persona to v2.2 compliance | `/muse:update` | `/muse:update socrates` |
+| `muse:benchmark` | Persona distinctiveness + voice + mode fit benchmark | `/muse:benchmark` | `/muse:benchmark --quick` |
+| `muse:spike` | Scientific eval via real API calls (v2.3.0-alpha MVP gather-only, requires `ANTHROPIC_API_KEY`) | `/muse:spike` | `/muse:spike --personas=feynman,socrates,seneca` |
+| `muse:list` | List installed personas by category | `/muse:list` | `/muse:list --category=design` |
+
+**17 slash commands total** as of v2.3.0-alpha: 8 persona commands + 9 meta commands (build, update, benchmark, chain, all, debate, critic, list, spike). Claude Code users should prefer slash commands. Codex/Gemini CLI users fall back to the free-text Mode sections below.
 
 ---
 
@@ -156,6 +161,8 @@ When the session ends, print a brief summary:
 
 ## Mode: chain
 
+> **Claude Code users**: prefer `/muse:chain` — the slash command has structured step-by-step parse/validate/orchestrate/persist with pre-flight checkpoint, auto-summarize trip, and analytics. The free-text flow below is the Codex/Gemini CLI fallback.
+
 ### Load
 1. If the user specified personas inline (`muse:chain a→b→c`), parse the list.
 2. If the user named a preset (`muse:chain product-decision`), read `MUSE_DIR/chains/<name>.md` and extract the `personas` list from the markdown.
@@ -196,6 +203,8 @@ Keep synthesis ≤150 words.
 ---
 
 ## Mode: debate
+
+> **Claude Code users**: prefer `/muse:debate` — structured 3-round orchestration with asymmetry detection, disclaimer handling, and persistence. Free-text flow below is for Codex/Gemini CLI.
 
 ### Load
 Parse `<pA> vs <pB>` from the argument. Read both persona markdown files.
@@ -244,6 +253,8 @@ Each persona responds to what the OTHER said, pushing on disagreement. Reference
 ---
 
 ## Mode: critic
+
+> **Claude Code users**: prefer `/muse:critic` — structured path validation, sanitize + boundary marker, single-persona inline or `--chain=` parallel subagent dispatch with consensus/unique/disagreement synthesis. Free-text flow below is for Codex/Gemini CLI.
 
 ### Validate
 Parse `<file>` and persona/chain arguments. **Reject**:
@@ -591,11 +602,13 @@ For the full v2.2.2-alpha specification and worked examples: `commands/muse:benc
 
 ---
 
-## Mode: spike (v2.3+ — still NOT shipped)
+## Mode: spike (v2.3.0-alpha — MVP gather-only shipped; score mode v2.3.1+)
 
-> *Note: Spike mode (persona distinctiveness eval) was in v2.0 design but is NOT shipped as a runnable command in v2.1. This section is preserved for v2.2+ implementation reference. Users cannot currently run `/muse:spike` or free-text `muse:spike`. The documented flow below describes the v2.2+ target.*
+> **Claude Code users**: prefer `/muse:spike` — v2.3.0-alpha ships the gather subcommand as a self-contained slash command with API key prereq check, dry mode, seeded shuffle, and batch/dekey persistence. The score subcommand (cross-reference judge answers + GO/PIVOT/NO-GO verdict) is deferred to v2.3.1. Free-text flow below is for Codex/Gemini CLI.
+>
+> For a lightweight alternative that does NOT require an API key, use `/muse:benchmark` — it runs subagent-based Turing simulation in ~60 seconds.
 
-Run the persona distinctiveness eval entirely inside the agent context. No external bash scripts needed.
+Run the persona distinctiveness eval via real Claude API calls. Requires `ANTHROPIC_API_KEY`.
 
 ### Prereq
 Check that `ANTHROPIC_API_KEY` is set if running API-mode eval. Else run `--mode=dry` showing what would happen.
@@ -666,6 +679,8 @@ Write `spike/<batch-id>/spike-decision-<batch-id>.md` with the full decision mem
 ---
 
 ## Mode: list
+
+> **Claude Code users**: prefer `/muse:list` — dynamic category index from frontmatter, `--category=<tag>` filter, closest-match suggestions on empty filters. Free-text flow below is for Codex/Gemini CLI.
 
 Use Glob to list `MUSE_DIR/personas/*.md`. For each, use Read tool to extract the frontmatter (`name`, `tagline`, `categories`).
 

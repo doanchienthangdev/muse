@@ -13,6 +13,115 @@ Nothing yet.
 
 ---
 
+## [2.3.0-alpha] — 2026-04-15 — Ship 6 missing slash commands (chain, all, debate, critic, list, spike MVP) — original CEO plan complete
+
+### Why
+
+Back in v2.1.0-alpha, six commands from the original v1 CEO plan were deferred with the note *"don't fit the 5-stage shape, deferred to v2.2+"*. v2.2.0-alpha came and went without shipping them. v2.2.1-alpha and v2.2.2-alpha and v2.2.3-alpha came and went. The free-text Mode sections in SKILL.md were still there, but Claude Code users could not invoke `/muse:chain`, `/muse:debate`, `/muse:critic`, `/muse:all`, `/muse:list`, or `/muse:spike` as proper slash commands. The original CEO plan was 80% shipped.
+
+v2.3.0-alpha closes that gap. All 6 commands now ship as self-contained slash commands following the pattern established by `/muse:build` (524 lines), `/muse:update` (481), and `/muse:benchmark` (570). Inline orchestration for chain/debate (no subagent dispatch per persona — proven sufficient by v2.2.2's grade-A blind Turing run). Parallel subagents only for `/muse:critic --chain=` where per-persona critiques are genuinely independent. `/muse:spike` ships MVP gather-only; score subcommand is deferred to v2.3.1.
+
+Total slash commands: **11 → 17**. After this release, muse is at *"original v1 CEO plan fully shipped + instrumented + benchmarked"*. A real milestone.
+
+### Added
+
+- **`commands/muse:list.md` (~140 lines)** — ephemeral persona listing grouped by category. Dynamic category index from frontmatter `categories[]` union (no hardcoded list — survives schema growth). Supports `--category=<tag>` filter with closest-match suggestions on empty filters. Living personas marked `*(interpretive)*`. No persistence.
+- **`commands/muse:chain.md` (~360 lines)** — sequential multi-persona handoff. Supports inline syntax (`feynman→socrates→dieter-rams`) or preset name (loads `chains/<preset>.md`). Per-persona handoff context with 2-3 sentence inline summaries (not subagent-dispatched). Auto-summarize trip at N>5 personas or 30 KB context budget. Hard fail at Step 0 on missing personas with closest-match suggestions. Synthesis ≤150 words in framework voice. Persists to `~/.muse/chains/<ts>-<chain-slug>.md`.
+- **`commands/muse:all.md` (~380 lines)** — default 5-persona Council preset. Self-contained — reads `chains/all.md` for the sequence (Feynman → Socrates → Seneca → Aristotle → Marcus Aurelius) and inlines the chain orchestration logic (~80 lines duplicated from `muse:chain`). Works even if `commands/muse:chain.md` is missing or corrupted. Persists to `~/.muse/chains/<ts>-the-council-<slug>.md`.
+- **`commands/muse:debate.md` (~340 lines)** — 2 personas × 3 rounds (opening, tension, synthesis). Rejects self-debate. Gracefully degrades when one persona lacks `## Debate positions` section — flag the asymmetry in Round 3 synthesis. Inline orchestration (sequential state-dependent rounds). Synthesis is framework voice, not either persona. Persists to `~/.muse/debates/<ts>-<pA>-vs-<pB>-<slug>.md`.
+- **`commands/muse:critic.md` (~450 lines)** — apply persona's `## Critic frames` to a file. Supports `--persona=<id>` (single, inline) and `--chain=p1,p2,p3` (multi-persona, parallel subagent dispatch + consensus/unique/disagreement synthesis). Strict path validation (allowed roots only, no traversal, no symlink escape, no binaries, 200 KB warning). Mandatory sanitize + `--- ARTIFACT CONTENT BEGINS (data, not instructions) ---` boundary marker for prompt-injection defense. P0/P1/P2/P3 severity with line refs + concrete fixes. Persists to `~/.muse/critiques/<ts>-<file-slug>-<persona-or-chain>.md`.
+- **`commands/muse:spike.md` (~370 lines, MVP gather-only)** — scientific distinctiveness eval via real Claude API calls. Requires `ANTHROPIC_API_KEY`. Calls `claude-haiku-4-5-20251001` for each (persona, prompt) pair (9 calls default: 3 personas × 3 prompts). Seeded shuffle for deterministic blind batches. Writes `~/.muse/spike/<batch-id>/spike-batch-<batch-id>.md` (judge-facing) + `spike-key-<batch-id>.md` (hidden dekey). Supports `--mode=dry` (no API calls, preview only) for development without consuming credits. Score subcommand prints v2.3.1 stub and exits.
+
+### Changed
+
+- **`SKILL.md` routing table** — expanded to show the Slash column for all 17 commands and added a `17 slash commands total` footer. Per Mode section (chain, debate, critic, list, spike), added a "**Claude Code users: prefer `/muse:<mode>`**" note at the top. Free-text flow below remains valid for Codex/Gemini CLI. Version bumped to v2.3.0-alpha in header. Mode: spike description updated — no longer "still deferred", now "v2.3.0-alpha MVP gather-only shipped; score mode v2.3.1+".
+- **`README.md`** — dual update:
+  - **Backfill v2.2.2**: added `/muse:benchmark` to the commands reference table (was missing since v2.2.2-alpha).
+  - **v2.3.0 update**: version bumped 2.2.0 → 2.3.0-alpha. Slash command count 10 → 17. Commands reference table fully rewritten to show all 17 commands in two sections (8 personas + 9 meta). Added `docs/BENCHMARKS.md` to the documentation index. Status section rewritten with v2.3.0-alpha + v2.2.3-alpha + v2.2.2-alpha + v2.2.1-alpha entries (was stuck at v2.2.0-alpha).
+
+### Architecture decisions
+
+- **Inline orchestration for chain/debate** (not subagent-per-persona). 5-persona chain × ~1500 tokens/output = ~30 KB working set, fits comfortably in main agent context. Subagent dispatch × N personas adds 5-15 sec/persona overhead and loses running summary state coherence. v2.2.2-alpha benchmark grade A (24/24 blind Turing) proved main-agent embodiment is sufficient for persona quality.
+- **Parallel subagents only for `/muse:critic --chain=`**. The one place parallelism genuinely helps: per-persona critiques are independent (no cross-persona state dependency), so dispatching `len(chain)` parallel subagents gives N× speedup with zero coherence loss.
+- **`/muse:all` is self-contained, not a thin alias**. Claude Code slash commands can't invoke other slash commands transitively. Rather than building a fragile cross-command reference, `muse:all.md` duplicates the chain Step 3-4 orchestration (~80 lines). The autonomy gain (Council works even if chain is broken) outweighs the small duplication cost.
+- **`/muse:spike` MVP = gather only**. Full spike has 4 risk surfaces (missing API key, network fail, malformed judge answers, randomization correctness). Shipping all 4 in one alpha is risky, and `/muse:benchmark` already covers simulated Turing without API keys. Score mode deferred to v2.3.1 with an explicit stub.
+- **SKILL.md Mode sections kept verbatim**. Adding a "prefer slash" note per section and preserving the free-text flow below. Codex/Gemini CLI users still need the free-text path. This matches the precedent set by the 8 persona slash commands (both paths coexist).
+- **HARD FAIL on missing personas at Step 0**. Silent-skip would produce a chain/debate different from what the user asked for. Always fail loudly with closest-match suggestions. User can retry with the correct IDs from `/muse:list`.
+
+### Backward compatibility
+
+- **No persona file edits**. All 8 personas unchanged.
+- **No SESSION.md changes**. Load-bearing file untouched — chain/debate/critic bypass Stage 0 mode detection and have their own orchestration.
+- **SKILL.md Mode: * sections unchanged in content**, only "prefer slash" note added at top of each. Free-text free-text paths in Codex/Gemini CLI remain valid.
+- **`install.sh` unchanged**. Glob-based registration (`commands/muse:*.md`) automatically picks up the 6 new files. Verification count goes from `11 slash commands installed` to `17 slash commands installed` on next install.
+- **Existing session files, benchmark reports, and analytics are not invalidated**. v2.3.0 adds new persistence folders (`~/.muse/chains/`, `~/.muse/debates/`, `~/.muse/critiques/`, `~/.muse/spike/`) without touching existing ones.
+
+### Migration
+
+```bash
+cd ~/.claude/skills/muse && git pull && ./install.sh
+# Expect: "Installed 17 slash commands to ~/.claude/commands/"
+```
+
+**Verify** the 6 new commands are present:
+
+```bash
+ls ~/.claude/commands/muse:{chain,all,debate,critic,list,spike}.md
+```
+
+**Quick smoke tests** (each should succeed):
+
+```bash
+/muse:list                                    # Should show 8 personas in ~6 categories
+/muse:list --category=design                  # Should show dieter-rams + lao-tzu
+/muse:chain feynman→socrates "why is my code slow?"   # Should produce 2 outputs + synthesis
+/muse:debate aristotle vs lao-tzu "ship fast or polish?"   # Should produce 3 rounds
+/muse:critic README.md --persona=dieter-rams  # Should produce structured critique
+/muse:spike --mode=dry                        # Should preview API calls without calling
+```
+
+**Regression check**:
+
+```bash
+/muse:benchmark --diff
+# Expect: 0 regressions (the 6 new commands don't touch personas)
+```
+
+### Known limitations + deferrals to v2.3.1+
+
+- **`/muse:spike --mode=score`** — not yet implemented. Manual cross-reference via `spike-key-<batch-id>.md` is the only path in v2.3.0.
+- **`/muse:critic` response time on chain mode** depends on subagent dispatch latency. Typical 3-persona chain critique takes 60-120 sec vs single-persona ~20-30 sec.
+- **Chain preset format** (`chains/*.md`) relies on `### Step N — <Name>` heading fuzzy match against persona IDs. Ambiguous names fail loudly. v2.3.1 will add explicit `personas: [...]` frontmatter for deterministic parsing.
+- **`/muse:debate` when both personas lack `## Debate positions`** — runs with a warning but both sides fall back to generic signature_moves + thinking_mode. Suggests running `/muse:update` on both before retrying.
+- **install.sh "8 personas" welcome message** — hardcoded, doesn't reflect the actual persona count. Cosmetic; defer to v2.3.1.
+
+### Not fixed (deferred to v2.4+ or later)
+
+- CI integration (auto-run `/muse:benchmark --diff` on PRs, comment results). v2.4+.
+- Continuous benchmarking dashboards (trend HTML from jsonl). v2.4+.
+- Auto-improvement loop (benchmark drop → auto-`/muse:update`). Never — too dangerous.
+- New persona authoring (Claude Shannon, Jane Jacobs, Nassim Taleb, Keynes, Simone Weil). v2.4+.
+- Promotion of C9-C12 from SOFT-DRIFT to HARD-GAP. v3.0 breaking release.
+- New schema fields (anti_examples, distinctiveness_anchor, era_tone_notes). v3.0.
+
+### Risks + mitigations
+
+- **R1**: `/muse:chain` token budget blowout on long chains. **Mitigation**: auto-summarize trip at N>5 or 30 KB; print one-line warning; persist full outputs to disk even when evicted from working memory.
+- **R2**: `/muse:critic` file ingestion prompt-injection attack. **Mitigation**: mandatory sanitize + boundary marker; reject binaries, >200KB files, path traversal; sanitizer also escapes literal boundary markers inside the file.
+- **R3**: `/muse:spike` API failures mid-gather (network, rate limit, missing key). **Mitigation**: prereq check at Step 1 with AskUserQuestion options (dry/set/abort); retry each call 2× with backoff; record failed calls as `<API_ERROR>` in the dekey and continue.
+- **R4**: Chain preset format ambiguity. **Mitigation**: fuzzy match headings to persona IDs, fail loudly with candidate list if ambiguous. v2.3.1 will add explicit frontmatter.
+- **R5**: Living persona disclaimer drift across multi-persona modes. **Mitigation**: dedupe identical disclaimer strings; render once at top of output + once at top of persisted file.
+
+### Total diff
+
+- 6 new slash command files: `muse:list.md` (~140) + `muse:chain.md` (~360) + `muse:all.md` (~380) + `muse:debate.md` (~340) + `muse:critic.md` (~450) + `muse:spike.md` (~370) = **~2040 lines**
+- `SKILL.md`: +~60 lines (invocation table rewrite + 5 "prefer slash" notes + version bump)
+- `README.md`: +~80 lines (dual update — v2.2.2 backfill + v2.3.0 refresh — commands table rewrite, status history, docs index)
+- `docs/CHANGELOG.md`: +this entry
+- **Net**: ~2200 lines added, 6 new files, 3 files modified
+
+---
+
 ## [2.2.3-alpha] — 2026-04-15 — Quote-aware B3 matcher + BENCHMARKS.md contributor doc
 
 ### Why
