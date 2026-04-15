@@ -23,9 +23,10 @@ When the user invokes this skill, the argument after `muse:` determines the mode
 | `muse:debate <pA> vs <pB>` | Debate mode | `muse:debate aristotle vs lao-tzu ship fast vs polished?` |
 | `muse:critic <file> --persona=<id>` | Adversarial review | `muse:critic roadmap.md --persona=dieter-rams` |
 | `muse:build --person=<id> --src=<folder>` | v2.1-compliant persona builder | `muse:build --person=jane-jacobs --src=.archives/personas/jane-jacobs` |
-| `muse:update --person=<id>` | Upgrade existing persona to v2.1 compliance | `muse:update --person=socrates` |
-| `muse:update --all [--check]` | Batch-scan all personas for v2.1 drift | `muse:update --all --check` |
-| `muse:spike` | Run distinctiveness eval *(v2.2+ only)* | `muse:spike` (not yet shipped) |
+| `muse:update --person=<id>` | Upgrade existing persona to v2.2 compliance | `muse:update --person=socrates` |
+| `muse:update --all [--check]` | Batch-scan all personas for v2.2 drift | `muse:update --all --check` |
+| `muse:benchmark` | Persona distinctiveness + voice + mode fit benchmark (v2.2.2) | `muse:benchmark --quick` |
+| `muse:spike` | Full scientific distinctiveness eval with human judges *(v2.3+, still deferred)* | `muse:spike` (not yet shipped) |
 | `muse:list` | List installed personas | `muse:list` |
 
 ---
@@ -69,6 +70,9 @@ Jump to **Mode: build**.
 
 ### Update: `muse:update --person=<id>` OR `muse:update --all [--check]`
 Jump to **Mode: update**.
+
+### Benchmark: `muse:benchmark [--baseline | --diff | --quick | --trend] [--persona=<id>]`
+Jump to **Mode: benchmark**.
 
 ### Spike: `muse:spike [--personas=<csv>] [--seed=<n>]`
 Jump to **Mode: spike**.
@@ -533,7 +537,61 @@ Print: `Updated: personas/<id>.md. Backup: personas/<id>.md.bak.<ts>`
 
 ---
 
-## Mode: spike (v2.2+ — NOT shipped in v2.1)
+## Mode: benchmark (v2.2.2-alpha — NEW)
+
+Persona distinctiveness + voice + mode fit benchmark. Inspired by Garry Tan's `gstack/benchmark` performance regression detector, adapted for cognitive-frame measurement.
+
+> **Claude Code users**: prefer the slash command `/muse:benchmark` which runs the full workflow. This free-text mode exists for Codex CLI / Gemini CLI users. The slash command file is `commands/muse:benchmark.md` — see it for the full specification.
+
+### What it measures
+
+4 categories, 11 measures (B1-B11):
+
+**Category 1 — Static compliance** (deterministic, ~5 sec):
+- B1: C1-C12 compliance per persona (same checks as `/muse:update`)
+- B2: Schema mirror (frontmatter `taglines[]` ↔ body `## Taglines` table)
+- B3: Voice rules self-consistency (persona's banned patterns don't appear in own signature move Examples)
+- B4: Mandatory sections presence (9 required markdown sections)
+
+**Category 2 — Static distinctiveness** (deterministic, ~5 sec):
+- B5: Jaccard overlap matrix (8x8, on signature_move tokens). Target avg <0.25, WARN 0.25-0.40, REGRESSION >0.40.
+- B6: Stage 1/2/3 lens pick coverage (inline tag + keyword fallback)
+- B7: Canonical dilemma coverage (≥3 of 6 via canonical_mapping + deliberate_skips)
+
+**Category 3 — Blind Turing simulation** (subagent-based, ~60-120 sec):
+- B8: Generate persona-flavored responses to 3 sample prompts (inline, no subagent)
+- B9: Dispatch Agent judge subagent per prompt with blind-labeled responses
+- B10: Score match rate (8/8 = A, 7/8 = B, 6/8 = C, 4-5/8 = D, ≤3/8 = F)
+
+**Category 4 — Regression detection** (only if baseline exists):
+- B11: Compare current run to `baseline.json`. Flag drift per measure.
+
+### Modes
+
+- Default: full run
+- `--baseline`: full run + save as new baseline
+- `--diff`: full run + emphasize regression section
+- `--quick`: static only (B1-B7), skip subagent Turing
+- `--trend`: show last 10 runs as a trend table
+- `--persona=<id>`: deep-dive on one persona
+- `--prompts=u01,u05,u10`: override default prompt selection
+
+### Output
+
+- `~/.muse/benchmark-reports/<ts>-benchmark.md` — markdown report
+- `~/.muse/benchmark-reports/<ts>-benchmark.json` — metrics JSON
+- `~/.muse/benchmark-reports/baselines/baseline.json` — golden reference (updated via `--baseline`)
+- `~/.muse/analytics/benchmark-runs.jsonl` — append-only trend log
+
+### Not a pass/fail gate
+
+The benchmark is an **informational tool**, not a CI check. It reports regressions but does not block shipping. User reviews the report and decides what to fix via `/muse:update <persona>`.
+
+For the full v2.2.2-alpha specification and worked examples: `commands/muse:benchmark.md`.
+
+---
+
+## Mode: spike (v2.3+ — still NOT shipped)
 
 > *Note: Spike mode (persona distinctiveness eval) was in v2.0 design but is NOT shipped as a runnable command in v2.1. This section is preserved for v2.2+ implementation reference. Users cannot currently run `/muse:spike` or free-text `muse:spike`. The documented flow below describes the v2.2+ target.*
 
@@ -709,4 +767,4 @@ Claude Code auto-discovers this SKILL.md on next session. Codex CLI and Gemini C
 
 ---
 
-*Version 2.2.1-alpha · build/update harden: spec review loop + concrete synthesis recipes + distinctiveness check + dry-run + rollback · 2026-04-15*
+*Version 2.2.2-alpha · /muse:benchmark + persona distinctiveness measurement + regression detection · 2026-04-15*
