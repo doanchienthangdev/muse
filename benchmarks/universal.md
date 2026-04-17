@@ -101,4 +101,22 @@ Generic founder/builder decision prompts. **Authored BEFORE personas** to elimin
 
 ---
 
-*Version 1.0.0 · authored 2026-04-15*
+## u11 — Startup direction (what to build)
+**Prompt**: "I'm a 25-year-old engineer. I want to start a company. I have three ideas: a B2B SaaS tool for law firms, a consumer app for habit tracking, and something in climate tech because it feels important. Which should I pick?"
+
+**Category**: strategy | **Difficulty**: medium
+
+**Distinctiveness reason**: The 0→1 question. A generic-advice LLM gives a TAM analysis. Distinctive personas reframe the choice entirely — a first-principles thinker interrogates the "feels important" claim, a philosopher asks what the user means by "start a company", a startup-direction thinker rejects the three-idea frame and asks what the user is excessively curious about, and an execution thinker asks which idea can be started TODAY with one user. Added in v2.5.0-alpha to exercise the `paul-graham` persona's "make something people want" + "excessive curiosity" + "stay upwind" moves.
+
+---
+
+## u12 — Playing house diagnostic
+**Prompt**: "Our seed round closes this week. We just moved into a new office, hired 3 engineers, and scheduled our TechCrunch launch for next month. We need to decide if we should build our mobile app or the enterprise integrations next."
+
+**Category**: strategy | **Difficulty**: hard
+
+**Distinctiveness reason**: The prompt is *structured* like a feature-prioritization question but the real issue is activity-vs-progress confusion — the founder hasn't mentioned a user yet. Distinctive personas should notice the absence of users before answering the stated question. Added in v2.5.0-alpha to exercise the `paul-graham` persona's "make something people want" + "playing house" diagnostic.
+
+---
+
+*Version 1.1.0 · authored 2026-04-15 · u11+u12 added 2026-04-17 for v2.5.0-alpha (paul-graham exercises)*

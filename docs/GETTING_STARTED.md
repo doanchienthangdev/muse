@@ -1,6 +1,6 @@
-# Getting Started with Muse (v2.4.0-alpha)
+# Getting Started with Muse (v2.5.0-alpha)
 
-A 5-minute walkthrough to your first productive session, including the cold-start entry point (`/muse:who`) and the 19 slash commands available.
+A 5-minute walkthrough to your first productive session, including the cold-start entry point (`/muse:who`) and the 20 slash commands available.
 
 ---
 
@@ -20,7 +20,7 @@ cd ~/.claude/skills/muse
 
 The installer:
 1. Clones the repo to `~/.claude/skills/muse/`
-2. Copies all 19 slash commands to `~/.claude/commands/muse:*.md`
+2. Copies all 20 slash commands to `~/.claude/commands/muse:*.md`
 3. Creates `~/.muse/sessions/` (and `chains/`, `debates/`, `critiques/`, `spike/`, `analytics/`, `benchmark-reports/`) for your artifacts
 
 No dependencies to install. No build step. No package manager.
@@ -42,7 +42,7 @@ You don't need to memorize the persona map. Type your question via `/muse:who` a
 You'll see something like:
 
 ```
-MUSE TRIAGE — scoring 9 personas against your question
+MUSE TRIAGE — scoring 10 personas against your question
 
   "should I rewrite this service in Rust?"
 
@@ -111,7 +111,7 @@ See [`SESSIONS.md`](SESSIONS.md) for the full walkthrough and session file forma
 /muse:list
 ```
 
-Shows all installed personas grouped by category (first-principles, systems, philosophy, design, execution, etc.). Starter pack ships with 9 personas as of v2.4.0-alpha, but the list is dynamic — any persona you add locally via `/muse:build` appears automatically.
+Shows all installed personas grouped by category (first-principles, systems, philosophy, design, execution, etc.). Starter pack ships with 10 personas as of v2.5.0-alpha, but the list is dynamic — any persona you add locally via `/muse:build` appears automatically.
 
 Filter by category:
 
@@ -182,7 +182,7 @@ Produces per-persona critiques + a consensus/unique/disagreement synthesis. Cons
 
 ## 8. Build your own persona
 
-The starter pack is 9 personas. To add a 10th (say, Jane Jacobs on cities):
+The starter pack is 10 personas. To add an 11th (say, Jane Jacobs on cities):
 
 1. **Research**: collect articles, book excerpts, interviews into `.archives/personas/jane-jacobs/`
 2. **Build**: `/muse:build jane-jacobs`
@@ -215,7 +215,7 @@ See [`BENCHMARKS.md`](BENCHMARKS.md) for the full methodology.
 
 ## 10. Full command reference
 
-19 slash commands total. See the [README Commands reference](../README.md#commands-reference-18-total--v232-alpha) for the full table with attributes (interactive, persistent, multi-persona, requires-API, quick).
+20 slash commands total. See the [README Commands reference](../README.md#commands-reference-18-total--v232-alpha) for the full table with attributes (interactive, persistent, multi-persona, requires-API, quick).
 
 **Starter-pack personas (8)**: `/muse:feynman`, `/muse:socrates`, `/muse:seneca`, `/muse:marcus-aurelius`, `/muse:aristotle`, `/muse:confucius`, `/muse:lao-tzu`, `/muse:dieter-rams`
 
@@ -250,4 +250,4 @@ See [`BENCHMARKS.md`](BENCHMARKS.md) for the full methodology.
 
 ---
 
-*v2.4.0-alpha · 19 slash commands · 9 starter-pack personas · extensible runtime*
+*v2.5.0-alpha · 20 slash commands · 9 starter-pack personas · extensible runtime*

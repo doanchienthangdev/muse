@@ -13,6 +13,77 @@ Nothing yet.
 
 ---
 
+## [2.5.0-alpha] — 2026-04-17 — Second starter-pack extension: `paul-graham` interpretive persona + 10-persona benchmark grade A
+
+### Why
+
+v2.4.0-alpha shipped the first extension beyond the historical 8 (`elon-musk`). The ADVISORY_COUNCIL.md roadmap identified `paul-graham` as the highest-priority Tier 1 candidate, and the repo already contained ~17 MB of deep research at `.archives/personas/paul-graham/` — 22 verbatim essays, 5 long-form transcripts (Stanford CS183B 2014, Conversations with Tyler 2023, Ralston 2018, Office Hours 2013, LAUNCH 2014), and 5 book entries. v2.5.0-alpha takes that archive and produces the 10th starter-pack persona.
+
+The choice of Paul Graham is strategic: he covers the **0→1 startup-direction cognitive frame** that Elon Musk's algorithm-focused frame doesn't address. Where Musk optimizes manufacturing at scale (1→1000), Graham focuses on "does a real user want this at all" (0→1). The two are complementary — not redundant.
+
+### Added
+
+- **`personas/paul-graham.md` (~380 lines)** — new starter-pack persona.
+
+  **Cognitive signature**:
+  - **Make something people want** *(framing)* — the foundational reframe. A startup isn't a thing you *become*; it's a thing you *build*. Every activity that isn't making-something-people-want is "playing house."
+  - **Name the pattern** *(framing)* — give a handle to tacit-but-common behavior. Canonical PG coinages: *do things that don't scale*, *ramen profitable*, *playing house*, *top idea in your mind*, *default alive or default dead*, *the right kind of stubborn*, *maker's schedule vs manager's schedule*, *Nile Perch* (engaging-but-substanceless thoughts).
+  - **Talk to your users — manually, unscalably** *(inquiry)* — Stripe's "Collison installation"; Airbnb's door-to-door NYC photography; Wufoo's handwritten thank-you notes. "Startups take off because the founders make them take off."
+  - **Default alive or default dead?** *(test-probe)* — binary survival diagnostic: at current burn + growth, reach profitability before the bank hits zero?
+  - **The shower test — what's the top idea in your mind?** *(test-probe)* — attention as a single slot; money and disputes are "Nile Perch" that eat it.
+  - **Stay upwind — don't plan, preserve options** *(framing)* — when the territory is genuinely unknown, pick the move that teaches most and forecloses least.
+
+  **Voice rules**: short sentences, first person, plain English, self-deprecating about his own mistakes ("Jessica is better than me at people", "I've been wrong about solo founders"), specific examples (Stripe, Airbnb, Viaweb, Wufoo, Zuckerberg, the Collisons) instead of generic "some companies". Explicit banned patterns include the word *"growth hacks"* (PG translates to "bullshit"), the *"Big Launch"* fantasy, *"disrupt"*, *"unicorn"*, *"10x"*, *"crush it"*, *"unlock"*, *"circle back"*, *"synergy"*, *"stakeholders"*, *"value prop"*, *"alignment"*, *"bandwidth"*, *"ideate"*, and the word *"passion"* (he uses *curiosity* and *interest* because they're more testable).
+
+  **Session mode fit**: strong at STANDARD (natural essay tempo), DEEP (his essays are premise challenges), CRITIC (essay rewrite feedback). Weak at QUICK — his reasoning compresses into aphorisms that sound glib without context.
+
+- **`commands/muse:paul-graham.md` (51 lines)** — slash command wrapper following the v2.2 persona-command pattern. Includes the mandatory disclaimer as a body blockquote, routes through SESSION.md's 5-stage adaptive workflow, and prints the full disclaimer at the top of every saved session file. If Stage 0 detects QUICK mode, warns the user that PG is a poor fit for that compression level.
+
+### Distinctiveness + spec review
+
+The adversarial spec reviewer (Garry Tan pattern, `/muse:build` Step 5.5) returned score 8/10 on first pass with 7 specific issues — all concrete, all actionable:
+
+1. Cognitive pattern #2 "Name the pattern" title-collided with signature move "Name the pattern" — renamed to meta-habit **"Naming as an epistemic tool"** (describes the *instinct* that un-named things stay under-thought, while the signature move holds the specific PG coinages).
+2. Cognitive pattern #4 "Stay upwind" title-collided with signature move "Stay upwind" — renamed to **"Optionality-first over plan-first"** with an explicit Lao-Tzu disambiguation note ("wu-wei minimizes interference; optionality-first maximizes learnable paths").
+3. Signature move "Talk to your users" disambiguated from Socratic elenchus (PG watches what users *do* to update what to build; Socrates cross-examines to surface contradictions in *thinking*).
+4. Signature move "Default alive or default dead?" disambiguated from Elon Musk's "name the requirement-maker" binary test (PG's is a solvency check — when does the math stop working; Musk's is an attribution check — who authored a constraint).
+5. Typo fix in banned patterns (missing closing asterisk on `*"unlock"*`).
+6. Thinking-mode split: primary core_tension (curiosity vs. ambition) stays canonical; secondary heuristic (trust intuition about people, not about startups) promoted to its own labeled paragraph.
+
+All 7 fixes applied. C1-C12 static compliance PASS. Pre-save dry-run PASS. Post-save dry-run PASS.
+
+### Changed
+
+- **`SKILL.md`**: v2.4.0-alpha → v2.5.0-alpha header bump. New announcement paragraph for Paul Graham persona. Invocation table row updated: "(9 personas — 7 historical + 2 interpretive)" → "(10 personas — 7 historical + 3 interpretive)". Running total: "19 slash commands" → "20 slash commands". Living-figure disclaimer reminder updated to list three interpretive personas (dieter-rams, elon-musk, paul-graham).
+- **`README.md`**: starter pack table 9 rows → 10 rows (paul-graham added with interpretive marker and domain `strategy, execution, first-principles, philosophy`). Version header "2.4.0-alpha ~5,800 lines" → "2.5.0-alpha ~6,200 lines". § Commands reference "19 total — v2.4.0-alpha" → "20 total — v2.5.0-alpha". Status block updated with v2.5.0-alpha entry, version history extended.
+- **`docs/PERSONAS.md`**: v2.4.0 → v2.5.0 header. Starter pack count 9 → 10. New § "Strategy + Execution (Startup)" category with full Paul Graham entry (tagline, all 6 signature moves with category tags, cognitive-patterns summary, best-for/avoid-when guidance, session mode fit, sample invocation). Quick-reference table adds 6 new rows for PG use cases (playing-house diagnostic, user-conversation audit, top-idea-in-your-mind, default-alive/dead, pattern-naming, write-like-you-talk).
+- **`docs/GETTING_STARTED.md`**: v2.4.0-alpha → v2.5.0-alpha header. "19 slash commands" → "20". "9 personas" → "10". "To add a 10th" → "To add an 11th."
+- **`docs/ADVISORY_COUNCIL.md`**: Paul Graham removed from Tier 1 candidate list; added to the "Existing muse personas" table at the top (9 → 10 rows).
+
+### Legal + interpretive framing
+
+**The Paul Graham persona disclaimer** is comparable in extent to Elon Musk's but with one additional dimension: Graham **actively publishes essays** and updates his views frequently. The disclaimer therefore explicitly notes that the persona is a **frozen snapshot as of April 2026** — readers should not treat outputs as what Graham currently thinks, and any contradiction with a post-2026-04 essay should be resolved in favor of the live essay.
+
+The disclaimer appears in three places (same safeguard pattern as elon-musk):
+1. **Frontmatter `disclaimer:` field** in `personas/paul-graham.md` — ~200 words. Enumerates sources (paulgraham.com 2001–present, Hackers & Painters 2004, Founders at Work 2007, The Launch Pad 2012, 5 long-form transcripts), explicitly names NOT-affiliated entities (Y Combinator, Viaweb, Yahoo, Jessica Livingston), and states that outputs are NOT quotation, NOT predictions, NOT current-views claims, and NOT investment/fundraising advice.
+2. **Body blockquote** immediately below the tagline.
+3. **Slash command file** `commands/muse:paul-graham.md` has a shortened disclaimer in the body. Step 4 of the skill instructs the agent to write the **full disclaimer** into every saved session file.
+
+### Not changed
+
+- Schema unchanged (v2.2.1-alpha). No new fields, no migrations needed.
+- No changes to historical 8 personas.
+- No changes to meta commands (`muse:who`, `muse:all`, `muse:chain`, `muse:debate`, `muse:critic`, `muse:build`, `muse:update`, `muse:benchmark`, `muse:spike`, `muse:list`).
+- No changes to `install.sh` — persona count is already dynamic from v2.4.0-alpha.
+- Benchmark methodology unchanged.
+
+### Known limitations
+
+- Spec review final score was 8/10 with 7 fixes applied. Did not re-run the reviewer post-fix — agent recommended fixes and the author applied them directly. Follow-up distinctiveness run is in Phase 7 (benchmark).
+- Paul Graham is a living, actively-publishing figure. Any essay he publishes after 2026-04-17 may contradict the persona's frozen snapshot. Suggested: annual refresh via `/persona:add --name=paul-graham` to pull new essays + `/muse:update paul-graham` to re-integrate.
+
+---
+
 ## [2.4.0-alpha] — 2026-04-16 — First starter-pack extension: `elon-musk` interpretive persona + 9-persona benchmark grade A
 
 ### Why

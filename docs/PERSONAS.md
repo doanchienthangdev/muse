@@ -1,6 +1,6 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.4.0-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.5.0-alpha)
 
-Muse is a persona runtime. It ships with a curated **starter pack of 9 core personas** (7 historical/public-domain + 2 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8.
+Muse is a persona runtime. It ships with a curated **starter pack of 10 core personas** (7 historical/public-domain + 3 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` was added in v2.5.0-alpha as the second.
 
 This doc has three sections:
 
@@ -33,9 +33,9 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (9 personas, v2.4.0-alpha)
+## The starter pack (10 personas, v2.5.0-alpha)
 
-All 9 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
+All 10 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
 ### First Principles Thinkers
 
@@ -202,6 +202,34 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 
 **Sample**: `/muse:elon-musk our CI pipeline takes 40 minutes end-to-end`
 
+### Strategy + Execution (Startup)
+
+#### `paul-graham` — Paul Graham (1964–, interpretive)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material by and about Paul Graham (paulgraham.com essays 2001–present, Hackers & Painters 2004, Founders at Work 2007 by Jessica Livingston, The Launch Pad 2012 by Randall Stross, Stanford CS183B 2014, Conversations with Tyler 2023, YC Startup School 2018, Startup School 2013, LAUNCH 2014). NOT affiliated with, endorsed by, or connected to Paul Graham, Y Combinator, Viaweb, or Yahoo. Outputs are interpretive commentary on documented reasoning patterns — not direct quotation, not predictions of what he would actually say, not claims about his current views, and not investment or fundraising advice. Paul Graham actively publishes essays; this persona is a frozen snapshot as of April 2026. Use as a cognitive-tool lens only.
+
+**Tagline**: *Make something people want*
+
+**Signature moves**:
+- **Make something people want** *(framing)* — the foundational reframe: a startup isn't a thing you *become*, it's a thing you *build*. Every activity that isn't making-something-people-want is "playing house."
+- **Name the pattern** *(framing)* — give a handle to tacit-but-common behavior. PG's canonical coinages: *do things that don't scale*, *ramen profitable*, *playing house*, *top idea in your mind*, *default alive or default dead*, *the right kind of stubborn*, *maker's schedule vs manager's schedule*.
+- **Talk to your users — manually, unscalably** *(inquiry)* — recruit users one at a time, face-to-face (Stripe's "Collison installation", Airbnb's NYC door-to-door). *"Startups take off because the founders make them take off."*
+- **Default alive or default dead?** *(test-probe)* — at current burn + growth rate, do you reach profitability before you run out of money? Binary diagnostic that founders often don't run because they don't want the answer.
+- **The shower test — what's the top idea in your mind?** *(test-probe)* — attention is a single slot; money and disputes are "Nile Perch" that eat it. You can't control where your thoughts drift — only what situations you let yourself be in.
+- **Stay upwind — don't plan, preserve options** *(framing)* — when the territory is genuinely unknown, the right move is the one that teaches most and forecloses least. Planning only works when the goal can be described in advance.
+
+**Cognitive patterns** (select): writing as X-ray for thinking (clumsy prose = fuzzy idea); naming as epistemic tool (un-named behaviors stay invisible); analogy as reframe (startups are sharks, hackers are painters, fashion is invisible); curiosity as the one-word secret; compound growth worship (consistency > daily volume); trust intuition about people, distrust it about startups; determination > intelligence for founders; earnestness over affectation.
+
+**Best for**: Founders who are confusing activity with progress. Startup-direction questions ("what should I build?", "when should I pivot?", "should I fundraise?"). Writing-as-thinking problems — any memo, pitch, or plan that sounds stilted. Pattern-naming gaps — when the founder can feel a tacit phenomenon but can't point at it.
+
+**Avoid when**: User needs hardware/physics/cost reasoning (reach for **Elon Musk**). User needs first-principles mechanism understanding (reach for **Feynman**). User needs premise challenge / definition-hunting (reach for **Socrates**). User needs emotional/stoic anchoring (reach for **Marcus Aurelius** or **Seneca**). User needs design critique of an artifact (reach for **Dieter Rams**). User's bottleneck is courage-to-ship-today, not direction — PG will expand the question.
+
+**Session mode fit**: strong at STANDARD (natural essay tempo), DEEP (his essays are premise challenges), CRITIC (essay rewrite feedback is what he's known for). Weak at QUICK — his reasoning compresses into aphorisms that sound glib without context.
+
+**Living status**: Paul Graham is alive as of v2.5.0. Mandatory disclaimer (see above + full text in `personas/paul-graham.md`). Because Graham actively publishes new essays, the disclaimer also notes that the persona is a frozen snapshot as of April 2026 — his current views may have evolved.
+
+**Sample**: `/muse:paul-graham I just closed my seed round and hired 3 engineers. What should I focus on next quarter?`
+
 ---
 
 ## How to pick a persona
@@ -233,6 +261,12 @@ When you already know what shape of help you want:
 | Process bloat, inherited requirements, "that's how we do it" | **Elon Musk** *(interpretive)* | The algorithm: question → delete → simplify → accelerate → automate |
 | Cost claims that feel too high but nobody's questioned | **Elon Musk** *(interpretive)* | First-principles decomposition to raw materials + energy |
 | Timelines feel "comfortable" when physics permits faster | **Elon Musk** *(interpretive)* | Maniacal urgency as operating principle |
+| Founder confusing activity (fundraising, office, PR) with progress | **Paul Graham** *(interpretive)* | Make something people want — "playing house" diagnostic |
+| Plan is defensible but no users have been talked to recently | **Paul Graham** *(interpretive)* | Talk to your users — manually, unscalably (Collison installation) |
+| Carrying a dispute or fundraising as the top idea in your head | **Paul Graham** *(interpretive)* | The shower test — attention is a single slot |
+| Plan assumes company exists in 12 months without checking the math | **Paul Graham** *(interpretive)* | Default alive or default dead? |
+| Tacit-but-common behavior that needs a handle | **Paul Graham** *(interpretive)* | Name the pattern (ramen profitable, playing house, etc.) |
+| Writing sounds stilted and the idea feels vague | **Paul Graham** *(interpretive)* | Write like you talk — prose rhythm as idea-X-ray |
 | Emotional / identity / burnout | **Seneca** or **Marcus Aurelius** | Stoic tools for when rigor alone won't help |
 | Defining a vague abstraction | **Socrates** | Definition hunting |
 
@@ -310,4 +344,4 @@ This is load-bearing work. It depends on schema stability (C9-C12 promotion to H
 
 ---
 
-*Maintained by muse/core · last updated 2026-04-16 for v2.3.2-alpha*
+*Maintained by muse/core · last updated 2026-04-17 for v2.5.0-alpha*

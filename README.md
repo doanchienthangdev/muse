@@ -1,16 +1,44 @@
 # Muse
 
-> *"What I cannot create, I do not understand."* — Richard Feynman
+![Muse — Think with the greats](public/images/home.jpg)
 
-When I read that line on Feynman's blackboard, I realized that's exactly what AI chatbots can't do. They can imitate Feynman's writing style. They can't run his thinking on my problem.
+### Ten great mentors. Five minutes each. One decision closer.
 
-I'm a builder. I spend hours thinking through decisions where a distinctive thinker would have shown me the answer in five minutes, if I could just *borrow their cognitive move* — Feynman's simplification test, Socrates's definition hunting, Rams's ten principles, Lao Tzu's value of emptiness. Not their personality. Not a motivational poster of their face. The **specific mental action** they took when they saw a problem like mine.
+---
 
-**Muse is my answer.** A persona runtime that ships with a curated starter pack of cognitive tools and is designed from day one to be extended. Each persona is encoded not as a character to chat with but as a reusable cognitive tool you can point at your actual problem. Runs natively inside Claude Code, Codex CLI, and Gemini CLI. Zero dependencies. Ship markdown, and the agent handles the rest.
+**You're stuck on a decision.** Not because it's hard — because it deserves a frame you don't have. Feynman would ask *"can you explain this without jargon?"* Paul Graham would ask *"how many users have you talked to this week?"* Elon Musk would ask *"which law of physics forbids this?"* Socrates would ask *"what do you mean by that word?"* Dieter Rams would audit the thing against ten principles. Each frame takes five minutes and unlocks the decision.
+
+**But you can't call them.** And the AI chatbots you've tried can *imitate* their writing style — they can't *run their thinking* on your actual problem. Knowing the quote doesn't help. Knowing the move does.
+
+**Muse is the runtime for the move.** Ten great mentors, encoded not as characters to chat with but as reusable cognitive tools you can point at your actual problem:
+
+| Mentor | The move | When you reach for it |
+|---|---|---|
+| **Feynman** | *Simplification test* | Jargon is covering for confusion |
+| **Socrates** | *Definition hunting* | A central word is undefined |
+| **Paul Graham** | *Make something people want* | Confusing activity with progress |
+| **Elon Musk** | *The algorithm + physics-as-constraint* | Inherited requirements are slowing you down |
+| **Dieter Rams** | *Ten-principles audit* | A design is cluttered, loud, or trend-chasing |
+| **Marcus Aurelius** | *Duty focus* | Paralyzed by ten competing priorities |
+| **Seneca** | *Premeditatio malorum* | Running flat out, no time to think |
+| **Aristotle** | *Four causes + categorization* | Treating an ethics question as strategy |
+| **Confucius** | *Rectification of names* | Restructuring an inherited system |
+| **Lao Tzu** | *Wu wei + value of emptiness* | Pushing harder when you should do less |
+
+You invoke one — `/muse:feynman why is my code slow?` — and it runs a 5–15 minute structured session applying *that specific move* to *your problem*. No character roleplay. No "as Feynman would say" padding. Just the cognitive move, applied rigorously, with a saved transcript you can re-read weeks later.
+
+**What you get:**
+- ✅ Five to fifteen minutes from question → concrete next action
+- ✅ The specific mental move that made the mentor famous, applied to *your* actual problem
+- ✅ A saved session file you can re-read, grep, or share
+- ✅ Works inside your existing tools: Claude Code, Codex CLI, Gemini CLI
+- ✅ Install in 30 seconds. Zero dependencies. Zero build step. Ship markdown; the agent handles the rest.
+
+> *"What I cannot create, I do not understand."* — Richard Feynman's blackboard at the time of his death. When I read that line, I realized it's exactly what generic LLMs can't do: they can quote Feynman, but they can't *be the frame* that made him Feynman. Muse is the attempt to turn that frame into a runtime.
 
 ```
 /muse:who should I rewrite this service in Rust?
-  → Scores 9 personas. Top 3: Elon Musk 72/80 (the algorithm +
+  → Scores 10 personas. Top 3: Elon Musk 72/80 (the algorithm +
     first-principles cost decomposition + physics-as-constraint),
     Feynman 65/80 (hand calculation + cargo cult detection),
     Socrates 55/80 (define "rewrite"). Pick one, and the
@@ -51,13 +79,13 @@ Each session saves a markdown file to `~/.muse/sessions/` (or `~/.muse/chains/`,
 
 ## What gets shipped
 
-**Version 2.4.0-alpha**. ~5,800 lines of content, zero lines of shell tooling.
+**Version 2.5.0-alpha**. ~6,200 lines of content, zero lines of shell tooling.
 
 Muse is a **persona runtime**. It ships with a curated starter pack of personas and a full set of commands to use them, compose them, build new ones, and measure them. The starter pack is not a ceiling — it is a baseline. You can add personas locally via `/muse:build` in ~15 interactive questions, or pull new personas from the community via a future persona catalog (roadmap item — see § Roadmap).
 
 Shipped artifacts:
 
-### 🎭 Starter pack — 9 cognitive personas
+### 🎭 Starter pack — 10 cognitive personas
 
 A curated baseline covering first-principles, systems, design, philosophy, and execution/engineering. Each persona is ~300-370 lines of structured markdown with multi-tagline, voice rules (core belief + banned patterns), 7-12 cognitive patterns, signature moves with inline category tags (framing/inquiry/test-probe), debate positions on canonical dilemmas, and documented analogous problems with citations.
 
@@ -72,14 +100,15 @@ A curated baseline covering first-principles, systems, design, philosophy, and e
 | `lao-tzu` | Lao Tzu | 6th c. BCE | philosophy, design | *The way that can be spoken is not the eternal way* |
 | `dieter-rams` *(interpretive)* | Dieter Rams | 1932– | design, systems | *Less, but better* |
 | `elon-musk` *(interpretive)* | Elon Musk | 1971– | first-principles, execution, engineering | *Make it less dumb* |
+| `paul-graham` *(interpretive)* | Paul Graham | 1964– | strategy, execution, first-principles, philosophy | *Make something people want* |
 
-7 historical/public-domain + 2 interpretive living figures (Rams and Musk — both with mandatory disclaimers). All pass benchmark grade A.
+7 historical/public-domain + 3 interpretive living figures (Rams, Musk, and Graham — all with mandatory disclaimers). All pass benchmark grade A.
 
-**Starter pack, not a ceiling.** If the cognitive frame you need is Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes on economic uncertainty, or anyone else — build it locally in ~15 interactive questions. The starter pack grows too: `elon-musk` was added in v2.4.0-alpha, and v2.4+ will add more historical and interpretive frames. See § Build your own persona below.
+**Starter pack, not a ceiling.** If the cognitive frame you need is Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes on economic uncertainty, or anyone else — build it locally in ~15 interactive questions. The starter pack grows too: `elon-musk` was added in v2.4.0-alpha, `paul-graham` in v2.5.0-alpha, and v2.6+ will add more historical and interpretive frames. See § Build your own persona below.
 
-### ⚙️ Runtime — 19 slash commands
+### ⚙️ Runtime — 20 slash commands
 
-10 meta commands + 9 persona commands. All self-contained, all structured step-by-step with validation and persistence. See § Commands reference for full list with characteristics.
+10 meta commands + 10 persona commands. All self-contained, all structured step-by-step with validation and persistence. See § Commands reference for full list with characteristics.
 
 ### 📐 Framework — load-bearing specs
 
@@ -114,7 +143,7 @@ Zero dependencies. Zero shell scripts. Zero build step. The agent is the runtime
 curl -fsSL https://raw.githubusercontent.com/doanchienthangdev/muse/main/install.sh | sh
 ```
 
-That's it. No dependencies. No build. No package manager. The installer clones the repo to `~/.claude/skills/muse/`, copies all 19 slash commands to `~/.claude/commands/`, and creates `~/.muse/sessions/` for your session artifacts. Restart Claude Code once and start typing:
+That's it. No dependencies. No build. No package manager. The installer clones the repo to `~/.claude/skills/muse/`, copies all 20 slash commands to `~/.claude/commands/`, and creates `~/.muse/sessions/` for your session artifacts. Restart Claude Code once and start typing:
 
 ```
 /muse:who what's on your mind?
@@ -136,7 +165,7 @@ For Codex CLI or Gemini CLI users (no slash command support), Muse invokes via f
 
 ## Discovering the right persona
 
-You don't need to memorize 9 personas (or 80 someday) to use muse. Three entry points, from cold-start to expert:
+You don't need to memorize 10 personas (or 80 someday) to use muse. Three entry points, from cold-start to expert:
 
 ### 1. `/muse:who <question>` — the triage command (new in v2.3.1)
 
@@ -145,7 +174,7 @@ Type your question without knowing the map. Muse scores every installed persona 
 ```
 /muse:who should I rewrite this service in Rust?
 
-MUSE TRIAGE — scoring 9 personas against your question
+MUSE TRIAGE — scoring 10 personas against your question
 
   "should I rewrite this service in Rust?"
 
@@ -168,7 +197,7 @@ Top 5 matches (score out of 80):
      (test-probe → inquiry)
 
   H) Council: run all 5 Council personas (/muse:all)
-  I) See full table for all 9 personas
+  I) See full table for all 10 personas
   J) Abort
 ```
 
@@ -193,7 +222,7 @@ PHILOSOPHY
 
 ...
 
-9 personas across 8 categories. Use /muse:list --category=<tag> to filter.
+10 personas across 8 categories. Use /muse:list --category=<tag> to filter.
 ```
 
 ### 3. `/muse:<persona-id> <question>` — direct invocation (when you know who to ask)
@@ -300,7 +329,7 @@ The mode is surfaced to you at Stage 0 via AskUserQuestion. You pick. The sessio
 
 ---
 
-## Commands reference (19 total — v2.4.0-alpha)
+## Commands reference (20 total — v2.5.0-alpha)
 
 Legend for attributes:
 - 💬 **Interactive** — uses AskUserQuestion to stop at decision points
@@ -316,7 +345,7 @@ Legend for attributes:
 | `/muse:who <user_text>` | 💬 💾 | **Persona triage** — score all installed personas 0-80 against your question, present top 5 with rationales, optionally suggest a chain or debate, then run the chosen session inline. The cold-start entry point. |
 | `/muse:list [--category=<tag>]` | ⚡ | List installed personas grouped by category with one-line taglines. Dynamic — new personas appear automatically. |
 
-### 🎭 Persona sessions — the starter pack (9)
+### 🎭 Persona sessions — the starter pack (10)
 
 Each runs a 5-stage session (Stage 0 mode detection + Stages 1-5) and persists to `~/.muse/sessions/`.
 
@@ -365,7 +394,7 @@ All commands run **inside your agent session**. No separate CLI to install. No s
 
 ## Build your own persona
 
-The 9 personas in the starter pack are a baseline, not a ceiling. Muse is designed from day one for local persona authoring. If you want a 10th (say, Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, or anyone else), build it in ~15 interactive questions:
+The 10 personas in the starter pack are a baseline, not a ceiling. Muse is designed from day one for local persona authoring. If you want an 11th (say, Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, or anyone else), build it in ~15 interactive questions:
 
 ```
 1. Gather research
@@ -436,7 +465,7 @@ When in doubt: **keep living-figure personas local**. Don't share them until you
 
 6. **Runs anywhere the agent runs.** Claude Code, Codex CLI, Gemini CLI — all the same markdown. No per-platform shell tooling to maintain.
 
-7. **Extensible by design.** The starter pack is 9 personas (growing). The runtime supports arbitrary local personas via `/muse:build`. A future persona catalog (§ Roadmap) will let users browse and clone individual personas without cloning the whole framework.
+7. **Extensible by design.** The starter pack is 10 personas (growing). The runtime supports arbitrary local personas via `/muse:build`. A future persona catalog (§ Roadmap) will let users browse and clone individual personas without cloning the whole framework.
 
 ---
 
@@ -462,8 +491,8 @@ This is the agentic pattern. Ship markdown, enforce at the content layer, let th
 
 Muse's long-term direction: **a persona runtime + an extensible persona catalog**.
 
-**Shipping today** (v2.4.0-alpha):
-- 19 slash commands, 4 adaptive session modes, 9 starter pack personas
+**Shipping today** (v2.5.0-alpha):
+- 20 slash commands, 4 adaptive session modes, 10 starter pack personas
 - `/muse:who` for cold-start triage, `/muse:build` for local authoring
 - `/muse:benchmark` with measurement-backed distinctiveness (grade A)
 - Full multi-persona orchestration (chain, debate, critic, all)
@@ -496,10 +525,13 @@ In the meantime, **share via PR**. If you build a good persona, open a PR to add
 
 ## Status
 
+**v2.5.0-alpha** — Second starter-pack extension. `paul-graham` joins the roster as the 10th persona — an interpretive cognitive-tool frame focused on **make something people want** as the foundational reframe, **naming previously-unnamed patterns** (do things that don't scale, ramen profitable, playing house, top idea in your mind, default alive/dead, the right kind of stubborn), **manual user recruitment** (Collison-installation style), the **shower test** for attention-slot diagnostics, and **staying upwind** over planning when the territory is unknown. Grade A maintained on 10-persona benchmark. 20 slash commands total. Distilled from paulgraham.com (12 verbatim essays), Stanford CS183B 2014, Conversations with Tyler 2023, three more long-form transcripts, and three reference books.
+
 **v2.4.0-alpha** — First extension of the starter pack beyond the historical 8. `elon-musk` joins the roster as the 9th persona — an interpretive cognitive-tool frame focused on first-principles cost decomposition, the 5-step algorithm (question → delete → simplify → accelerate → automate, in that order), manufacturing reality checks, and physics-as-the-only-constraint reasoning. Grade A maintained on 9-persona benchmark. The Elon Musk persona carries the most extensive interpretive disclaimer in the repo — use as a cognitive-tool lens only, not as a representation of Elon Musk himself. 19 slash commands total.
 
 Version history:
-- **v2.4.0-alpha** (this release): First starter-pack extension. `personas/elon-musk.md` + `commands/muse:elon-musk.md`. Benchmark grade A maintained with 9 personas. `install.sh` persona count made dynamic. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md. First repo-ship of an interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards all enforced by `/muse:build` C5 check.
+- **v2.5.0-alpha** (this release): Second starter-pack extension. `personas/paul-graham.md` + `commands/muse:paul-graham.md`. Benchmark grade A maintained with 10 personas. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md, ADVISORY_COUNCIL.md. Second repo-shipped interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards enforced by `/muse:build` C5 check.
+- **v2.4.0-alpha**: First starter-pack extension. `personas/elon-musk.md` + `commands/muse:elon-musk.md`. Benchmark grade A maintained with 9 personas. `install.sh` persona count made dynamic. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md. First repo-ship of an interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards all enforced by `/muse:build` C5 check.
 - **v2.3.2-alpha**: Docs-only refresh. README + PERSONAS.md + GETTING_STARTED.md + CONTRIBUTING.md + ARCHITECTURE.md + SESSIONS.md. Reframes muse as persona runtime + extensible catalog.
 - **v2.3.1-alpha**: `/muse:who` triage command with 0-80 scoring rubric, top 5 pick list, chain/debate/council suggestions, inline handoff. 1 new command, ~400 lines. Zero persona edits.
 - **v2.3.0-alpha**: 6 new slash commands (chain, all, debate, critic, list, spike MVP) + SKILL.md routing + README refresh. Completes the original v1 CEO plan. 17 commands total. ~2,000 net LoC.

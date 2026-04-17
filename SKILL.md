@@ -3,13 +3,15 @@ name: muse
 description: "Think with the greats. Invoke the distinctive cognitive patterns of great thinkers (Feynman, Socrates, Seneca, Marcus Aurelius, Aristotle, Confucius, Lao Tzu, Dieter Rams) as reusable thinking tools. Supports muse:[person] for single persona, muse:all for the default pipeline, muse:chain persona1→persona2 for custom pipelines, muse:debate personA vs personB for tension surfacing, muse:critic for adversarial review of existing work, muse:build for creating v2.1-compliant personas from research, muse:update for upgrading existing personas to v2.1 compliance, and muse:list to see what's installed."
 ---
 
-# Muse — Unified Dispatcher (v2.4.0-alpha)
+# Muse — Unified Dispatcher (v2.5.0-alpha)
 
 This skill applies the distinctive cognitive moves of chosen thinker(s) to the user's problem. It is NOT character acting. It is NOT cosplay. The goal is to apply **reusable cognitive tools**, the specific thinking moves each persona is known for, to help the user think more rigorously about their problem.
 
 **You are the runtime.** You read persona data with the Read tool. You parse markdown natively. No shell tools needed for interactive use. No external binaries required. Everything happens inside your context.
 
-**v2.4.0-alpha** adds the first extension of the starter pack beyond the historical 8: `/muse:elon-musk` — an **interpretive cognitive-tool frame** (not a character representation) focused on first-principles cost decomposition, the 5-step algorithm (question → delete → simplify → accelerate → automate), manufacturing reality checks, and physics-as-the-only-constraint reasoning. Mandatory disclaimer — see `personas/elon-musk.md`. 19 slash commands total, 9 personas.
+**v2.5.0-alpha** adds the second extension of the starter pack: `/muse:paul-graham` — an **interpretive cognitive-tool frame** (not a character representation) focused on *make something people want* as foundational reframe, naming previously-unnamed patterns (do things that don't scale, ramen profitable, playing house, top idea in your mind, default alive or default dead, the right kind of stubborn), manual user recruitment, the shower test for attention-slot diagnostics, and staying upwind over planning when the territory is unknown. Mandatory disclaimer — see `personas/paul-graham.md`. 20 slash commands total, 10 personas.
+
+**v2.4.0-alpha** added `/muse:elon-musk` — an interpretive cognitive-tool frame focused on first-principles cost decomposition, the 5-step algorithm (question → delete → simplify → accelerate → automate), manufacturing reality checks, and physics-as-the-only-constraint reasoning. Mandatory disclaimer — see `personas/elon-musk.md`.
 
 **v2.3.1-alpha** added `/muse:who` — the persona triage entry point. When you don't know which persona to reach for, type `/muse:who <your question>` and the command scores all installed personas against your input, presents the top 5 with rationales, optionally suggests a chain or debate, and runs the chosen session inline on the same question.
 
@@ -25,7 +27,7 @@ When the user invokes this skill, the argument after `muse:` determines the mode
 |---|---|---|
 | Pattern | Mode | Slash | Example |
 |---|---|---|---|
-| `muse:<person>` | Single persona brainstorm | `/muse:<person>` (9 personas — 7 historical + 2 interpretive) | `/muse:feynman "why is my code slow?"` |
+| `muse:<person>` | Single persona brainstorm | `/muse:<person>` (10 personas — 7 historical + 3 interpretive) | `/muse:feynman "why is my code slow?"` |
 | `muse:all` | Default 5-persona Council chain | `/muse:all` | `/muse:all "should I pivot?"` |
 | `muse:chain <p1>→<p2>→<p3>` | Custom sequential chain | `/muse:chain` | `/muse:chain feynman→socrates→dieter-rams "question"` |
 | `muse:debate <pA> vs <pB>` | 2 personas × 3 rounds + synthesis | `/muse:debate` | `/muse:debate aristotle vs lao-tzu "ship fast or polish?"` |
@@ -37,9 +39,9 @@ When the user invokes this skill, the argument after `muse:` determines the mode
 | `muse:list` | List installed personas by category | `/muse:list` | `/muse:list --category=design` |
 | `muse:who <user_text>` | Persona triage — score top 5, pick one, run session inline | `/muse:who` | `/muse:who "should I rewrite in Rust?"` |
 
-**19 slash commands total** as of v2.4.0-alpha: 9 persona commands (7 historical + Dieter Rams interpretive + Elon Musk interpretive) + 10 meta commands (who, list, build, update, benchmark, chain, all, debate, critic, spike). Claude Code users should prefer slash commands. Codex/Gemini CLI users fall back to the free-text Mode sections below.
+**20 slash commands total** as of v2.5.0-alpha: 10 persona commands (7 historical + Dieter Rams interpretive + Elon Musk interpretive + Paul Graham interpretive) + 10 meta commands (who, list, build, update, benchmark, chain, all, debate, critic, spike). Claude Code users should prefer slash commands. Codex/Gemini CLI users fall back to the free-text Mode sections below.
 
-**Living-figure disclaimer reminder**: the two interpretive personas (`dieter-rams`, `elon-musk`) each carry a mandatory `disclaimer` field in frontmatter and a body blockquote below the tagline. SESSION.md pre-flight auto-prints the disclaimer at the top of every session using that persona. `/muse:build` refuses to save a living-figure persona without the disclaimer (C5 hard gap). Outputs from these personas are interpretive commentary on publicly documented principles — not quotation, not affiliation, not endorsement.
+**Living-figure disclaimer reminder**: the three interpretive personas (`dieter-rams`, `elon-musk`, `paul-graham`) each carry a mandatory `disclaimer` field in frontmatter and a body blockquote below the tagline. SESSION.md pre-flight auto-prints the disclaimer at the top of every session using that persona. `/muse:build` refuses to save a living-figure persona without the disclaimer (C5 hard gap). Outputs from these personas are interpretive commentary on publicly documented principles — not quotation, not affiliation, not endorsement.
 
 ---
 
