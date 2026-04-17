@@ -1,4 +1,4 @@
-# Getting Started with Muse (v2.5.0-alpha)
+# Getting Started with Muse (v2.6.0-alpha)
 
 A 5-minute walkthrough to your first productive session, including the cold-start entry point (`/muse:who`) and the 20 slash commands available.
 
@@ -111,7 +111,7 @@ See [`SESSIONS.md`](SESSIONS.md) for the full walkthrough and session file forma
 /muse:list
 ```
 
-Shows all installed personas grouped by category (first-principles, systems, philosophy, design, execution, etc.). Starter pack ships with 10 personas as of v2.5.0-alpha, but the list is dynamic — any persona you add locally via `/muse:build` appears automatically.
+Shows all installed personas grouped by category (first-principles, systems, philosophy, design, execution, etc.). Starter pack ships with 10 personas as of v2.6.0-alpha, but the list is dynamic — any persona you add locally via `/muse:build` appears automatically.
 
 Filter by category:
 
@@ -250,4 +250,4 @@ See [`BENCHMARKS.md`](BENCHMARKS.md) for the full methodology.
 
 ---
 
-*v2.5.0-alpha · 20 slash commands · 9 starter-pack personas · extensible runtime*
+*v2.6.0-alpha · 20 slash commands · 9 starter-pack personas · extensible runtime*

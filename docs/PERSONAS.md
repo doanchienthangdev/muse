@@ -1,4 +1,4 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.5.0-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.6.0-alpha)
 
 Muse is a persona runtime. It ships with a curated **starter pack of 10 core personas** (7 historical/public-domain + 3 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` was added in v2.5.0-alpha as the second.
 
@@ -33,7 +33,7 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (10 personas, v2.5.0-alpha)
+## The starter pack (10 personas, v2.6.0-alpha)
 
 All 10 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
@@ -183,14 +183,18 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 
 **Tagline**: *Make it less dumb*
 
-**Signature moves**:
-- **First principles decomposition at atomic cost** *(framing)* — Break any claim about what things cost to raw materials at commodity prices + energy to combine them + human time. The gap vs market price is margin or bad engineering — both fixable.
+**Signature moves** (v3.0.0 rebuild, v2.6.0-alpha):
+- **First principles decomposition at atomic cost — the Idiot Index** *(framing)* — Decompose any cost claim to raw materials at commodity prices + energy + human time, then compute the **idiot index** (Isaacson's own named metric, pp. 3305-3310: finished-cost / raw-material-floor ratio). High idiot index = margin or bad engineering. Both fixable.
 - **The algorithm** *(test-probe)* — Question every requirement → delete parts → simplify → accelerate cycle time → automate. Automate **last**, never first. Documented verbatim in Isaacson 2023 pp. 284-285 as his production-meeting mantra.
-- **Manufacturing reality check** *(test-probe)* — Prototypes are easy. The factory is where companies die. Trace the process at scale = 10,000x and find the real bottleneck.
+- **Surge the choke point** *(test-probe)* — Isaacson's documented name for the tactic: concentrated 24/7 physical presence at the production bottleneck until engineers move it. "Never ask your troops to do something you're not willing to do yourself." The birthday push at Fremont, the tent in the parking lot — all canonical surges.
 - **Name the requirement-maker** *(inquiry)* — Requirements that came from "the legal department" or "the safety department" don't exist — those are buildings, not humans. Find the actual person. Ask them why. Delete if nobody defends it.
 - **Physics as the only constraint** *(framing)* — The only inviolable rules are the laws of physics. Everything else is a recommendation. "We can't ship in 2 weeks" — which law of physics forbids it?
 
-**Cognitive patterns** (select): nonsense intolerance as primary filter; delete until ~10% has to come back; maniacal urgency as operating principle; skip levels to find ground truth; be wrong publicly to compress feedback loops.
+**Cognitive patterns** (select, 16 total): chef-not-cook; cost-lives-at-commodity-floor; order-before-speed; delete-until-10%-comes-back; physics-is-the-only-vote-that-counts; **tighter-loops-not-chaos**; maniacal-urgency; **mission-makes-friction-survivable**; be-wrong-publicly; physical-presence-at-the-constraint; no-orphan-requirements; skip-levels-to-find-ground-truth.
+
+**New in v2.6.0-alpha (v3 rebuild)**: two additive body sections — `## Shadow — known limitations of this cognitive frame` (names demon mode per Isaacson p. 207, the collaborator-acknowledged demoralization weakness per p. 3797, directness-without-empathy explained as cognitive-profile, misplaced certainty, and chaos-masquerading-as-speed) and `## What to steal, what to leave` (explicit interpretive guidance: steal principles, leave aesthetic). Shadow section is what makes this an **honest** interpretive persona rather than an uncritical one.
+
+**New Critic frame**: Church-vs-Lab audit (Tim Urban) — for each load-bearing belief, play the Why? game until you hit the floor. "Because authority said so" = church (faith-based dogma); physics/economic first principle = lab.
 
 **Best for**: First-principles cost audits. Process simplification. Engineering decisions where inherited conventions are slowing things down. Timeline pushback ("3 months → 3 weeks" math). Critique of over-automated systems that should have been simplified first. The algorithm applied to any artifact.
 
@@ -344,4 +348,4 @@ This is load-bearing work. It depends on schema stability (C9-C12 promotion to H
 
 ---
 
-*Maintained by muse/core · last updated 2026-04-17 for v2.5.0-alpha*
+*Maintained by muse/core · last updated 2026-04-17 for v2.6.0-alpha*

@@ -13,6 +13,92 @@ Nothing yet.
 
 ---
 
+## [2.6.0-alpha] — 2026-04-17 — `elon-musk` persona full rebuild (gap-analysis-driven) + README "runs his thinking" tagline
+
+### Why
+
+A user-requested gap analysis on the `elon-musk` persona vs. its archive (`.archives/personas/elon-musk/`) surfaced **6 unused source files** (~10K lines — "How Elon Musk Thinks" article, Joe Rogan #1470 transcript, Nikhil Kamath interview, TED 2017 "future we're building," "How to Train Your Brain" short, expanded Isaacson pages) and **~12 missing cognitive-move concepts** (the named "Idiot Index," "hardcore," "production hell," "surge," Tim Urban's layered thinking-software framework, Musk's "demon mode" shadow, the documented "you've demoralized them" weakness from collaborators, the "what to steal, what to leave" interpretive guidance, MuskSpeak, Asperger's-style-directness origin of voice, etc.). The v2.4.0-alpha release shipped without these.
+
+v2.6.0-alpha rebuilds the persona from the ground up with full archive exploitation, adds two new body sections (Shadow, What-to-steal-what-to-leave), and re-benchmarks. Same 10-persona pack, grade A maintained.
+
+### Added
+
+- **`personas/elon-musk.md` v3.0.0 rebuild** (387 → 469 lines, +80 net)
+
+  **5 signature moves, now with named Musk terminology**:
+  - **First principles decomposition at atomic cost — the Idiot Index** *(framing)* — Isaacson's own coined metric (pp. 3305-3310) for the ratio of finished cost to raw-material floor. Previously referenced but unnamed.
+  - **The algorithm — question, delete, simplify, accelerate, automate** *(test-probe)* — unchanged, still the verbatim Isaacson pp. 284-285 mantra
+  - **Surge the choke point** *(test-probe)* — Isaacson's documented name for the 24/7 physical-presence-at-bottleneck tactic. Previously named "Own the choke point."
+  - **Name the requirement-maker** *(inquiry)* — unchanged
+  - **Physics as the only constraint** *(framing)* — unchanged
+
+  **16 cognitive patterns, now non-colliding meta-habits**:
+  - Spec-review caught the "pattern vs move title collision" issue (same C11 compliance risk that was caught on paul-graham). 5 patterns renamed to describe *instincts behind* the tactics (e.g., "Cost lives at the commodity-price floor" as the meta-habit behind the "Idiot Index" move; "Physical presence at the constraint" behind "Surge"; "No orphan requirements" behind "Name the requirement-maker"; "Order before speed" behind "The algorithm"; "Physics is the only vote that counts" behind "Physics as the only constraint").
+  - **New patterns added**: "Tighter loops, not chaos" (explicit disambiguation of speed from chaos); "Mission is what makes friction survivable" (from How Elon Thinks distillation).
+
+  **New `## Shadow — known limitations of this cognitive frame` body section**:
+  - **Demon mode** (Isaacson p. 207) — acknowledged-by-observers behavioral pattern
+  - **"You've demoralized them. It's Elon's biggest weakness"** (Isaacson p. 3797) — direct collaborator testimony
+  - **Directness without empathy** — explained as Asperger's-style cognitive-communication profile (Isaacson p. 677)
+  - **Misplaced certainty** — the same frame that produces reusable rockets produces timeline-prediction misses
+  - **Chaos masquerading as speed** — the public-persona trap; the documented principle is *tighter loops*, not chaos. Using "Musk = chaos" without the algorithm produces chaos without the speed benefit.
+
+  **New `## What to steal, what to leave` body section** (adapted from *How Elon Musk Thinks* distillation essay):
+  - Steal: question every requirement, compute idiot index, delete-before-optimize, attack the bottleneck physically, stay close to the work, treat feedback as free data
+  - Leave: sleep deprivation, demoralization of teams, demon-mode interpersonal behavior, Twitter-feud habits, timeline-prediction overconfidence
+  - Explicit framing: the goal is the *operating system*, not the operating *style*
+
+  **Voice rules upgraded**:
+  - Added **MuskSpeak** concept (Tim Urban's term) to Tone — describing things exactly as they literally are
+  - Added **Asperger's-style direct communication** Isaacson-sourced note — explains sharp delivery as cognitive-profile, not rudeness strategy
+  - Added **irony-circle humor** (Isaacson) — humor as social signaling
+  - Added banned pattern: "Confuse strategic speed (tighter loops) with reckless chaos — these are not the same thing"
+
+  **Expanded sources** 13 → 18 (added: `how-elon-thinks-2025`, `ted-2017-boring-mars`, `joe-rogan-1470`, `nikhil-kamath-2024`, `train-brain-short`).
+
+  **New tagline `commit` context** — "Just build one, fire it, and learn the limits by breaking it." (Stage 5 imperative, replaces the observational prior candidate after spec-review fix).
+
+  **New Critic frame**: Church-vs-Lab audit (from Tim Urban) — for each load-bearing belief, play the Why? game until you hit the floor. "Because [authority] said so" = church; physics/economic first principle = lab.
+
+  **New benchmark prompt `bp_hardcore_shadow`** — explicitly tests that the persona surfaces its own known failure mode (sending a hardcore email to an already-demoralized team is the documented Musk-failure pattern; the persona should flag this and route to Marcus Aurelius / Seneca / Paul Graham instead).
+
+- **README hero tagline changed** to the "runs his thinking" variant: *"ChatGPT can quote Feynman. Muse runs his thinking on your problem."* with the prior "Ten great mentors. Five minutes each. One decision closer." preserved as subtitle. The new lead differentiates muse directly from generic LLM alternatives via a single load-bearing verb ("runs" — runtime, not imitation).
+
+### Changed
+
+- **`commands/muse:elon-musk.md`** — signature-move listing updated to match v3 (Idiot Index, Surge terminology). Structure + disclaimer unchanged.
+- **`SKILL.md`** — version bump 2.5.0-alpha → 2.6.0-alpha in header + announcement paragraph (elon-musk v3 rebuild + README tagline refresh).
+- **`README.md`** — hero tagline above the fold; version bump 2.5.0-alpha → 2.6.0-alpha; Status block updated with v2.6.0-alpha entry.
+- **`docs/PERSONAS.md`** — version bump; elon-musk section expanded with Idiot Index + Surge + Shadow + What-to-steal references.
+- **`docs/GETTING_STARTED.md`** — version bump.
+
+### Distinctiveness + spec review
+
+Adversarial spec review caught 4 issues on first pass (score 6/10 — blocking):
+1. **5 cognitive-pattern / signature-move title collisions** — same C11 failure mode caught on paul-graham build. Fixed by renaming all 5 patterns to describe the *instinct* behind the tactic.
+2. **Core belief ~130 words** — compressed to 3 sentences with load-bearing content preserved.
+3. **Commit tagline was observational** ("Faster iteration means faster contact with reality") — swapped for imperative ("Just build one, fire it, and learn the limits by breaking it" — Isaacson-sourced).
+4. **Source consistency** — verified post-fix that all inline source IDs resolve in bibliography.
+
+Verification pass: **PASS**.
+
+**Benchmark**: 10-persona pack retains grade A. Blind Turing on prompt u02 (pricing): 10/10 match rate. Judge-subagent specifically noted: *"the v2 additions — specifically the numeric idiot index computation and the ingredients-not-recipe phrasing — are lexically unique to Musk and cannot be confused with any other persona in the pack. The idiot-index move alone made A instantly identifiable — arguably the single sharpest voice fingerprint in the whole pack."*
+
+### Not changed
+
+- Schema unchanged (v2.2.1-alpha). `## Shadow` and `## What to steal, what to leave` are **additive** body sections; they do not violate any v2.2 C1-C12 gate.
+- No changes to the 9 other personas.
+- No changes to meta commands (`/muse:build`, `/muse:update`, `/muse:benchmark`, etc.).
+- Benchmark methodology unchanged; same universal.md prompt set.
+
+### Known limitations
+
+- The v3 Shadow section names the "demon mode" pattern but does not resolve it — an interpretive persona can acknowledge a documented behavioral shadow but cannot neutralize it. Users reaching for elon-musk in emotionally-loaded or morale-critical contexts should re-route to Marcus Aurelius / Seneca / Paul Graham per the expanded Avoid-when list.
+- Isaacson citations use page numbers from the 2023 first edition; later editions may re-paginate.
+- The persona remains a **frozen snapshot as of April 2026**. Musk actively publishes new statements; any contradiction with post-2026-04 material should be resolved in favor of the live source.
+
+---
+
 ## [2.5.0-alpha] — 2026-04-17 — Second starter-pack extension: `paul-graham` interpretive persona + 10-persona benchmark grade A
 
 ### Why

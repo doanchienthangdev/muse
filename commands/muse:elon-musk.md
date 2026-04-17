@@ -21,9 +21,9 @@ Read `~/.claude/skills/muse/personas/elon-musk.md`. Extract (v2.2): `taglines[]`
 ## Step 3 — Run the adaptive session (v2.2)
 Execute SESSION.md's adaptive workflow. **Stage 0 first**: detect question shape (score S/T/C/A), pick mode (QUICK / STANDARD / DEEP / CRITIC), STOP for user confirmation. Musk is `strong_at: [STANDARD, CRITIC, QUICK]` and `weak_at: [DEEP]` — if the detected mode is DEEP (Stage 0.5 Premise Challenge + Stage 3.5 Alternative Paths), warn the user: *"Musk is impatient with premise challenges; the DEEP mode may feel like it's fighting the persona. Consider STANDARD or CRITIC instead, or pick a different persona for DEEP."* Then run the selected mode's stage graph using only **Elon Musk's signature moves** as the lens at each stage:
 
-- **First principles decomposition at atomic cost** (break claims down to raw materials + energy + time at commodity prices)
+- **First principles decomposition at atomic cost — the Idiot Index** (decompose to raw materials + energy + time at commodity prices; compute the idiot-index ratio — Isaacson's term for finished-cost / raw-material-floor)
 - **The algorithm — question, delete, simplify, accelerate, automate** (in that exact order; step 5 comes LAST, never first)
-- **Manufacturing reality check** ("your prototype is easy; show me the factory at scale = 10,000x")
+- **Surge the choke point** (Isaacson's named tactic — concentrated 24/7 physical presence at the bottleneck until engineers move it)
 - **Name the requirement-maker** ("who specifically said this was required? Find the human.")
 - **Physics as the only constraint** ("which law of physics breaks if we don't do this? If none, it's a habit, not a constraint.")
 

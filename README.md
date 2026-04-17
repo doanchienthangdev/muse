@@ -2,7 +2,9 @@
 
 ![Muse — Think with the greats](public/images/home.jpg)
 
-### Ten great mentors. Five minutes each. One decision closer.
+### ChatGPT can quote Feynman. Muse runs his thinking on your problem.
+
+*Ten great mentors. Five minutes each. One decision closer.*
 
 ---
 
@@ -79,7 +81,7 @@ Each session saves a markdown file to `~/.muse/sessions/` (or `~/.muse/chains/`,
 
 ## What gets shipped
 
-**Version 2.5.0-alpha**. ~6,200 lines of content, zero lines of shell tooling.
+**Version 2.6.0-alpha**. ~6,400 lines of content, zero lines of shell tooling.
 
 Muse is a **persona runtime**. It ships with a curated starter pack of personas and a full set of commands to use them, compose them, build new ones, and measure them. The starter pack is not a ceiling — it is a baseline. You can add personas locally via `/muse:build` in ~15 interactive questions, or pull new personas from the community via a future persona catalog (roadmap item — see § Roadmap).
 
@@ -329,7 +331,7 @@ The mode is surfaced to you at Stage 0 via AskUserQuestion. You pick. The sessio
 
 ---
 
-## Commands reference (20 total — v2.5.0-alpha)
+## Commands reference (20 total — v2.6.0-alpha)
 
 Legend for attributes:
 - 💬 **Interactive** — uses AskUserQuestion to stop at decision points
@@ -491,8 +493,8 @@ This is the agentic pattern. Ship markdown, enforce at the content layer, let th
 
 Muse's long-term direction: **a persona runtime + an extensible persona catalog**.
 
-**Shipping today** (v2.5.0-alpha):
-- 20 slash commands, 4 adaptive session modes, 10 starter pack personas
+**Shipping today** (v2.6.0-alpha):
+- 20 slash commands, 4 adaptive session modes, 10 starter pack personas (elon-musk v3 rebuild)
 - `/muse:who` for cold-start triage, `/muse:build` for local authoring
 - `/muse:benchmark` with measurement-backed distinctiveness (grade A)
 - Full multi-persona orchestration (chain, debate, critic, all)
@@ -525,12 +527,15 @@ In the meantime, **share via PR**. If you build a good persona, open a PR to add
 
 ## Status
 
+**v2.6.0-alpha** — `elon-musk` persona full rebuild (gap-analysis-driven). A user-requested audit vs the archive surfaced 6 unused source files and ~12 missing cognitive-move concepts (Idiot Index as Isaacson's named metric, "surge" as Musk's tactical term, the layered Urban software framework, documented "demon mode" shadow, collaborator-acknowledged demoralization weakness, MuskSpeak, Asperger's-style-directness explainer). v3 rebuild integrates all of these, adds two new body sections (`## Shadow — known limitations of this cognitive frame` and `## What to steal, what to leave`), and expands sources 13 → 18. Spec review caught 5 pattern-move title collisions (same C11 issue as paul-graham) + commit-tagline weakness + Core-belief over-length; all 4 issues fixed. Benchmark retains grade A with 10/10 blind Turing match rate — judge specifically noted the "idiot index" terminology as the single sharpest voice fingerprint in the 10-persona pack. README hero tagline changed to *"ChatGPT can quote Feynman. Muse runs his thinking on your problem."* — differentiates muse from generic LLM alternatives via the single load-bearing verb "runs" (runtime, not imitation). 20 slash commands total.
+
 **v2.5.0-alpha** — Second starter-pack extension. `paul-graham` joins the roster as the 10th persona — an interpretive cognitive-tool frame focused on **make something people want** as the foundational reframe, **naming previously-unnamed patterns** (do things that don't scale, ramen profitable, playing house, top idea in your mind, default alive/dead, the right kind of stubborn), **manual user recruitment** (Collison-installation style), the **shower test** for attention-slot diagnostics, and **staying upwind** over planning when the territory is unknown. Grade A maintained on 10-persona benchmark. 20 slash commands total. Distilled from paulgraham.com (12 verbatim essays), Stanford CS183B 2014, Conversations with Tyler 2023, three more long-form transcripts, and three reference books.
 
 **v2.4.0-alpha** — First extension of the starter pack beyond the historical 8. `elon-musk` joins the roster as the 9th persona — an interpretive cognitive-tool frame focused on first-principles cost decomposition, the 5-step algorithm (question → delete → simplify → accelerate → automate, in that order), manufacturing reality checks, and physics-as-the-only-constraint reasoning. Grade A maintained on 9-persona benchmark. The Elon Musk persona carries the most extensive interpretive disclaimer in the repo — use as a cognitive-tool lens only, not as a representation of Elon Musk himself. 19 slash commands total.
 
 Version history:
-- **v2.5.0-alpha** (this release): Second starter-pack extension. `personas/paul-graham.md` + `commands/muse:paul-graham.md`. Benchmark grade A maintained with 10 personas. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md, ADVISORY_COUNCIL.md. Second repo-shipped interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards enforced by `/muse:build` C5 check.
+- **v2.6.0-alpha** (this release): `elon-musk` persona full rebuild (v3.0.0). Gap-analysis-driven — 6 unused archive sources pulled in, ~12 missing concepts integrated, 2 new body sections (Shadow + What-to-steal-what-to-leave). Spec-review 6/10 → PASS after 4 fixes. Benchmark grade A maintained (10/10 blind Turing). README hero tagline refreshed.
+- **v2.5.0-alpha**: Second starter-pack extension. `personas/paul-graham.md` + `commands/muse:paul-graham.md`. Benchmark grade A maintained with 10 personas. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md, ADVISORY_COUNCIL.md. Second repo-shipped interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards enforced by `/muse:build` C5 check.
 - **v2.4.0-alpha**: First starter-pack extension. `personas/elon-musk.md` + `commands/muse:elon-musk.md`. Benchmark grade A maintained with 9 personas. `install.sh` persona count made dynamic. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md. First repo-ship of an interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards all enforced by `/muse:build` C5 check.
 - **v2.3.2-alpha**: Docs-only refresh. README + PERSONAS.md + GETTING_STARTED.md + CONTRIBUTING.md + ARCHITECTURE.md + SESSIONS.md. Reframes muse as persona runtime + extensible catalog.
 - **v2.3.1-alpha**: `/muse:who` triage command with 0-80 scoring rubric, top 5 pick list, chain/debate/council suggestions, inline handoff. 1 new command, ~400 lines. Zero persona edits.
