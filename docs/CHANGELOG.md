@@ -13,6 +13,63 @@ Nothing yet.
 
 ---
 
+## [2.9.0-alpha] — 2026-04-18 — `elon-musk` persona v3.1 — Vance EPUB mining + ghost-citation fix
+
+### Why
+
+Same user audit that caught the Kotler books gap caught a sibling issue on `elon-musk`: asked whether the persona actually mined the books. Honest audit:
+
+- **Isaacson 2023 (28,573-line markdown)**: YES, fully primary-source-mined from the start. The v3.0.0 rebuild in v2.6.0-alpha was real, not a summary-shortcut. Unlike the Kotler v1.0 situation, Isaacson was always the load-bearing primary source.
+- **Vance 2015 (EPUB in archive)**: NO. The EPUB sat in `.archives/personas/elon-musk/books/` unread. Cited as `vance-2015` in persona sources but never actually extracted or mined.
+- **Higgins *Power Play* (2021) and Berger *Liftoff* (2021)**: NOT in archive at all. Cited as `higgins-2021` and `berger-2021` in v3.0.0 sources — **ghost citations**. Honest mistake in the v3 rebuild; fixed in v3.1.
+
+Unlike the Kotler v1 → v2 jump (full rebuild from 9 unread PDFs), this is a v3.0 → v3.1 minor patch: the primary source (Isaacson) was always real; this adds Vance's distinctive material and removes the ghost citations.
+
+### Added — Persona v3.1.0
+
+- **Vance EPUB extraction**: Python-zipfile + HTML-stripper pipeline (pandoc and ebook-convert unavailable). 2,986 lines of clean text → `.archives/personas/elon-musk/books/extracted/vance-elon-musk-2015.txt`.
+
+- **Vance mining via adversarial subagent**: scoped to material Isaacson under-covers (Zip2 era, X.com/PayPal, Russia trips 2001-2002, Kwajalein Falcon 1 era, Eberhard-Tarpenning Tesla conflict, Justine Musk / Talulah Riley direct interviews).
+
+- **Persona line count: 470 → 517 (+10%)**.
+
+- **2 new Vance-anchored taglines** (contexts 6 → 8):
+  - `critique`: *"I think we can build this rocket ourselves."* — Musk's documented Moscow-flight-back line (Vance ch 6) after Russian ICBM refusal. The literal cognitive origin of SpaceX as a cost-decomposition spreadsheet produced at 35,000 feet.
+  - `closing`: *"Money is low bandwidth."* — Stanford 2003 (Vance ch 5). The first-principles decomposition of finance ("it's really just an entry in a database") pre-dating the idiot-index formalization by a decade.
+
+- **6 new `## On analogous problems` entries, all Vance-sourced**:
+  - **Bank of Nova Scotia Brady-bond arbitrage** (early 1990s) — the earliest documented idiot-index move. $10B at 25¢ backed by US Treasury at 50¢; incumbents declined to act. The reflex that became SpaceX, operational 25 years earlier.
+  - **The Moscow spreadsheet** (February 2002) — the literal artifact of first-principles cost decomposition becoming a company.
+  - **The $120K actuator → $3,900** (SpaceX 2004) — cleaner and earlier-dated than the $250K valve case Isaacson makes canonical. "No more complicated than a garage door opener. Your budget is $5,000."
+  - **PayPal internal-transactions** (1999-2002) — idiot-indexing payments 13 years before the term existed in public record.
+  - **Tom Mueller, engine-in-the-garage hire** (January 2002) — SpaceX's first hiring decision as cost-interrogation. *"How much could you really do it for?"*
+  - **SpaceX IPO-refusal email** (June 2013) — mission-timescale exceeds market-timescale as a documented operating principle.
+
+- **3 new Shadow entries**, Vance-corroborated:
+  - **Collapse-of-domains** — engineering firing-logic applied to personal partners. Justine Musk's published *"If you were my employee, I would fire you"* and the divorce-by-intermediary pattern (ch 5, ch 8).
+  - **The post-victory berating** (December 2010) — 9 days after SpaceX Dragon-to-ISS success, a 90-minute dressing-down of execs about a *different* rocket's truss while their wives waited in party attire three cubes over. Victories do not reset the pressure.
+  - **The childbirth email** — documented textual artifact: *"That is no excuse. I am extremely disappointed. You need to figure out where your priorities are. We're changing the world and changing history, and you either commit or you don't."* The demoralization pattern rendered as text.
+
+### Fixed — Ghost citations
+
+- Removed `higgins-2021` (Tim Higgins, *Power Play*) and `berger-2021` (Eric Berger, *Liftoff*) from the Sources section. Neither file is in `.archives/personas/elon-musk/`, neither was mined. Both were cited in v3.0.0 as if they had been consulted. This is an honesty fix — the sources section should reflect what was actually extracted, not what would strengthen the persona if added. Added a note at the former-location explaining what to do to actually add them: drop EPUBs into the archive, re-run the mining pipeline documented in CHANGELOG v2.8.0-alpha.
+
+### Expanded — Vance source entry
+
+Previous `vance-2015` source entry was one line (*"The foundational biography."*). Now includes ISBN, line count, chapter-by-chapter coverage notes (Zip2 ch 4; X.com/PayPal Appendix B; Brady bonds ch 5; Russia trips ch 6; Kwajalein ch 7-8; Tesla origin conflict ch 7-8; Mueller ch 6; $120K actuator ch 9; Justine/Riley interviews; IPO email Appendix 3).
+
+### Methodology note
+
+Same gap-analysis-rebuild pattern as the Kotler v2.0 mine in v2.8.0-alpha. User-surfaced audit caught the gap, Python EPUB-extraction + single mining subagent, targeted Edit-based integration rather than full rewrite (since Isaacson was already the primary source — Vance is additive, not foundational). Total cycle: ~35 min.
+
+### Benchmark
+
+- v3.1 maintains C1-C12 compliance
+- Grade A maintained on 11-persona pack
+- Voice fingerprints now include verbatim Vance phrasings the v3.0 rebuild missed: *"Young boy. No."* (the Russian rejection memory-groove), the loud involuntary laugh that carries through the floor, pricing-to-the-million as default numeric grain, *"fuck it, let's [extreme thing]"* decision-compression
+
+---
+
 ## [2.8.0-alpha] — 2026-04-18 — `philip-kotler` persona v2.0 rebuild (gap-analysis-driven, primary-source mining)
 
 ### Why

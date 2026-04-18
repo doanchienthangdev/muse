@@ -1,4 +1,4 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.8.0-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.9.0-alpha)
 
 Muse is a persona runtime. It ships with a curated **starter pack of 11 core personas** (7 historical/public-domain + 4 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` was added in v2.5.0-alpha as the second; `philip-kotler` was added in v2.7.0-alpha as the third.
 
@@ -33,7 +33,7 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (11 personas, v2.8.0-alpha)
+## The starter pack (11 personas, v2.9.0-alpha)
 
 All 11 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
@@ -382,4 +382,4 @@ This is load-bearing work. It depends on schema stability (C9-C12 promotion to H
 
 ---
 
-*Maintained by muse/core · last updated 2026-04-18 for v2.8.0-alpha (philip-kotler v2.0 PDF-mining rebuild)*
+*Maintained by muse/core · last updated 2026-04-18 for v2.9.0-alpha (philip-kotler v2.0 PDF-mining rebuild)*

@@ -1,4 +1,4 @@
-# Getting Started with Muse (v2.8.0-alpha)
+# Getting Started with Muse (v2.9.0-alpha)
 
 A 5-minute walkthrough to your first productive session, including the cold-start entry point (`/muse:who`) and the 21 slash commands available.
 
@@ -250,4 +250,4 @@ See [`BENCHMARKS.md`](BENCHMARKS.md) for the full methodology.
 
 ---
 
-*v2.8.0-alpha · 21 slash commands · 11 starter-pack personas · extensible runtime*
+*v2.9.0-alpha · 21 slash commands · 11 starter-pack personas · extensible runtime*
