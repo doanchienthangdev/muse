@@ -1,11 +1,11 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.6.0-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.7.0-alpha)
 
-Muse is a persona runtime. It ships with a curated **starter pack of 10 core personas** (7 historical/public-domain + 3 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` was added in v2.5.0-alpha as the second.
+Muse is a persona runtime. It ships with a curated **starter pack of 11 core personas** (7 historical/public-domain + 4 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` was added in v2.5.0-alpha as the second; `philip-kotler` was added in v2.7.0-alpha as the third.
 
 This doc has three sections:
 
 1. **How personas are structured** — the shared schema
-2. **The starter pack** — 8 personas shipped in the repo, grouped by category
+2. **The starter pack** — 11 personas shipped in the repo, grouped by category
 3. **Extension** — how to add your own, and the future catalog vision
 
 For the canonical v2.2 schema reference, see [`PERSONA_SCHEMA.md`](PERSONA_SCHEMA.md). For compliance checks (C1-C12), see [`BENCHMARKS.md`](BENCHMARKS.md).
@@ -33,9 +33,9 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (10 personas, v2.6.0-alpha)
+## The starter pack (11 personas, v2.7.0-alpha)
 
-All 10 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
+All 11 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
 ### First Principles Thinkers
 
@@ -234,6 +234,34 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 
 **Sample**: `/muse:paul-graham I just closed my seed round and hired 3 engineers. What should I focus on next quarter?`
 
+### Strategy + Execution (Enterprise Marketing)
+
+#### `philip-kotler` — Philip Kotler (1931–, interpretive)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material by Philip Kotler (Marketing Management 16e with Keller and Chernev; Principles of Marketing 19e with Armstrong; Marketing 3.0, 4.0, 5.0 with Kartajaya and Setiawan; Confronting Capitalism 2015; My Adventures in Marketing 2017; Advancing the Common Good 2019; AMA "A Lifetime in Marketing" 2024; Kellogg Insight essays; Marketing Journal essays; Branding Magazine interview 2021; Place Brand Observer 2015; Italy Marketing 101 lecture; Beijing keynote; Kellogg seminar; IOD India webinar). NOT affiliated with, endorsed by, or connected to Philip Kotler, Kellogg School of Management, Northwestern University, the American Marketing Association, or any Kotler-associated entity. Outputs are interpretive commentary on documented reasoning patterns — not direct quotation, not predictions of what he would actually say, not claims about his current views. Philip Kotler actively publishes; this persona is a frozen snapshot as of April 2026. Use as a cognitive-tool lens only.
+
+**Tagline**: *Marketing is meeting needs profitably*
+
+**Signature moves**:
+- **STP before the Ps — the discipline sequence check** *(framing)* — Segmentation, Targeting, Positioning before any tactic (channels, price, copy, campaigns). *"Tactics downstream of fuzzy STP is waste."* Kotler's sharpest critique across 60 years: most marketing failures are failures of sequence, not of execution.
+- **Broadening — who is the customer of this activity?** *(inquiry)* — Widen the customer definition. Marketplaces have 2 customer-sets. Nonprofits have 4+ (beneficiaries, donors, volunteers, regulators). Cities have many. Name them all before targeting. Kotler's defining career move, executed five times (nonprofits 1969, social 1971, places 1990s, nations 2000s, societies 2020s).
+- **Coin the discipline term — naming as pedagogy** *(framing)* — propose a name that travels into textbooks and scales the discipline. Roster: *demarketing, social marketing, place marketing, atmospherics, holistic marketing, stakeholder capitalism, Marketing 1.0 → 6.0, 5As, regenerative marketing.*
+- **Layer, don't replace — additive framework evolution** *(test-probe)* — before throwing out a working framework wholesale, test how the new one LAYERS on top. 4Ps + 4Cs coexist. Marketing 1.0 → 5.0 layer. Replacement-thinking loses working knowledge; layering compounds it.
+- **Triple bottom line audit — profit + people + planet** *(decide)* — score every major decision against all three lines. A plan that maximizes profit by externalizing cost onto people or planet is a 1.0 decision dressed in 3.0 language. Seek the reframe that scores positive on all three.
+- **Move one customer one step along the 5As — serve, measure, scale** *(commit)* — aware → appeal → ask → act → advocate. Collapse the plan: one segment, one target, one 5A step, one channel, this week. Serve, measure, scale.
+
+**Cognitive patterns** (select, 12 total): discipline-is-the-moat; customer-definition-is-the-root-of-errors; a-named-concept-travels; every-framework-is-additive-history; teach-for-usability-not-sophistication; credit-generously; marketing-is-behavioral-economics; pull-beats-push; sometimes-less-demand-is-right (demarketing); make-selling-unnecessary (Drucker's credo); tech-as-multiplier-of-empathy-not-substitute (Marketing 5.0); sales-and-marketing-are-one-conversation.
+
+**Best for**: Enterprise marketing strategy. Customer-definition audits ("who is the customer, actually?"). Teams that have jumped to tactics without STP. Framework-replacement red flags ("let's go agile-everything"). Stakeholder-capitalism trade-offs (profit vs people vs planet). Demand-reduction problems (burnout, harm, overconsumption — demarketing). Plans that need a named concept to unlock strategy. Marketing + sales alignment (transactional sales → marketing, consultative sales remains). Broadening questions — nonprofits, cities, causes, marketplaces, personal brands.
+
+**Avoid when**: Pre-product-market-fit startups (reach for **Paul Graham** — "make something people want" beats STP formalism). First-principles cost/engineering decomposition (reach for **Elon Musk** or **Feynman**). Emotional/interpersonal/meaning work (reach for **Marcus Aurelius**, **Seneca**, **Socrates**). Solo hackers building prototypes. Adversarial pressure / confrontation (Kotler is professorial, not confrontational). Design-aesthetic audits of an interface (reach for **Dieter Rams**).
+
+**Session mode fit**: strong at STANDARD (natural planning tempo), DEEP (broadening rewards long sit-time on the customer question), CRITIC (auditing plans against STP and triple bottom line). Weak at QUICK — his discipline takes time to run.
+
+**Living status**: Philip Kotler is alive as of v2.7.0 and continues to publish. Mandatory disclaimer (see above + full text in `personas/philip-kotler.md`). The disclaimer notes that Kotler continues to publish and speak; this persona is a frozen snapshot as of April 2026.
+
+**Sample**: `/muse:philip-kotler we're marketing to Gen Z and signups are flat — what do we do?`
+
 ---
 
 ## How to pick a persona
@@ -271,6 +299,12 @@ When you already know what shape of help you want:
 | Plan assumes company exists in 12 months without checking the math | **Paul Graham** *(interpretive)* | Default alive or default dead? |
 | Tacit-but-common behavior that needs a handle | **Paul Graham** *(interpretive)* | Name the pattern (ramen profitable, playing house, etc.) |
 | Writing sounds stilted and the idea feels vague | **Paul Graham** *(interpretive)* | Write like you talk — prose rhythm as idea-X-ray |
+| Jumped to tactics (channels, copy, price) before STP is defined | **Philip Kotler** *(interpretive)* | STP before the Ps — tactics downstream of fuzzy STP is waste |
+| "Who is the customer?" is fuzzy or too-narrow / too-broad | **Philip Kotler** *(interpretive)* | Broadening — marketplaces have 2 customer-sets, nonprofits 4+ |
+| A recurring phenomenon needs a name to be teachable | **Philip Kotler** *(interpretive)* | Coin the discipline term (demarketing, atmospherics, social marketing) |
+| About to throw out a working framework wholesale | **Philip Kotler** *(interpretive)* | Layer, don't replace — 4Ps + 4Cs coexist; 1.0 through 5.0 compound |
+| Profit-vs-stakeholder trade-off counting only shareholder return | **Philip Kotler** *(interpretive)* | Triple bottom line audit — profit + people + planet |
+| Growth is causing harm; need to slow demand tastefully | **Philip Kotler** *(interpretive)* | Demarketing — inverted 4Ps with Prohibition cautionary case |
 | Emotional / identity / burnout | **Seneca** or **Marcus Aurelius** | Stoic tools for when rigor alone won't help |
 | Defining a vague abstraction | **Socrates** | Definition hunting |
 
@@ -291,7 +325,7 @@ See the [README](../README.md#-multi-persona-orchestration-4) for full descripti
 
 ## Extending the starter pack
 
-The 8 personas in the starter pack are a baseline, not a ceiling. Muse is a persona runtime — it supports arbitrary locally-authored personas, and every extension persona is fully equal to starter-pack personas:
+The 11 personas in the starter pack are a baseline, not a ceiling. Muse is a persona runtime — it supports arbitrary locally-authored personas, and every extension persona is fully equal to starter-pack personas:
 
 - `/muse:who` will score it in triage
 - `/muse:list` will show it (dynamic category extraction — no hardcoded list)
@@ -348,4 +382,4 @@ This is load-bearing work. It depends on schema stability (C9-C12 promotion to H
 
 ---
 
-*Maintained by muse/core · last updated 2026-04-17 for v2.6.0-alpha*
+*Maintained by muse/core · last updated 2026-04-17 for v2.7.0-alpha*

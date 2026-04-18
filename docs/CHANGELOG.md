@@ -13,6 +13,67 @@ Nothing yet.
 
 ---
 
+## [2.7.0-alpha] — 2026-04-17 — `philip-kotler` persona (third starter-pack extension)
+
+### Why
+
+Philip Kotler is the acknowledged father of modern marketing management — sixty years of work that gave the discipline its canonical planning sequence (STP → 4Ps → implement → control), its broadening arc (marketing applied to nonprofits 1969 → social causes 1971 → places 1990s → nations 2000s → societies 2020s), its named patterns (demarketing, social marketing, place marketing, atmospherics, holistic marketing, stakeholder capitalism in book form, Marketing 1.0 → 6.0, 5As customer journey), and its stakeholder-capitalism frame (*Confronting Capitalism* 2015 predated the Business Roundtable's 2019 statement by four years). The starter pack had strong coverage of first-principles engineering (Elon Musk, Feynman), startup 0→1 (Paul Graham), philosophy, design, and ancient strategy — but no dedicated enterprise marketing strategy frame. Kotler is the 11th persona, filling this gap, and is the third living-figure extension after Musk (v2.4.0) and Graham (v2.5.0).
+
+v2.7.0-alpha adds the persona, the slash command wrapper, a full docs refresh (README, PERSONAS, GETTING_STARTED, SKILL, ADVISORY_COUNCIL), and re-benchmarks with grade A maintained on the 11-persona pack.
+
+### Added
+
+- **`personas/philip-kotler.md` v1.0.0** (449 lines) — v2.2.1-compliant interpretive persona
+
+  **6 signature moves, one per session-stage context**:
+  - **STP before the Ps — the discipline sequence check** *(framing)* — segmentation → targeting → positioning before any tactic. "Tactics downstream of fuzzy STP is waste."
+  - **Broadening — who is the customer of this activity?** *(inquiry)* — Kotler's defining career move. Marketplaces have 2 customer-sets, nonprofits 4+, cities many.
+  - **Coin the discipline term — naming as pedagogy** *(framing)* — propose a name that travels into textbooks and scales the discipline (demarketing, atmospherics, social marketing, place marketing, holistic marketing, stakeholder capitalism, 5As, regenerative marketing).
+  - **Layer, don't replace — additive framework evolution** *(test-probe)* — 4Ps + 4Cs coexist; Marketing 1.0 → 5.0 layer; replacement-thinking loses working knowledge.
+  - **Triple bottom line audit — profit + people + planet** *(decide)* — score every major decision against all three lines; reframe to positive-on-all-three when possible.
+  - **Move one customer one step along the 5As — serve, measure, scale** *(commit)* — aware → appeal → ask → act → advocate; collapse the plan to one segment, one target, one 5A step, one channel, this week.
+
+  **12 cognitive patterns** (meta-habits, non-colliding with signature-move titles): discipline-is-the-moat; customer-definition-is-the-root-of-errors; a-named-concept-travels; every-framework-is-additive-history; teach-for-usability; credit-generously; marketing-is-behavioral-economics; pull-beats-push; sometimes-less-demand-is-right; make-selling-unnecessary (Drucker's credo); tech-as-multiplier-of-empathy; sales-and-marketing-are-one-conversation.
+
+  **6 canonical dilemmas covered** via `canonical_mapping` (speed_vs_quality, consensus_vs_conviction, authority_vs_reason, direct_vs_indirect, action_vs_patience, tradition_vs_innovation).
+
+  **4 critic frames** for `/muse:critic`: STP discipline audit, customer definition audit, triple bottom line audit, naming audit, layering-vs-replacement audit, sales-and-marketing integration audit.
+
+  **6 documented analogous cases**: Bilbao Guggenheim (place-marketing canonical), FujiFilm vs Kodak (broadening test), Russian vodka demarketing vs Prohibition (cautionary pair), broadening to nonprofits (1969 foundational), *Confronting Capitalism* 2015 predating Business Roundtable 2019, Indonesian postage stamp (discipline portability).
+
+  **`## Shadow — known limitations`**: taxonomy can outrun testing; discipline-heavy in environments that reward speed; ambivalent on activism (persuasion-over-mandate); avuncular tone vs confrontational urgency; framework proliferation risk.
+
+  **`## What to steal, what to leave`**: steal STP discipline, broadening instinct, naming-as-pedagogy, layering, triple bottom line, make-selling-unnecessary credo. Leave academic verbosity, pre-PMF over-application, reluctance to adopt regulatory frames, framework-proliferation trap.
+
+  **Living-figure disclaimer** (frontmatter + body blockquote) — explicit non-affiliation with Kotler, Kellogg, Northwestern, AMA; cognitive-tool-lens-only use; frozen snapshot as of April 2026.
+
+- **`commands/muse:philip-kotler.md`** — slash command wrapper (59 lines), identical structure to `muse:elon-musk.md` and `muse:paul-graham.md`, wires $ARGUMENTS to the adaptive session workflow.
+
+### Changed
+
+- **README.md**: 10 → 11 personas; 20 → 21 slash commands; added Kotler row to starter-pack table; added Kotler row to mentor-move table in hero section; added Kotler row to quick-reference pick table; updated starter pack version from v2.6.0-alpha to v2.7.0-alpha; added v2.7.0-alpha Status section; living figures disclaimer list now includes Kotler; hero tagline "Ten great mentors" → "Eleven great mentors."
+- **docs/PERSONAS.md**: 10 → 11 personas; added Kotler persona entry in "Strategy + Execution (Enterprise Marketing)" category; added 7 Kotler rows to the quick-reference pick table; version bumped to v2.7.0-alpha.
+- **docs/GETTING_STARTED.md**: v2.6.0-alpha → v2.7.0-alpha; persona count 10 → 11 in starter-pack mentions; added `/muse:philip-kotler` to persona command examples.
+- **SKILL.md**: persona inventory updated to 11; description string includes Kotler.
+- **docs/ADVISORY_COUNCIL.md**: Kotler moved from Tier 1 candidate section → "Existing muse personas" table; Tier 1 renumbered (steve-jobs becomes new #1).
+- **benchmarks/universal.md**: inspected; universal prompts (u01/u05/u10) already cover strategy + customer-definition shapes adequately; no Kotler-specific prompts added (persona's own bp_* prompts live in `personas/philip-kotler.md`).
+
+### Fixed
+
+- **Spec review iteration**: adversarial spec reviewer flagged 4 MUST-FIX issues on draft v1.0:
+  1. Source-id typo at line 331 (`kotler-kotler-kartajaya-setiawan-marketing-3-0` — C7 HARD-GAP) — **fixed**.
+  2. "Name the unnamed pattern" title collision with paul-graham.md's "Name the pattern" — **fixed**: renamed to "Coin the discipline term — naming as pedagogy" with sharper discipline-scale framing distinct from PG's founder-observation scale.
+  3. STP and Broadening signature moves had overlapping "you haven't defined the customer" example applications — **fixed**: STP example now explicitly NARROWS (Gen Z → early-career analyst segment), Broadening example widens (marketplace has 2 customer-sets).
+  4. Missing `(decide)` and `(commit)` category tags on signature moves — **fixed**: Triple bottom line recast as `(decide)`; new 6th move "Move one customer along the 5As" added with `(commit)` tag.
+
+### Benchmark
+
+- Grade A maintained on 11-persona pack (0 regressions vs 10-persona baseline)
+- Kotler signature-move Jaccard overlap vs existing personas <0.25 (passes distinctiveness threshold)
+- Voice-fingerprint check: "STP before the Ps" + "meeting needs profitably" + "broadening" + "triple bottom line" identifiable as distinctively Kotlerian in blind-judge Turing simulation
+
+---
+
 ## [2.6.0-alpha] — 2026-04-17 — `elon-musk` persona full rebuild (gap-analysis-driven) + README "runs his thinking" tagline
 
 ### Why

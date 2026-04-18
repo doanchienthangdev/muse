@@ -6,7 +6,7 @@
 
 ---
 
-## Existing muse personas (10 — already built)
+## Existing muse personas (11 — already built)
 
 | ID | Name | Domain | Use for Ritsu |
 |---|---|---|---|
@@ -20,12 +20,13 @@
 | `dieter-rams` | Dieter Rams *(interpretive)* | design, systems | UI/UX review, product simplification, feature cull |
 | `elon-musk` | Elon Musk *(interpretive)* | first-principles, execution | Process optimization, cost decomposition, timeline compression |
 | `paul-graham` | Paul Graham *(interpretive)* | strategy, execution, first-principles, philosophy | Startup direction, 0→1 decisions, playing-house diagnostic, user-conversation inquiry, writing-as-thinking |
+| `philip-kotler` | Philip Kotler *(interpretive)* | strategy, execution, first-principles, philosophy | Enterprise marketing strategy, STP-before-Ps discipline, customer-definition audits, broadening (who is the customer?), naming-as-pedagogy (demarketing, atmospherics, social marketing), layered framework evolution, triple bottom line (profit + people + planet), 5As customer journey |
 
 ---
 
 ## Tier 1 — Build first (highest impact for startup founder)
 
-> **Status note**: `paul-graham` was **built and shipped** in v2.5.0-alpha (2026-04-17). It was formerly #1 in this tier; the remaining Tier 1 entries have been renumbered. See `personas/paul-graham.md` for the full spec and the "Existing muse personas" table above.
+> **Status note**: `paul-graham` shipped in v2.5.0-alpha (2026-04-17). `philip-kotler` shipped in v2.7.0-alpha (2026-04-17). Both were formerly Tier 1 candidates; remaining Tier 1 entries have been renumbered. See `personas/paul-graham.md` and `personas/philip-kotler.md` for the full specs, and the "Existing muse personas" table above for the full roster.
 
 ### 1. `steve-jobs` — Product vision + taste + simplicity
 
@@ -249,9 +250,13 @@
 
 ---
 
-### 8. `philip-kotler` — Strategic marketing architecture + 4Ps + STP
+### 8. `philip-kotler` — Strategic marketing architecture + 4Ps + STP ✅ BUILT in v2.7.0-alpha
 
-**Tagline candidate**: "Marketing is not about selling what you make; it's about making what will sell."
+> **Shipped 2026-04-17** as the third starter-pack extension. See `personas/philip-kotler.md` for the full built spec (449 lines, 6 signature moves, 12 cognitive patterns, 6 canonical dilemmas, 4 critic frames, 6 analogous cases, Shadow + What-to-steal sections). The draft below is retained as the pre-build candidate notes.
+
+**Tagline candidate (pre-build)**: "Marketing is not about selling what you make; it's about making what will sell."
+
+**Final shipped tagline**: *Marketing is meeting needs profitably*
 
 **Distinctive cognitive moves**:
 - **The 4Ps (marketing mix)** *(framing)* — **Product, Price, Place, Promotion**. Every marketing decision decomposes into these four levers. Kotler's contribution: making the 4Ps the default skeleton of every marketing plan, globally, since the 1960s. Extended to **7Ps** for services (adding People, Process, Physical evidence). If a marketing conversation skips any P, the plan has a hole.

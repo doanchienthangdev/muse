@@ -26,3 +26,4 @@ spike-key-*.yaml
 spike-results-*.jsonl
 spike-decision-*.md
 !spike-batch-example.md
+.gstack/
