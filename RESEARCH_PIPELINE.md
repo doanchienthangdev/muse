@@ -189,19 +189,51 @@ Step 2A — Glob
   Cap: 100 files per bucket. If >100, process first 100 by modification time
   (newest first), add skipped ones to files_skipped[] with reason "cap:>100".
 
-Step 2B — Per-file read, format-aware
+Step 2B — Per-file read, format-aware + granularity-aware (v2.13 UPDATED)
   For each file in file list:
 
     Size check: if >50MB OR has null byte in first 1KB, skip and record:
       files_skipped[] += { path, reason: "too-large" | "binary-marker" }
 
-    Format dispatch:
+    **Granularity heuristic (v2.13.0-alpha NEW)**: Before reading a text file,
+    check whether it is a single-essay file or a concatenated-multi-document
+    collection (e.g. a year-archive of daily blog posts):
+      - Count markdown `##` headings and `#` top-level headings via grep.
+      - MULTI-DOCUMENT trigger (any one condition sufficient):
+          a) heading_count > 30 (many distinct posts regardless of size)
+          b) file_size > 500KB AND heading_count > 10 (large file with
+             moderate structure — typical year-archive)
+          c) file_size > 100KB AND heading_count > 20 (medium file with
+             many headings — a mid-year selection)
+      - If MULTI-DOCUMENT → use Stratified Sampling (Step 2B-strat).
+      - Otherwise → treat as SINGLE-DOCUMENT → use direct full-read or
+        chunk-read per format dispatch below.
+
+    Stratified Sampling (Step 2B-strat, v2.13.0-alpha NEW):
+      For a multi-document file (e.g., seth-godin/articles/2007.md with ~570
+      daily posts concatenated), do NOT read end-to-end. Sample across the
+      file to get diversity, not depth-on-one-essay:
+        1. Read opening 1500-2500 lines (first ~100 posts, sets the year's tone)
+        2. Read middle 1500-2000 lines from roughly the midpoint of the file
+           (seasonal / mid-year register)
+        3. Read closing 1500-2000 lines (year-end reflection posts, which often
+           summarize the year's themes)
+        4. Optional deep-dive: if a known canonical post is in this file (e.g.,
+           "Sheepwalking" in 2007.md), find its line range via grep and read
+           that specific section in full.
+      Total budget per multi-document file: ~8000 lines (~500KB of text).
+      Mark findings with chunk_id containing the line-range read.
+
+    Format dispatch (SINGLE-DOCUMENT files):
       .md / .txt / .srt / .vtt / .json → Read tool, full file (unless >5MB;
         if 5-50MB, read in 2000-line chunks via offset/limit, concatenate)
       .pdf → skim-then-deepen strategy (Step 2C)
 
     Sanitize the result per rules above.
-    Extract findings (Step 2D).
+    Extract findings (Step 2D). For stratified-sampled files, extract at
+    POST-level granularity — each finding should cite the specific post title
+    (usually the `## <title>` heading nearest the quote), not just the year-
+    archive file.
 
 Step 2C — PDF skim-then-deepen strategy
   For each .pdf file:
@@ -540,6 +572,6 @@ See `tests/README.md` for how to run.
 
 ## Versioning note
 
-This file is introduced in v2.10.0-alpha. `/muse:build` and `/muse:update` versions are bumped to v2.3 when they adopt this pipeline. v2.2 personas remain fully compatible — nothing in this pipeline changes the output schema; it changes only how the input (source folder) is read.
+This file is introduced in v2.13.0-alpha. `/muse:build` and `/muse:update` versions are bumped to v2.3 when they adopt this pipeline. v2.2 personas remain fully compatible — nothing in this pipeline changes the output schema; it changes only how the input (source folder) is read.
 
 If a user is on an old agent runtime that cannot dispatch subagents, both skills fall back automatically (see "Fallback" above). No breaking change.

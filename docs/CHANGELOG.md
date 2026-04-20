@@ -13,6 +13,66 @@ Nothing yet.
 
 ---
 
+## [2.13.0-alpha] — 2026-04-21 — "Gate the drafter" — synthesis-plan + save-time benchmark + year-archive heuristic
+
+### Why
+
+Three consecutive major persona rebuilds (elon-musk v3.0 → v3.1, philip-kotler v1 → v2, seth-godin v1 → v2) all followed the same pattern: pipeline ran, all automated gates passed, persona shipped, user manual audit caught fundamental gaps, rebuild required.
+
+Root cause from `/plan-ceo-review` on 2026-04-21: every gate in the system (C1-C12, spec review, dry-run, ghost-citation, triple-verification) tests properties *inside* the drafted persona. Zero gates tested the *relationship between* pipeline output and the drafted persona. A drafter could receive 100+ findings and use 20% of them, and all gates still pass.
+
+This release adds the producer-consumer contract that was missing.
+
+### Added
+
+- **Step 3.5 Synthesis Plan + Audit** (MANDATORY, v2.13 NEW) in `commands/muse:build.md` — the load-bearing gate. Drafter produces a coverage matrix BEFORE interactive brainstorm: `slot → candidate_name → primary_source → bucket → era → confidence → cross_refs`. Five deterministic validator checks (coverage ratio, bucket balance, no hallucinations, cross-bucket balance per move, era coverage). Optional `--deep-validate` dispatches an Agent subagent for judgment questions (are these the highest-confidence candidates? is the plan coherent?). Blocks Step 4 until plan passes.
+- **Inline ghost-citation during drafting** (Step 4 sub-step 3.1, v2.13 NEW) — ghost-citation check fires per-move as the drafter composes, not post-hoc at Step 5.95. Prevents wasted interactive-brainstorm cycles on fabricated quotes.
+- **Inline incremental distinctiveness** (Step 4 sub-step 3.2, v2.13 NEW) — Jaccard overlap vs all shipped personas runs per-move during drafting. Catches collisions early instead of at Step 5.3 post-draft.
+- **Inline balanced-provenance** (Step 4 sub-step 3.3, v2.13 NEW) — every signature_move must cite cross-bucket refs when the corpus has ≥2 buckets with findings. Sparse-corpus exception: warn-not-block.
+- **Step 5.95b Save-gate benchmark + balanced-provenance re-check** (MANDATORY, v2.13 NEW) — pairwise Jaccard collision check against all shipped personas (move vs move, pattern vs pattern, tagline vs tagline) with threshold 0.7 for same-category, 0.8 for cross-category. Balanced-provenance re-verified against Synthesis Plan requirements. Blocks Step 7 atomic write on failure. Analytics logged to `~/.muse/analytics/save-gate.jsonl`.
+- **Year-archive granularity heuristic** in `RESEARCH_PIPELINE.md` Step 2B (v2.13 NEW) — detects multi-document files via heading count + file size OR-logic: `heading_count > 30` OR `file_size > 500KB AND heading_count > 10` OR `file_size > 100KB AND heading_count > 20`. Triggers Stratified Sampling.
+- **Stratified Sampling codified** (Step 2B-strat, v2.13 NEW) — for multi-document files (e.g., year-archives with 300-500 concatenated daily posts): read opening 1500-2500 lines + mid 1500-2000 lines + closing 1500-2000 lines, plus targeted deep-dive on known canonical posts via grep. Total budget ~8000 lines per file. Prevents the seth-v1-class bug where 27-year-archive files were each treated as single essays.
+- **`tests/fixtures/sparse-bucket-persona/`** — exercises balanced-provenance sparse-corpus exception. 1 bucket (notes), 3 files.
+- **`tests/fixtures/large-year-archive/`** — exercises year-archive granularity heuristic. Single file with 53 `##` headings simulating a year-archive structure.
+- **`tests/fixtures/multi-bucket-persona/synthesis-plan-example.md`** — golden reference for what a PASSING Synthesis Plan looks like for the multi-bucket fixture.
+
+### Changed
+
+- `/muse:build` v2.10.0-alpha → v2.13.0-alpha. Description updated to reflect the new synthesis-plan gate as the primary quality improvement.
+- `RESEARCH_PIPELINE.md` v2.10 → v2.13. Step 2B enhanced with granularity-awareness; Step 2B-strat added.
+- Step 9 close message now reports: `v2.13.0-alpha compliant, synthesis-plan PASS, spec review score <X>/10, dry-run PASS, ghost-citation PASS, benchmark-gate PASS, balanced-provenance PASS`.
+
+### Architecture
+
+This is **Phase 1 of the 3-phase persona-quality overhaul** per CEO plan `~/.gstack/projects/muse/ceo-plans/2026-04-21-persona-quality-overhaul.md`:
+- Phase 1 (v2.13, this release): "Gate the drafter" — synthesis audit, inline checks, save-time gates, year-archive heuristic
+- Phase 2 (v2.14, planned): "Pipeline brains" — envelope preservation to disk, semantic similarity for exclusive-test, subagent auto-retry, adaptive book-budget
+- Phase 3 (v2.15, planned): "Living and fresh" — corpus fingerprint, staleness detection, /muse:refresh, /muse:rebuild, update-skill pipeline expansion
+
+10 P2 items deferred to TODOS.md (QOVER-1..10) for opportunistic fixing.
+
+### Reviews
+
+- `/plan-ceo-review` on 2026-04-21: SELECTIVE_EXPANSION mode, 30 issues surfaced (4 P0 + 12 P1 + 14 P2), 20 accepted into Phases 1-3, 10 deferred.
+- `/plan-eng-review` on 2026-04-21: HOLD_SCOPE, 3 issues (validator split deterministic+Agent-opt, DRY on distinctiveness + ghost-citation shared blocks). All resolved during implementation.
+- No ghost-citation regression test yet for the new Synthesis Plan validator — deferred to Phase 2.
+
+### Fixed
+
+- **The three-consecutive-rebuild pattern**. If this Phase 1 were active when seth-godin v1, kotler v1, elon v3.0 shipped, the Synthesis Plan coverage-ratio check would have flagged each one at Step 3.5 (before Step 4 drafting) because the drafter would have been forced to admit: "I'm only mapping 20% of pipeline findings to persona slots."
+
+### Not in scope (deferred)
+
+- Semantic similarity for exclusive-test (Phase 2)
+- Pipeline envelope preservation to disk (Phase 2)
+- Rejected candidates surfaced to spec reviewer (Phase 2)
+- Corpus fingerprint + staleness detection (Phase 3)
+- `/muse:refresh` + `/muse:rebuild` skills (Phase 3)
+- `/muse:update` pipeline expansion for C3/C6/C9/C10/C11 (Phase 3)
+- Formal `/muse:benchmark` re-run on 12-persona pack with Phase-1 gates active
+
+---
+
 ## [2.12.0-alpha] — 2026-04-21 — `seth-godin` persona v2.0 — article-depth rebuild (1,317+ posts across 24 year-archives)
 
 ### Why
