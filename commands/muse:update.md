@@ -1,10 +1,10 @@
 ---
-description: Upgrade an existing persona to v2.2 compliance (v2.14.0-alpha tooling). Detects gaps against SESSION.md (C1–C12 checks), proposes fixes interactively with concrete synthesis recipes, runs spec review loop (max 3 iterations), writes with backup + draft + diff + confirm. C7 (missing sources) and C8 (missing analogous problems) fixes use the v2.14 research pipeline (RESEARCH_PIPELINE.md) when the user opts to pull from `.archives/`. Supports --check (dry-run), --all (batch scan), and --rollback (restore from most recent backup).
+description: Upgrade an existing persona to v2.2 compliance (v2.15.0-alpha tooling). Detects gaps against SESSION.md (C1–C12 checks), proposes fixes interactively with concrete synthesis recipes, runs spec review loop (max 3 iterations), writes with backup + draft + diff + confirm. C3/C6/C7/C8/C9/C10/C11 fixes use the v2.14 research pipeline (RESEARCH_PIPELINE.md) when the user opts to pull from `.archives/` — primary-source grounding for debate positions, thinking_mode, taglines, voice rules, and cognitive patterns (v2.15.0-alpha extends pipeline routing from C7/C8 to all interpretive fields). Supports --check (dry-run), --all (batch scan), and --rollback (restore from most recent backup).
 allowed-tools: Read, Glob, Bash, Write, Edit, AskUserQuestion, Agent
 argument-hint: <persona-id> [--check | --rollback] | --all [--check]
 ---
 
-# muse:update — persona v2.2 compliance upgrader (v2.14.0-alpha tooling)
+# muse:update — persona v2.2 compliance upgrader (v2.15.0-alpha tooling)
 
 **Args**: $ARGUMENTS
 
@@ -182,12 +182,14 @@ Bail. Tell the user: *"This persona has only N moves. That's below session minim
 
 ### C3 missing debate_positions entirely
 1. Show: *"This persona has no `## Debate positions` section. Stage 4 of every session will be silently skipped."*
-2. `AskUserQuestion` with 4 options:
-   - A) Walk the 6 canonical dilemmas now, one at a time
-   - B) Leave it — sessions will gracefully skip Stage 4
-   - C) Skip Stage 4 permanently (set all 6 in `deliberate_skips`)
-   - D) Abort the whole update
-3. On A: mini-interview — for each canonical dilemma, show the persona's `thinking_mode.core_tension` and ask: *"Given this core tension, what would this thinker say on <dilemma>? A) <inferred from core_tension>, B) <opposite>, C) pass (deliberate skip — thinker had no documented view), D) let me write it"*
+2. `AskUserQuestion` with 5 options:
+   - A) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline (`RESEARCH_PIPELINE.md`), filter `findings.tensions[]`, map each to a canonical dilemma slug via the persona's voice, and propose positions with source-file citations (Recommended when corpus exists)
+   - B) Walk the 6 canonical dilemmas now, one at a time (inline inference from existing persona fields)
+   - C) Leave it — sessions will gracefully skip Stage 4
+   - D) Skip Stage 4 permanently (set all 6 in `deliberate_skips`)
+   - E) Abort the whole update
+3. On A (v2.15.0-alpha): invoke the pipeline with `src_folder=.archives/personas/<id>/`. Filter the envelope's `findings.tensions[]` only. For each tension, propose a mapping: *"Tension '<raw tension>' from sources <list> looks like canonical dilemma `<slug>`. Position: <extracted stance>. A) Accept, B) Different canonical slug, C) Different stance wording, D) Mark as `deliberate_skip` instead."* If the pipeline returns empty tensions or `status: "no_research_material"`, fall back to option B.
+4. On B: mini-interview — for each canonical dilemma, show the persona's `thinking_mode.core_tension` and ask: *"Given this core tension, what would this thinker say on <dilemma>? A) <inferred from core_tension>, B) <opposite>, C) pass (deliberate skip — thinker had no documented view), D) let me write it"*
 
 ### C4 low canonical coverage
 Ask: *"This persona has N positions but only M/6 canonical dilemmas covered. Options:"*
@@ -212,6 +214,21 @@ Generate from template:
 Write the approved disclaimer to BOTH frontmatter `disclaimer:` field AND a body blockquote immediately after the tagline (match `personas/dieter-rams.md` lines 13–15 pattern).
 
 ### C6 thinking_mode incomplete
+
+**Option gate**: if `.archives/personas/<id>/` exists, offer the pipeline route FIRST:
+
+1. `AskUserQuestion` at the top of C6 fix:
+   - A) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline and derive the missing thinking_mode fields from primary sources (Recommended when corpus exists)
+   - B) Inline inference from existing persona fields (fallback, works without corpus)
+
+**On A** (v2.15.0-alpha): invoke the pipeline. Filter the envelope for three specific outputs:
+- `opening_question` → pick the top-frequency entry from `findings.distinctive_questions[]` (questions this persona returns to across multiple sources)
+- `core_tension` → take the dominant entry from `findings.tensions[]` (the tension that anchors the most findings)
+- `anti_pattern` → derive from `findings.banned_phrases[]` — convert the most-cited banned phrase into a mental move (e.g., banned phrase "you should" → anti_pattern "giving advice without first asking why")
+
+For each, show the candidate + citations, then `AskUserQuestion`: A) Accept, B) Refine, C) Write own, D) Skip (leave as soft-drift). If the pipeline returns empty or `status: "no_research_material"`, fall through to option B.
+
+**On B** (inline inference, pre-v2.15 behavior):
 - `opening_question` missing → generate from the first framing-category signature move's Trigger line. Show user, confirm.
 - `core_tension` missing → generate from the two most-opposed debate_positions. Show user, confirm.
 - `anti_pattern` missing → ask directly: *"What's the common mistake this thinker would reject? A) From debate_positions, I'd guess <inferred>, B) <alternative inference>, C) free-text, D) skip (leave as soft-drift)"*
@@ -234,7 +251,22 @@ Ask: *"Missing analogous problems section. Options:"*
 
 ### C9 missing or sparse taglines + schema drift (v2.2, stricter recipes in v2.2.1)
 
-Walk the 5 stage contexts (default, framing, inquiry, test-probe, decide). For each missing context:
+**Option gate**: if `.archives/personas/<id>/` exists, offer the pipeline route FIRST:
+
+1. `AskUserQuestion` at the top of C9 fix:
+   - A) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline and filter `findings.signature_phrases[]` to short-form candidates (5-15 words), then propose one tagline per stage context with verbatim source quotes (Recommended when corpus exists — produces persona-authored taglines, not AI-generated)
+   - B) Inline inference from existing persona fields (fallback)
+
+**On A** (v2.15.0-alpha): invoke the pipeline. Filter the envelope's `findings.signature_phrases[]`. Apply length filter: keep only phrases with 5-15 words. Cluster by stage affinity:
+- Phrases ending in "?" or starting with "what/why/how" → `framing` context
+- Phrases expressing contradiction or correction → `inquiry` context
+- Phrases expressing test/measurement/verification → `test-probe` context
+- Phrases expressing choice/commitment → `decide` context
+- Most-cited overall → `default` context
+
+For each context, show 2-3 candidates with citations, `AskUserQuestion`: A) Accept top candidate, B) Pick a different candidate, C) Write my own (free-text), D) Skip this context. If pipeline returns empty phrases or `status: "no_research_material"`, fall through to option B.
+
+**On B** (inline inference — walk the 5 stage contexts: default, framing, inquiry, test-probe, decide):
 
 1. Propose a candidate tagline by reading, in order:
    - (a) existing signature move Trigger lines (extract the `*"..."*` quoted part)
@@ -253,6 +285,20 @@ Walk the 5 stage contexts (default, framing, inquiry, test-probe, decide). For e
 On A/B, auto-regenerate and confirm final content. On C, walk each conflicting entry.
 
 ### C10 missing or thin Voice rules (v2.2.1 CONCRETE RECIPES)
+
+**Option gate**: if `.archives/personas/<id>/` exists, offer the pipeline route FIRST:
+
+1. `AskUserQuestion` at the top of C10 fix:
+   - A) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline, filter `findings.banned_phrases[]` for banned-patterns and `findings.signature_phrases[]` for tone cues, then propose Voice rules subsections with primary-source grounding (Recommended when corpus exists — banned patterns from the actual text the persona rejected, not AI-inferred jargon lists)
+   - B) Inline inference from existing persona fields (fallback)
+
+**On A** (v2.15.0-alpha): invoke the pipeline. Filter two outputs:
+- `findings.banned_phrases[]` → direct source for the "Banned patterns" subsection (keep the pipeline's 6-8 strongest). These are real phrases the persona explicitly rejected in primary sources, not AI-inferred "modern jargon" lists. Higher signal than inline inference.
+- `findings.signature_phrases[]` → source for "Tone" (frequency-rank the phrases, extract the persona's characteristic register)
+
+For each subsection derived from pipeline, show candidates + citations, `AskUserQuestion`: A) Accept, B) Refine, C) Write own, D) Keep existing (SOFT-DRIFT). For the Core belief subsection, the pipeline has no direct filter — pipeline mode synthesizes from the dominant `findings.tensions[]` entry (same approach as inline). Contextual voice shifts are still derived from signature move `Example:` fields (same as inline) because the pipeline doesn't categorize examples by stage. If pipeline returns empty or `status: "no_research_material"`, fall through to option B.
+
+**On B** (inline inference — pre-v2.15 behavior):
 
 For each missing or thin subsection, use these explicit derivation recipes (same as `/muse:build` Step 4 field 7):
 
@@ -287,6 +333,24 @@ For each missing or thin subsection, use these explicit derivation recipes (same
 - Target 6-8 total. Show list, AskUserQuestion A/B/C/D.
 
 ### C11 missing or sparse Cognitive patterns (v2.2.1 CONCRETE RECIPE)
+
+**Option gate**: if `.archives/personas/<id>/` exists, offer the pipeline route FIRST:
+
+1. `AskUserQuestion` at the top of C11 fix:
+   - A) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline, filter `findings.cognitive_patterns[]`, apply the "one pattern per signature move" extraction recipe, and propose 7-12 domain-agnostic thinking instincts with primary-source citations (Recommended when corpus exists — patterns grounded in actual text, not inferred from existing moves)
+   - B) Inline inference from existing persona fields (fallback)
+
+**On A** (v2.15.0-alpha): invoke the pipeline. Filter the envelope's `findings.cognitive_patterns[]`. These are the pipeline's raw cognitive-habit extractions from primary sources. Apply the v2.2.1 "one per signature move" extraction recipe:
+
+- For each of the persona's existing signature moves, find the pipeline cognitive_pattern that best aligns (use Jaccard + semantic similarity from Stage 4 Test 3)
+- If aligned: the pattern is the meta-habit behind that move → add as numbered entry
+- If no signature_move match but high cross-source frequency (≥3 sources): add as a "tension pattern" derived from `findings.tensions[]`
+
+Deduplicate against the existing persona's moves (don't propose a "pattern" that's really just a restatement of an existing move). Target 7-12.
+
+Show list, `AskUserQuestion`: A) Accept all, B) Refine: one feels too tactical (point at which), C) Refine: one duplicates another, D) Regenerate from a different filter. If pipeline returns empty or `status: "no_research_material"`, fall through to option B.
+
+**On B** (inline inference — pre-v2.15 behavior):
 
 Derive 7-12 thinking instincts deterministically from existing fields. Same algorithm as `/muse:build` Step 4 field 8:
 

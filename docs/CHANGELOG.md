@@ -13,6 +13,75 @@ Nothing yet.
 
 ---
 
+## [2.15.0-alpha] — 2026-04-22 — "Living and fresh" — corpus_fingerprint, /muse:refresh, /muse:rebuild, update-skill pipeline expansion, auto-rewrite on ghost-citation fail
+
+### Why
+
+Phase 3 of the persona-quality overhaul (per CEO plan `~/.gstack/projects/muse/ceo-plans/2026-04-21-persona-quality-overhaul.md`). Phase 1 (v2.13) gated the drafter. Phase 2 (v2.14) gave the pipeline smarter brains. Phase 3 closes the trilogy by addressing **staleness** (living figures publish daily — a month-old Seth persona decays), **user-facing rebuild safety** (the manual `cp; rm; /muse:build` dance is lossy and risky), and **update-skill primary-source grounding** (C3/C6/C9/C10/C11 fixes previously relied on inline inference from the persona file itself — now they can route through the v2.14 pipeline for primary-source evidence).
+
+### Added
+
+- **`corpus_fingerprint` frontmatter field** (Item 14) in `docs/PERSONA_SCHEMA.md`. Optional v2.15 field with `last_mined`, `src_folder`, `bucket_counts`, `total_files`, `total_bytes`. Lightweight mtime + count snapshot (not SHA256 — QOVER-9 deferred). Fully additive; pre-v2.15 personas keep working but can't be refresh-mined until rebuilt or updated.
+- **Staleness detection appendix** (Item 15) in `RESEARCH_PIPELINE.md` Appendix A. Algorithm `compare_fingerprint(persona_id) → {fresh, stale, missing_fingerprint, corpus_missing}` using POSIX `find -newermt` + bucket-count diff + 5% size-drift threshold. Called by `/muse:refresh` Step 2.
+- **`/muse:refresh <persona-id>` NEW skill** (Item 16) in `commands/muse:refresh.md`. 9-step incremental re-mine workflow: staleness check → delta file collection → delta-mode pipeline dispatch → merge proposal → diff + confirm → atomic write + fingerprint update → analytics log. `--check` dry-run flag. Does not replace `/muse:build` — additive-only merge, preserves existing persona structure.
+- **`/muse:rebuild <persona-id>` NEW skill** (Item 17) in `commands/muse:rebuild.md`. 9-step safe-rebuild workflow with automatic backup + A/B comparison + user choice (accept new / keep old / merge manually). Replaces the manual `cp; rm; /muse:build` pattern with transactional semantics. Interactive merge mode walks each diff item-by-item for users who want line-by-line control.
+- **`/muse:update` pipeline routing for C3/C6/C9/C10/C11** (Item 18) in `commands/muse:update.md`. Each C-check fix now offers a "point me at `.archives/personas/<id>/`" option that invokes the v2.14 research pipeline and filters the envelope to the relevant findings category (C3 → tensions; C6 → distinctive_questions + tensions + banned_phrases; C9 → signature_phrases; C10 → banned_phrases + signature_phrases; C11 → cognitive_patterns). Produces primary-source-grounded fixes. Fallback to inline inference on empty pipeline or no-research-material.
+- **Auto-rewrite on ghost-citation fail** (Item 19) in `commands/muse:build.md` Step 4 sub-step 3.1 AND Step 5.95. Agent subagent reads the source file, finds a verified verbatim quote that expresses the same cognitive move, returns `VERIFIED_QUOTE / LINE / CONFIDENCE` or `NO_VERIFIED_QUOTE_FOUND / REASON`. Replaces the fabricated quote on re-verified pass. Usually succeeds when the drafter hallucinated the wording of a real idea; fails cleanly when the concept itself wasn't in the source.
+- **`corpus_fingerprint` auto-write on `/muse:build` Step 7** — every new persona build now writes the fingerprint before atomic `mv`. Enables `/muse:refresh` on day-one new personas.
+- **`tests/fixtures/refresh-delta-persona/`** — README-documented fixture with 4-file corpus + fingerprint of first 3. Validates Item 15 staleness detection + Item 16 delta-mine workflow.
+- **`tests/fixtures/rebuild-diff-persona/`** — README-documented fixture with a deliberately-gappy v1 persona + 5-file corpus. Validates Item 17 A/B comparison + user-choice paths.
+
+### Changed
+
+- `commands/muse:build.md` v2.14.0-alpha → v2.15.0-alpha (Step 4.3.1 + Step 5.95 auto-rewrite, Step 7 fingerprint-write, header version bumps)
+- `commands/muse:update.md` v2.14.0-alpha → v2.15.0-alpha tooling (C3/C6/C9/C10/C11 each gain pipeline-route option as first choice)
+- `RESEARCH_PIPELINE.md` v2.14.0-alpha → v2.15.0-alpha (adds Appendix A: Staleness detection + delta-mode subagent prompt)
+- `docs/PERSONA_SCHEMA.md` schema version 2.2.1-alpha → 2.15.0-alpha (header note + corpus_fingerprint field + footer version)
+- Frontmatter schema: new optional field `corpus_fingerprint` (additive, backward-compatible)
+
+### Fixed
+
+- **Persona staleness for living figures** — a month-old Seth Godin persona built on 2026-03-15 couldn't detect the 30+ new posts added in April. v2.15 `/muse:refresh` closes the loop: fingerprint comparison → delta-mine → merge.
+- **Manual rebuild was lossy** — users running `cp personas/<id>.md ~/backup/; rm personas/<id>.md; /muse:build <id>` had no structured A/B comparison. If the new build lost a signature move the user liked, they noticed after the fact. v2.15 `/muse:rebuild` gives an explicit diff + 3-way choice BEFORE finalizing.
+- **Update-skill C-checks were inference-only** — C3/C6/C9/C10/C11 fixes derived proposals from the persona's own fields (already-distilled, potentially already-wrong). v2.15 lets each route through the pipeline and pull from primary sources when the corpus is available. Reduces "AI-flavored" voice-rule bans in favor of phrases the persona actually rejected.
+- **Ghost-citation hard-stops were friction** — Step 5.95 previously FAILed the build when a quote didn't verify, forcing manual Step 4 loop-back. v2.15 dispatches an Agent to find a verified replacement from the same source file; usually saves the move without user intervention. Absolute verify-or-refuse guarantee preserved.
+
+### Architecture
+
+This is **Phase 3 of 3** per CEO plan — the trilogy is complete:
+- Phase 1 (v2.13, 2026-04-21) — Gate the drafter: synthesis audit, inline gates, save-time gates, year-archive heuristic
+- Phase 2 (v2.14, 2026-04-22) — Pipeline brains: envelope persistence, semantic similarity, context budget, adaptive PDF, rejected-candidates visibility, auto-retry
+- **Phase 3 (v2.15, this release) — Living and fresh** (current): corpus_fingerprint, staleness detection, /muse:refresh, /muse:rebuild, update-skill pipeline expansion, auto-rewrite
+
+### Reviews
+
+- `/plan-ceo-review` on 2026-04-21: CLEAR, SELECTIVE_EXPANSION mode — 20 of 30 items accepted, 10 deferred to QOVER-1..10 in TODOS.md
+- `/plan-eng-review` on 2026-04-22: CLEAR — 2 key decisions resolved via AskUserQuestion (LLM-judge over embeddings; separate v2.14→v2.15 releases)
+
+### Not in scope (deferred to TODOS.md QOVER-1..10)
+
+- SHA256 content-addressed corpus manifest (QOVER-9) — mtime + count sufficient for Seth's append-only use case; revisit when edit-heavy living-figure persona surfaces
+- Embedding API integration (OpenAI/Cohere/Voyage) — conflicts with zero-dep philosophy; LLM-judge via Agent covers semantic similarity
+- `/muse:explore <id>` corpus preview skill (QOVER-2) — low demand
+- Multi-persona batch build (QOVER-3) — low demand
+- Session-quality feedback loop (QOVER-6) — own future CEO plan
+- Specialized adversarial reviewers (QOVER-7) — complexity not yet justified
+- EPUB native support (QOVER-8) — `ebook-convert` convention acceptable
+- Per-era / per-bucket finding weighting (QOVER-9) — semantic similarity is a bigger lever
+- Mid-build interactive redirect (QOVER-10) — low demand
+- Backfilling v2.10+ pipeline improvements against the 12 shipped personas — golden regression still passes; users can opt in via `/muse:rebuild <id>`
+
+### Install
+
+```bash
+cd ~/.claude/skills/muse && git pull
+# (or) cp -r commands/* RESEARCH_PIPELINE.md docs/ tests/fixtures/ ~/.claude/skills/muse/
+```
+
+Existing personas continue to work unchanged. To opt in to v2.15 features for an existing persona, run `/muse:update <id>` (which adds the fingerprint) or `/muse:rebuild <id>` (which rebuilds with all v2.15 improvements).
+
+---
+
 ## [2.14.0-alpha] — 2026-04-22 — "Pipeline brains" — envelope persistence, semantic similarity, context budget, adaptive PDF, rejected-candidates visibility, auto-retry
 
 ### Why

@@ -732,6 +732,135 @@ See `tests/README.md` for how to run.
 
 ## Versioning note
 
-This file is introduced in v2.14.0-alpha. `/muse:build` and `/muse:update` versions are bumped to v2.3 when they adopt this pipeline. v2.2 personas remain fully compatible — nothing in this pipeline changes the output schema; it changes only how the input (source folder) is read.
+This file was introduced in v2.10 and is current at v2.15.0-alpha. `/muse:build` and `/muse:update` versions are bumped to v2.3 when they adopt this pipeline. v2.2 personas remain fully compatible — nothing in this pipeline changes the output schema; it changes only how the input (source folder) is read.
+
+**v2.15.0-alpha additions** (all additive, no breaking changes):
+- Appendix A (Staleness detection) — consumed by `/muse:refresh` via `corpus_fingerprint` frontmatter field (schema docs: `docs/PERSONA_SCHEMA.md`)
+- Delta-mode subagent prompt block for `/muse:refresh` (re-uses same 4-subagent fanout, restricted file list)
+- Pipeline envelope writes still apply in delta mode (last 5 rotation per persona)
+
+**v2.14.0-alpha additions** (recap):
+- LLM-judge semantic similarity (Stage 4 Test 3)
+- Envelope persistence (Stage 5)
+- Context-budget awareness (subagent prompts)
+- Book-length adaptive PDF budget (Step 2C)
+- Auto-retry on subagent timeout (Stage 2)
 
 If a user is on an old agent runtime that cannot dispatch subagents, both skills fall back automatically (see "Fallback" above). No breaking change.
+
+---
+
+## Appendix A — Staleness detection (v2.15.0-alpha)
+
+Living figures like Seth Godin publish daily; a persona file mined last month is already out of date. The `corpus_fingerprint` frontmatter field (added to the schema in v2.15) stores a lightweight snapshot of the source folder at mine time. `/muse:refresh` compares the stored fingerprint against the current folder state to decide whether anything changed.
+
+### When to invoke
+
+- `/muse:refresh <persona-id>` → Step 1 staleness check (primary consumer)
+- `/muse:update <persona-id> --check` → staleness reporting without modification (optional)
+- `/muse:rebuild <persona-id>` → bypasses staleness check (always full rebuild)
+
+### Fingerprint schema (recap from PERSONA_SCHEMA.md)
+
+```yaml
+corpus_fingerprint:
+  last_mined: "2026-04-22T10:30:00Z"           # ISO 8601 UTC
+  src_folder: ".archives/personas/seth-godin"
+  bucket_counts:
+    articles: 27
+    books: 18
+    transcripts: 5
+    notes: 0
+    root: 1
+  total_files: 51
+  total_bytes: 83554432
+```
+
+### Algorithm — `compare_fingerprint(persona_id) → state`
+
+```
+1. Read personas/<persona-id>.md frontmatter
+2. Extract fp = frontmatter.corpus_fingerprint
+3. If fp is absent → return "missing_fingerprint"
+4. src = fp.src_folder
+5. If not exists(src) → return "corpus_missing"
+
+6. Compute current state:
+   current_counts = count_files_per_bucket(src)
+     # For each subfolder in {articles, books, transcripts, notes}:
+     #   count = ls -1 "src/<bucket>"/*.{md,txt,srt,vtt,json,pdf} | wc -l
+     # Plus root bucket: ls -1 "src"/*.{md,txt,srt,vtt,json,pdf} | wc -l
+
+7. If current_counts != fp.bucket_counts → return "stale"
+   (New file added, old file removed, or rename crossed a bucket boundary)
+
+8. newer_files = find src -type f -newermt "${fp.last_mined}"
+   (POSIX find -newermt; mtime comparison against the stored timestamp)
+
+9. If newer_files is non-empty → return "stale"
+   (An existing file was modified after the mine; could be new content appended)
+
+10. total_bytes_now = total size of all files
+11. If abs(total_bytes_now - fp.total_bytes) / fp.total_bytes > 0.05 → return "stale"
+    (>5% size drift is suspicious even when count + mtime look clean;
+     catches edge cases like file-system clock skew or mtime-preserving rsync)
+
+12. Return "fresh"
+```
+
+### State semantics
+
+| State | When | Caller behavior |
+|---|---|---|
+| `fresh` | No detectable change since `last_mined` | `/muse:refresh` exits with "Nothing to do." |
+| `stale` | New files, modified files, or size drift >5% | `/muse:refresh` proceeds with incremental re-mine of files newer than `last_mined` |
+| `missing_fingerprint` | Persona predates v2.15 or was manually edited without fingerprint update | `/muse:refresh` recommends `/muse:rebuild` (full re-mine) or `/muse:update` (schema upgrade) |
+| `corpus_missing` | `src_folder` no longer exists on disk | Error out; recommend `/muse:build` from scratch after re-locating corpus |
+
+### Incremental re-mine protocol (consumed by `/muse:refresh`)
+
+When state is `stale`, `/muse:refresh` invokes the pipeline in **delta mode**:
+
+1. Collect only files where `mtime > fp.last_mined` (plus new files not in the previous bucket_counts)
+2. Dispatch the same 4-subagent fanout over the filtered file list
+3. Subagent prompt gets an additional instruction block:
+   ```
+   === DELTA MODE ===
+   You are mining NEW material added since the last persona build.
+   The persona already exists and has been analyzed; you are NOT re-deriving
+   the full cognitive profile. Your job:
+   
+   1. Find GENUINELY NEW cognitive patterns, analogous cases, or signature
+      moves not represented in the existing persona.
+   2. Find STRONGER EVIDENCE for existing persona items (more citations,
+      clearer examples) — these will be appended to existing sources[] arrays.
+   3. Skip patterns already well-represented in the existing persona unless
+      the new material substantially deepens or complicates them.
+   
+   The existing persona file will be shown to you so you can distinguish
+   "already known" from "new."
+   ```
+4. Envelope schema is the same; consumers interpret delta vs. full based on invocation context
+5. Updated fingerprint is computed from the current folder state (post-mine) and written to the persona on save
+
+### Write path (when updating fingerprint)
+
+Every successful `/muse:build`, `/muse:refresh`, and `/muse:rebuild` must update the fingerprint before atomic write:
+
+```
+fp = {
+  "last_mined": now_iso_utc(),
+  "src_folder": <relative src path>,
+  "bucket_counts": count_files_per_bucket(src),
+  "total_files": count_all_files(src),
+  "total_bytes": sum_file_sizes(src)
+}
+```
+
+Skipping the fingerprint write on success (e.g., due to a failed subagent that produced a partial envelope) is OK; it means the next `/muse:refresh` will still see the persona as stale and try again. Better than writing a fresh fingerprint for an incomplete mine.
+
+### Not in scope (deferred)
+
+- **SHA256 content-addressed manifest** (QOVER-9 in TODOS.md): would catch edit-in-place without mtime update. Lightweight count+mtime covers Seth's append-only corpus; revisit when an edit-heavy living-figure persona surfaces.
+- **Per-file fingerprint** (individual file hashes): granular but larger frontmatter. The bucket-count + total-bytes aggregate is sufficient for refresh decisions.
+- **Bucket-level deltas**: bucket_counts change triggers stale, but individual bucket's newness is not exposed. Subagents figure out "which files are new" via mtime filter at dispatch time.

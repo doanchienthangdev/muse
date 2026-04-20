@@ -5,6 +5,7 @@ This file is the **single source of truth** for persona file format in Muse v2.2
 - **v2.1 files still work** — every v2.2 field is additive and optional. The SESSION.md pre-flight falls back to v2.1 behavior when v2.2 fields are absent.
 - **v2.2 compliance** requires all new fields. `/muse:build` produces v2.2-compliant personas. `/muse:update` upgrades v2.1 personas to v2.2 with backup + draft + diff + confirm.
 - **v2.3+ roadmap**: v2.2 new fields are SOFT-DRIFT warnings in v2.2.0-alpha. They will be promoted to HARD-GAP (blocking) in v2.3.
+- **v2.15 adds `corpus_fingerprint`** (optional) — lightweight mtime + bucket-count staleness signal for living figures, consumed by `/muse:refresh`. Fully backward-compatible; personas without it just can't be refresh-mined incrementally.
 
 See `personas/socrates.md` or `personas/feynman.md` for a complete working example.
 
@@ -140,6 +141,39 @@ session_mode_preferences:
 - `strong_at[]`: subset of {QUICK, STANDARD, DEEP, CRITIC}. Modes this persona handles well.
 - `weak_at[]`: subset of {QUICK, STANDARD, DEEP, CRITIC}. Modes this persona handles poorly — SESSION.md Stage 0 warns the user if the detected mode is in this list.
 - Default if absent: `strong_at: [STANDARD]`, `weak_at: []`.
+
+#### `corpus_fingerprint` (v2.15 NEW, optional) — staleness detection for living figures
+
+```yaml
+corpus_fingerprint:
+  last_mined: "2026-04-22T10:30:00Z"           # ISO 8601 UTC, updated after successful build/refresh
+  src_folder: ".archives/personas/seth-godin"  # for validation and re-mining
+  bucket_counts:                                # lightweight "has it changed" signal
+    articles: 27
+    books: 18
+    transcripts: 5
+    notes: 0
+    root: 1
+  total_files: 51
+  total_bytes: 83554432
+```
+
+- **Purpose**: Lets `/muse:refresh` detect whether new source material has been added since the last mine. A persona file with a fingerprint older than its corpus is **stale**.
+- **When written**: populated by `/muse:build` Step 7 (atomic write) on first build, and updated by `/muse:refresh` and `/muse:rebuild` on their own saves.
+- **Not a cryptographic hash**: this is lightweight mtime + file-count data. SHA256 content-addressed manifest is deferred (QOVER-9) until an edit-heavy use case surfaces. Append-only corpora (Seth's daily posts) are fully covered by mtime + count.
+- **When absent**: `/muse:refresh` reports `missing_fingerprint` and recommends `/muse:rebuild` instead. All pre-v2.15 personas have no fingerprint; they keep working, but `/muse:refresh` cannot operate on them until rebuilt or updated.
+- **Most useful for**: `living_status: living` and `living_status: estate_protected` personas whose source folders receive ongoing updates. Historical personas (`living_status: historical`) rarely need refresh, but the field is still valid.
+
+Staleness states (returned by `compare_fingerprint(persona_id)`):
+
+| State | Meaning | Action |
+|---|---|---|
+| `fresh` | Corpus unchanged since `last_mined` | No-op |
+| `stale` | File count or mtime indicates new material | `/muse:refresh` can do incremental re-mine |
+| `missing_fingerprint` | Persona predates v2.15 or was hand-edited | Recommend `/muse:rebuild` |
+| `corpus_missing` | `src_folder` no longer exists | Error out, recommend `/muse:build` from scratch |
+
+See `RESEARCH_PIPELINE.md` appendix "Staleness detection" for the algorithm and `commands/muse:refresh.md` for the consumer.
 
 ---
 
@@ -440,4 +474,4 @@ The schema is additive — no breaking changes — so v2.1 users upgrade at thei
 
 ---
 
-*Schema version: 2.2.1-alpha · generated 2026-04-15 · source of truth for `/muse:build` and `/muse:update`. v2.2.1 adds runtime quality gates (spec review loop, distinctiveness check, dry-run walk, rollback) on top of the v2.2 schema — no schema fields changed, same backward compatibility guarantees.*
+*Schema version: 2.15.0-alpha · generated 2026-04-15, updated 2026-04-22 · source of truth for `/muse:build`, `/muse:update`, `/muse:refresh`, `/muse:rebuild`. v2.2.1 adds runtime quality gates (spec review loop, distinctiveness check, dry-run walk, rollback). v2.15 adds optional `corpus_fingerprint` frontmatter field for staleness detection — fully additive, same backward compatibility guarantees.*
