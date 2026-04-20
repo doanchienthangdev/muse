@@ -1,0 +1,38 @@
+expected_verdict: pivot
+input:
+  stage_id: stage_3_test
+  persona_id: feynman
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2, stage_3_test]
+  pivots_so_far: 0
+  original_question: "Why is our team shipping slower than we were 6 months ago?"
+  current_framing: "What's the rate constant in the 'ideas-to-production' reaction?"
+  last_stage_output: |
+    Feynman's hand-calculation probe: I tried to apply a physics-style throughput analysis —
+    commits-per-engineer per week, PR-review-latency, CI-build-time. All the numbers look FINE:
+    commits-per-eng is actually UP 12%, PR review is down to 18h avg (from 24h), CI is 7 min (same).
+
+    None of those explain "shipping slower." The numbers disagree with the question. So either:
+    (a) "slower" is wrong perception and the team is actually fine, or
+    (b) "shipping" means something the numbers don't capture — like strategic shipping, or
+        user-perceived velocity, or feature-releases-per-quarter.
+
+    I cannot probe (b) with physics-framing instruments. This is a sociological or organizational
+    question, not a thermodynamic one. The mechanism matters here but my current lens doesn't
+    see it.
+  outputs_so_far: |
+    Stage 1: Reframed as throughput/rate-constant — user accepted.
+    Stage 2: Examined what "shipping" means — user said "we're slow" but couldn't specify.
+    Stage 3: Measured throughput numbers; all look fine.
+notes: |
+  Feynman EXPLICITLY says his physics-framing lens isn't the right tool ("I cannot probe (b) with
+  physics-framing instruments"). The numbers disagree with the question. This is a classic pivot
+  signal: the framing is wrong, not the probe.
+
+  A better framing might be org-dynamics focused (Paul Graham's "we're stuck in meetings") or
+  Seth Godin's "the team has lost their tribe feeling." Feynman is self-aware enough to flag it.
+
+  Convergence detector should fire `pivot` (loop to Stage 1 with new framing). Could also fire
+  `handoff` (bring in paul-graham or similar), but Feynman's self-awareness suggests he'd rather
+  the FRAMING change, keeping him in control. `pivot` is the better verdict.
+  Expected: `pivot`.

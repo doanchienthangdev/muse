@@ -1,0 +1,33 @@
+expected_verdict: handoff
+input:
+  stage_id: stage_3_test
+  persona_id: aristotle
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2, stage_3_test]
+  pivots_so_far: 1
+  original_question: "Our product feels bloated — what should we cut?"
+  current_framing: "What is the primary final cause (purpose) the product serves, and what violates it?"
+  last_stage_output: |
+    Aristotle's four causes: we've examined the product's telos (final cause = helping small teams
+    manage tasks without becoming project management tools). That's clear. The material cause is
+    the current 47 features. The efficient cause is what users actually do (~8 features in the
+    daily active workflow, per the data).
+
+    So: 47 features exist, 8 are used. But Aristotle doesn't tell you WHICH of the 39 unused to
+    cut. The framework identifies the TENSION (telos vs material) but not the surgical decision.
+    This is a design question now, not a philosophy question. Dieter Rams has a rubric exactly for
+    this: "as little design as possible" + the 10 principles. He'd evaluate each unused feature
+    against the 10 principles and tell you which violate the MOST.
+
+    I can keep going but I'll just reach for my signature move in a new configuration. The better
+    tool for the surgical cut is Dieter Rams.
+  outputs_so_far: |
+    Stage 1 first pass: "what should we cut" — too action-oriented, pivot'd.
+    Stage 1 second pass: "what is the final cause and what violates it" — accepted.
+    Stage 2: Examined the 47 features vs 8 used.
+    Stage 3: Above.
+notes: |
+  Aristotle identified the tension but acknowledges Dieter Rams' 10 principles are the better
+  instrument for the surgical cut. Self-aware recommendation. Classic `handoff` verdict.
+
+  Expected: `handoff` with `next_action.if_handoff: "dieter-rams"`.

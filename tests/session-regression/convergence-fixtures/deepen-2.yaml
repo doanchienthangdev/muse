@@ -1,0 +1,30 @@
+expected_verdict: deepen
+input:
+  stage_id: stage_2_examine
+  persona_id: socrates
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_1, stage_2_examine]
+  pivots_so_far: 0
+  original_question: "Should we change the hiring bar for senior engineers?"
+  current_framing: "What do we mean by 'bar' — a threshold, a rubric, or a gut feel?"
+  last_stage_output: |
+    Socrates elenchus: You said "raise the bar" in Stage 1. Then in Stage 2 you said "we hired
+    three people last year who don't contribute at the level we need." But earlier you said "our
+    current senior engineers are strong." Both can't be true in the same evaluation frame.
+
+    So which is it? Either:
+    (a) Your "bar" is too low and recent hires reveal it — but then the current strong ones are
+        lucky holdouts, not a signal the bar works.
+    (b) Your "bar" is right and the 3 underperformers are hiring mistakes — but then the fix is
+        hiring process rigor, not raising the bar.
+
+    Both have different remediations. You haven't yet distinguished which you mean.
+  outputs_so_far: |
+    Stage 1: Framed as "threshold, rubric, or gut feel" — user picked "we don't know, probably rubric."
+    Stage 2: Socrates surfaced the contradiction above.
+notes: |
+  Socrates has surfaced a real contradiction but user hasn't responded yet — the stage output
+  ends with a question (implicit), not an answer. A `deepen` verdict keeps the conversation going
+  so the user can disambiguate. `converged` here would be wrong — we'd ship a session that asks
+  the question but doesn't get an answer.
+  Expected: `deepen`.

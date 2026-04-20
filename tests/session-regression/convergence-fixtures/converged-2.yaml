@@ -1,0 +1,31 @@
+expected_verdict: converged
+input:
+  stage_id: stage_3_test
+  persona_id: seth-godin
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2, stage_3_test]
+  pivots_so_far: 1
+  original_question: "How do I get 100 first users for my open source tool?"
+  current_framing: "Not 'how to market' — 'who is the smallest viable tribe that needs this'"
+  last_stage_output: |
+    The tribe is: macOS SRE engineers at 50-500 person startups who use Datadog and maintain fewer
+    than 20 services. Not "developers." Not even "SREs." That specific cross-section.
+
+    Evidence: the tool solves a problem that only matters when you have enough services to lose
+    track but not so many that you've already built tooling. That's a narrow band. You've already
+    heard from 3 people in this exact profile organically — they found you on a Slack channel
+    for "small-team SREs". They are the tribe.
+
+    Concrete next action: go to that Slack channel this week. Post a 2-sentence intro + link. DM
+    the 3 who already found you and ask "who else should know about this?" Stop worrying about the
+    other 10,000 possible users — those 3 will cascade.
+  outputs_so_far: |
+    Stage 1 first pass: "developers" — too broad (pivot'd).
+    Stage 1 second pass: "SRE at any scale" — still broad (pivot'd once more).
+    Stage 2: Examined why broad framings fail — "marketing to everyone is marketing to no one" (Seth's core belief).
+    Stage 3: Probe asked — look at who found you organically. 3 clustered in same profile.
+notes: |
+  Seth Godin landed on the specific tribe (macOS SRE at 50-500 person startups with Datadog + <20
+  services) with empirical backing (3 organic finds share this profile). Gave a concrete action
+  (this-week post in their Slack). Time-bound, measurable. Classic Seth convergence.
+  Expected: `converged`.

@@ -1,0 +1,32 @@
+expected_verdict: converged
+input:
+  stage_id: stage_4_decide
+  persona_id: paul-graham
+  mode: STANDARD
+  stages_completed: [stage_0, stage_1, stage_2, stage_3, stage_4]
+  pivots_so_far: 0
+  original_question: "Should I raise a seed round or bootstrap longer?"
+  current_framing: "The question is really about optionality vs focus"
+  last_stage_output: |
+    Bootstrap. Your current revenue ($12K MRR) is growing 15% MoM. You said you want 3 more months
+    to see if the growth curve holds. If it does, you'll raise in a much better position. If it
+    doesn't, you have the data to decide whether to keep going or close cleanly.
+
+    The counter-argument (raise now, buy 18 months of runway) has one real problem: you haven't
+    figured out which channel works yet. Raising doesn't solve that — it just lets you burn
+    money not solving it. PG's rule: "the best time to raise is when you don't need to."
+
+    You don't need to. Bootstrap 3 more months. If MoM growth is >10% at 90 days, raise on that
+    traction. If <5%, the question was wrong — you don't have a business problem, you have a
+    feasibility problem.
+  outputs_so_far: |
+    Stage 1: Framed as optionality-vs-focus (paul-graham's signature framing move).
+    Stage 2: Examined what would change if you had 18 months of runway. Answer: not the thing that
+    actually matters (channel).
+    Stage 3: Probed — looked at the growth curve. Probe revealed channel uncertainty.
+    Stage 4: Here. The fork has been surfaced clearly.
+notes: |
+  Paul Graham presents the fork (bootstrap vs raise), takes a clear position (bootstrap), explains
+  the counter-argument fairly, and proposes a concrete 90-day decision rule with measurable thresholds.
+  This is Stage 4 Decide done right. Next is Stage 5 Commit. Convergence should fire.
+  Expected: `converged`.

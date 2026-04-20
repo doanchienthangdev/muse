@@ -1,4 +1,4 @@
-# Muse v2.2 — Adaptive Structured Session Workflow
+# Muse v2.16 — Adaptive Structured Session Workflow
 
 **This file is the load-bearing spec for `/muse:<persona>` slash commands.**
 
@@ -6,7 +6,17 @@ When a user invokes `/muse:feynman`, `/muse:socrates`, etc., the slash command f
 
 **v2.2 headline change**: Sessions are no longer a fixed 5-stage pipeline. The workflow **detects the shape of the user's question** and picks one of four modes (QUICK / STANDARD / DEEP / CRITIC). Each mode runs a different stage graph. The user can override the detected mode. Backward compatible: STANDARD mode is the v2.1 5-stage flow unchanged, and it remains the default when detection is unsure.
 
+**v2.16 additions**: Fifth mode `EXPLORE` (no stage cap, convergence-driven — iterate until the thinking lands). Checkpoint-every-stage persistence (replaces Stage-5-only save). Resume workflow (`--resume <path>`). Session threads (`--thread=<slug>`, cross-session memory via `~/.muse/threads/<slug>/digest.md`). Mid-session mode upgrade (`/promote <mode>`). Mid-session persona handoff (`/handoff <persona-id>`, spawns linked session). Multi-persona council (`/council <p1> <p2> [<p3>]`, parallel Agent dispatch). Artifact templates at Stage 5 (decision memo / RFC / one-pager / spec). Small-wins primitives (`/bookmark`, `/recap`, `/rewind`, `/dontknow`). See detailed sections below.
+
 **Load-bearing rule**: Do not merge stages. Do not silently skip a stage the selected mode requires. Do not collapse modes. If you think you can shortcut, you're wrong — run the selected mode's stage graph in full. STOP points are not optional.
+
+**Regression mode (v2.16 NEW)**: If the environment variable `MUSE_REGRESSION_MODE=true` is set, ALL of the following are deterministic-mode-locked:
+- Convergence detector is BYPASSED entirely (mode runs its fixed stage graph; EXPLORE mode falls back to DEEP)
+- LLM-judge calls (council, convergence detector) are skipped; heuristic-only paths execute
+- Auto-handoff suggestions are suppressed (no mid-session persona swap)
+- Random tie-breakers use a fixed seed
+
+This guarantees that the session-regression harness at `tests/session-regression/run.sh` produces deterministic fingerprints across runs. It is not a user-facing flag — the harness sets it.
 
 ---
 
@@ -139,6 +149,20 @@ Apply these throughout every stage. If the persona has no voice_rules section, d
 
 If the persona has a `## Cognitive patterns` body section, extract 7-12 numbered thinking instincts. **Do not enumerate them in output** — internalize them as the reference frame for your decisions throughout the session. Garry Tan's pattern: *"These are not checklist items. They are thinking instincts — let them shape your perspective, don't enumerate them."*
 
+### Thread digest loading (v2.16 NEW)
+
+If the invocation includes `--thread=<slug>` OR the session is a resume of a parent with `thread_id` set, load the thread digest:
+
+1. Validate `<slug>` against `^[a-z0-9][a-z0-9-]{0,40}$` (path-traversal-safe).
+2. Derive thread slug per `THREADS.md` §"Thread slug derivation" precedence rules (explicit flag > inherited > auto-derived > fallback).
+3. Check `~/.muse/threads/<slug>/digest.md`:
+   - If exists: read + inject body into persona system context as `=== THREAD CONTEXT ===` block per THREADS.md §"Pre-flight digest injection"
+   - If absent: this is the first session in a new thread — create `~/.muse/threads/<slug>/` directory structure; digest will be written at Stage 5
+4. Collision detection (when auto-derived): Jaccard-check current question against existing digest's `original_question`. If < 0.8 similarity, suffix slug with 4-char hash.
+5. Print resolved thread_id visibly: `Thread: <slug>` (or `Thread: <slug> (new)` or `Thread: <slug> (continuing from session N)`).
+
+If `MUSE_REGRESSION_MODE=true`, skip thread digest loading (regression tests run cold-start always).
+
 ### Disclaimer (v2.1, unchanged)
 
 **If `disclaimer` is present** (living figures like Dieter Rams), print it as a short italic note at the very top of output, before Stage 0 begins:
@@ -164,19 +188,32 @@ Score the user's question (from `$ARGUMENTS`) on 4 integer axes:
 - **C (concreteness)**: 1 = vague musing, 5 = specific action. Signals: "should I go with X or Y", "I have a choice between these three" → 5. "why is our product confusing", "how do I think about this" → 2.
 - **A (artifact)**: 0 = no artifact, 5 = detailed plan/doc/code to review. Signals: "review my roadmap", "critique this PR", "what do you think of this plan" + a reference to a file → 5. Pure question, no artifact → 0.
 
-### Mode selection algorithm
+### Mode selection algorithm (v2.16 — EXPLORE added)
 
 ```
+# Explicit override always wins
+if --mode=<X> passed on CLI:            mode = X        (no Stage 0 prompt, skip to Stage 1)
+
+# EXPLORE-signaling keywords in question text
+if question matches /\b(think through|explore|brainstorm|figure out|work through|sit with|deep dive)\b/i:
+    suggest mode = EXPLORE  (user can confirm in Stage 0 AskUserQuestion)
+
+# Scoring-based auto-select
 if A >= 3:                             mode = CRITIC
 elif S >= 4 and T <= 3:                mode = DEEP
 elif T >= 4 and S <= 3:                mode = QUICK
 else:                                  mode = STANDARD  (default)
+
+# EXPLORE is selected explicitly via --mode flag or user picking option E in Stage 0.
+# It is NOT auto-detected from scores (the S/T/C/A signal is for fixed-duration modes).
+# The keyword heuristic above SUGGESTS EXPLORE but user still confirms.
 ```
 
 **Edge cases**:
 - If S, T, C, A all score 1-2 (nothing clear): default STANDARD
 - If S=5 AND T=5 (high stakes + urgency): default DEEP, but warn user the time pressure is high
 - If the question is a single word or <5 words without context: default STANDARD, ask for elaboration in Stage 1
+- If `--mode=EXPLORE` is passed: skip Stage 0 entirely, go directly to Stage 1
 
 ### Session mode preferences
 
@@ -193,15 +230,18 @@ Question: "STOP. Detected <MODE> mode because <one-line reasoning>.
 <MODE> runs <stage list for this mode>, ~<duration>. 
 Run <MODE> or switch?"
 Header: "Mode"
-Options (4, single-select):
+Options (4, single-select — v2.16 NEW option E rotates in via multi-select max 4 UI convention below):
   A) Run <MODE> (Recommended — this is the detected fit)
   B) Force STANDARD (the default v2.1 5-stage flow, 10-15 min)
   C) Switch to <alternative mode> — <one-line reason to consider>
-  D) None of these — let me describe what I need
+  D) EXPLORE — open-ended, convergence-driven (~any duration; save as you go, stop when the thinking lands) [v2.16 NEW]
 ```
 
+**UI note**: AskUserQuestion max 4 options; option D is replaced by EXPLORE (v2.16 made the "describe your own" path implicit via free-text fallback). If user types a free-text response that doesn't match A/B/C/D, treat as "tell me what shape you want" and ask one follow-up.
+
 **User picks A/B/C** → use that mode for the rest of the session.
-**User picks D** → ask one free-text follow-up about what shape they want, then pick the closest mode.
+**User picks D (EXPLORE)** → run EXPLORE mode (see Mode → stage graph table below). Convergence detector drives stage progression; session ends when converged or safety-cap triggers.
+**User types free-text** → parse; if matches a command grammar (see §Command grammar below), dispatch that command. Otherwise ask one free-text follow-up about what shape they want, then pick the closest mode.
 
 **Mode is locked once chosen.** The session runs that mode's stage graph and does not re-enter Stage 0.
 
@@ -213,6 +253,15 @@ Options (4, single-select):
 | **STANDARD** (default) | ~10-15 min | **Stage 1** → **Stage 2** → **Stage 3** → **Stage 4** → **Stage 5** (v2.1 unchanged) |
 | **DEEP** | ~20-30 min | **Stage 0.5** (Premise Challenge) → **Stage 1** → **Stage 2** → **Stage 3** → **Stage 3.5** (Alternative Paths) → **Stage 4** → **Stage 5** (with 3-year retrospective) |
 | **CRITIC** | ~5-10 min | **Stage 1'** (Load artifact + apply critic frames) → **Stage 3'** (Prioritize findings) → **Stage 4** (Decide fix order) → **Stage 5** (Commit to first fix) |
+| **EXPLORE** (v2.16 NEW) | open-ended (typically 30-90 min, can span multiple sessions via `/muse:continue`) | **Stage 0.5** → **Stage 1** → {**Stage 2 / Stage 3 / Stage 3.5**}* (loop, convergence-driven) → **Stage 4** (optional — only if user wants fork) → **Stage 5** (Commit / artifact) |
+
+**EXPLORE semantics** (v2.16 NEW): after each stage, convergence detector returns one of:
+- `converged` → advance to Stage 5 artifact generation
+- `deepen` → re-enter the current stage with an additional probe instruction
+- `pivot` → loop back to Stage 1 with a new framing
+- `handoff` → suggest persona handoff (user types `/handoff <persona>` or declines)
+
+Safety cap: if `stages_completed > 15` in EXPLORE, force `converged` (user warned). User can `/rewind` if the forced convergence was premature.
 
 ---
 
@@ -493,6 +542,308 @@ Options (4, single-select):
 
 ---
 
+### EXPLORE mode — the adaptive loop (v2.16 NEW)
+
+EXPLORE is not a new stage — it's a new **orchestration shape** that reuses existing stages in a loop-capable way.
+
+**Entry**:
+- User invokes `/muse:<persona> "<question>" --mode=EXPLORE` (bypasses Stage 0)
+- OR user picks option D (EXPLORE) at Stage 0 Mode confirmation
+- OR user types a question with EXPLORE-signaling keywords (see Mode selection algorithm) and accepts the suggestion
+
+**Stage sequence**:
+1. **Stage 0.5 Premise Challenge** (always runs in EXPLORE, like DEEP)
+2. **Stage 1 Frame** (establishes working framing)
+3. **Loop**: repeatedly choose between Stage 2 Examine, Stage 3 Test, Stage 3.5 Alternative Paths based on convergence verdict + user-typed commands
+4. **Stage 4 Decide** — optional, only if user wants to converge on a fork (convergence detector can suggest this)
+5. **Stage 5 Commit + Artifact** — triggered by `converged` verdict or safety cap
+
+**After each stage**: orchestrator invokes `CONVERGENCE.md` convergence detector. Verdict drives what happens next:
+- `converged` → Stage 5
+- `deepen` → re-enter current stage with new probe
+- `pivot` → loop to Stage 1 with new framing
+- `handoff` → offer `/handoff <persona>` via AskUserQuestion
+
+**Checkpoint persistence**: after EVERY stage (not just Stage 5), the session file is updated with the new stage block + frontmatter checkpoint_stage field. Crash-safe.
+
+**User overrides during the loop**: at any STOP point, user can type a command (see Command Grammar below) to:
+- `/bookmark <note>` — save a tangent for later without interrupting flow
+- `/recap` — get a 3-bullet summary of where we are
+- `/rewind <n>` — go back n checkpoints
+- `/promote <mode>` — e.g., user realizes this is actually DEEP, demote from EXPLORE
+- `/handoff <persona-id>` — switch personas mid-session
+- `/council <p1> <p2> [<p3>]` — invoke 2-3 personas for parallel perspectives
+- `/dontknow` — pause cleanly, resumable via `/muse:continue`
+
+**EXPLORE Stage 5 differs**: instead of just emitting a session log, offers artifact templates:
+
+```
+AskUserQuestion at EXPLORE Stage 5:
+  A) Session log (default, ~v2.2 format)
+  B) Decision memo (committed stance + rationale)
+  C) RFC (proposal with alternatives + tradeoffs)
+  D) One-pager (summary + next action for sharing)
+```
+
+Agent also offers "E) Spec" via free-text extension if the thinking produced a specification-shaped artifact. Templates in `artifact-templates/*.md`. Rendered to `~/.muse/artifacts/<thread_id or session-slug>.<type>.md`.
+
+---
+
+## Command Grammar (v2.16 NEW — free-text commands at STOP points)
+
+At any AskUserQuestion STOP point, user MAY type a command instead of picking A/B/C/D. The agent parses free-text input line-by-line.
+
+**Grammar** (anchored to line start; POSIX-ERE):
+
+```
+^/(bookmark|recap|rewind|promote|handoff|council|dontknow)(\s+.*)?$
+```
+
+Only the FIRST line of free-text is parsed as a command. Subsequent lines are treated as literal text. No nested commands — if user types `/bookmark remember to /handoff later`, parser sees one `/bookmark` with note `remember to /handoff later` (slashes in note body are literal).
+
+**Argument schemas**:
+
+| Command | Syntax | Validation |
+|---|---|---|
+| `/bookmark` | `/bookmark <note text>` | `<note>` required, 1+ chars, ≤500 chars |
+| `/recap` | `/recap` | no args |
+| `/rewind` | `/rewind <n>` | `<n>` required positive integer, ≤ `stages_completed` |
+| `/promote` | `/promote <mode>` | `<mode>` ∈ {QUICK, STANDARD, DEEP, CRITIC, EXPLORE} |
+| `/handoff` | `/handoff <persona-id>` | `<persona-id>` matches `^[a-z][a-z0-9-]{0,30}$` AND file exists in `personas/` |
+| `/council` | `/council <p1> <p2> [<p3>]` | 2-3 valid persona-ids; current session persona MUST NOT be in list |
+| `/dontknow` | `/dontknow` | no args |
+
+**Parse failure handling**:
+- Command token matches but args fail validation → print concrete error, re-prompt original AskUserQuestion:
+  ```
+  /handoff expects a valid installed persona. "Socratess" is not installed.
+  Did you mean: socrates?
+  Try: /handoff socrates
+  ```
+- First token is a slash that doesn't match the command list → print hint + re-prompt:
+  ```
+  Unknown command "/explore". Try /bookmark, /recap, /rewind, /promote, /handoff, /council, /dontknow.
+  Or answer the original question (A/B/C/D).
+  ```
+- First token is not a slash → fall through to original option D ("describe your own") path
+
+**Every command's outcome is checkpointed** (v2.16 append-only): after dispatching a command, the orchestrator writes a new stage block (or metadata block) to the session file BEFORE resuming the interrupted stage. This guarantees command effects survive crashes.
+
+---
+
+## Command dispatch — `/promote` (mode upgrade)
+
+When user types `/promote <mode>` at a STOP point:
+
+1. Validate `<mode>` ∈ {QUICK, STANDARD, DEEP, CRITIC, EXPLORE}.
+2. Check legality of the transition:
+   - `QUICK → STANDARD|DEEP|EXPLORE`: allowed (upgrade)
+   - `STANDARD → DEEP|EXPLORE`: allowed (upgrade)
+   - `DEEP → EXPLORE`: allowed (upgrade to open-ended)
+   - `CRITIC → DEEP|EXPLORE`: allowed (user wants to think rather than just critique)
+   - Downgrade (e.g., `DEEP → QUICK`): warn but allow with confirm. Reason: downgrade loses future stages (Stage 3.5 won't run, retrospective won't trigger).
+   - Same-mode: no-op, print "already in <mode>"
+3. Update frontmatter: `session_mode: <new_mode>`; add entry to `stages_run` timeline `promoted_from_<old>_to_<new>_at_<stage>`.
+4. Re-enter stage graph at the appropriate point:
+   - `QUICK → STANDARD/DEEP/EXPLORE`: inject Stage 2 Examine BEFORE what would be Stage 5, then continue through the upgraded graph
+   - `STANDARD → DEEP`: if not yet past Stage 3, insert Stage 0.5 retroactively (a "framing re-check") + Stage 3.5 later
+   - `STANDARD → EXPLORE`: invoke convergence detector on the NEXT stage completion (enter the loop from wherever we are)
+   - Any → EXPLORE: just start running the convergence detector; no structural change needed
+5. Print banner: `=== Promoted from <OLD> to <NEW>. Now running <NEW>'s graph from stage <current+1>. ===`
+6. Resume at the appropriate stage.
+
+If the transition is illegal (shouldn't happen post-validation), print "cannot promote from <X> to <Y>" + re-prompt.
+
+---
+
+## Command dispatch — `/handoff` (persona handoff)
+
+When user types `/handoff <persona-id>` at a STOP point:
+
+1. Validate `<persona-id>` matches `^[a-z][a-z0-9-]{0,30}$` AND `personas/<id>.md` exists.
+   - If file missing: print "`<id>` persona not installed. Try /muse:list for available personas." + re-prompt.
+2. Validate target persona has a disclaimer if `living_status` ∈ {living, estate_protected}. If missing disclaimer, refuse handoff with: "`<id>` persona file is missing the required disclaimer; cannot hand off to a non-C5-compliant persona. Run /muse:update `<id>` to fix."
+3. Generate new session filename: take the current session's timestamp prefix (or today's new timestamp) + new persona + slug + `-continued`:
+   - Current: `2026-04-22-143000-feynman-100-first-customers.md`
+   - Handoff: `2026-04-22-143500-socrates-100-first-customers-continued.md`
+4. Compose the state transfer payload for new persona's pre-flight:
+   - If current session has `thread_id`: the new persona will load the thread digest at pre-flight (all prior thread context).
+   - Current framing (from Stage 1 of current session) passed explicitly.
+   - `outputs_so_far` compressed to ≤500 words (drop-oldest-first if longer). Stage 2, Stage 3, etc. outputs get compressed but their structure preserved (bullet points).
+   - Bookmarks: NOT passed inline (they're thread-scoped already via `~/.muse/threads/<slug>/followups.md`, or if no thread, they stay with old file).
+   - Convergence state: current `convergence_state` verdict if any (so new persona knows if we were deepening or pivoting).
+5. Update OLD session file frontmatter:
+   - `status: handed_off`
+   - `handed_off_to: <new_session_path>`
+   - `handoff_at_stage: <current_stage>`
+   - `ended_at: now()`
+6. Spawn NEW session file with frontmatter:
+   - `parent_session: <old_session_path>`
+   - `thread_id: <copied from old if set>`
+   - `status: active`
+   - `persona: <new_persona_id>`
+   - `session_mode: <copied from old mode>`
+   - `checkpoint_stage: <same as old session's last checkpoint>`
+   - `started_at: now()`
+7. Print transition banner:
+   ```
+   === HANDOFF ===
+   From: <old_persona_name> (session <old_path>)
+   To:   <new_persona_name> (session <new_path>)
+   Stage: continuing at <current_stage> in <MODE> mode
+   Thread: <thread_id or "single-session">
+   ===
+   ```
+8. New persona's pre-flight runs with state transfer injected. Agent re-enters the stage (not Stage 1 — the current stage, to continue the train of thought with a new lens).
+
+---
+
+## Auto-handoff suggestion (v2.16 NEW)
+
+After every stage output (in STANDARD, DEEP, EXPLORE — not in QUICK or CRITIC), the orchestrator runs a lightweight check:
+
+1. Determine what category of move the NEXT stage needs (e.g., Stage 2 → inquiry, Stage 3 → test-probe).
+2. Check current persona's available moves in that category. If 0 moves in that category → strong handoff signal.
+3. Check current persona's `session_mode_preferences.weak_at`. If current mode is in `weak_at` → moderate signal.
+4. Check convergence state: if last verdict was `handoff` → strong signal (detector already decided).
+5. If strong signal AND this thread's `handoff_declined` count < 3 (count of times user rejected handoff suggestions in current session):
+   - Identify a better-fit persona: walk `personas/*.md`, find one with `session_mode_preferences.strong_at` containing current mode AND moves in the needed category. Prefer personas from the same thread's `personas_visited` history (continuity over novelty).
+   - Offer via AskUserQuestion:
+     ```
+     A) Continue with <current-persona>
+     B) Hand off to <suggested-persona> — <reason>
+     C) Hand off to a different persona (type /handoff <id>)
+     D) Continue but tell me why you're suggesting this
+     ```
+6. On A or D: increment `handoff_declined` counter. Do not re-suggest same handoff for next 3 stages.
+7. On B: dispatch `/handoff <suggested-persona>` flow.
+8. On C: wait for user's `/handoff <id>` then dispatch.
+
+Auto-handoff is DISABLED when `MUSE_REGRESSION_MODE=true` (regression shouldn't get mid-session persona changes).
+
+---
+
+## Command dispatch — small-wins primitives (v2.16 NEW)
+
+Six additional commands extend the session's interactive surface. All parse-safe per the Command Grammar above.
+
+### `/bookmark <note text>`
+
+Save a tangent or followup without breaking flow.
+
+1. Validate: `<note>` is 1+ chars, ≤500 chars.
+2. Derive bookmark target file:
+   - If session has `thread_id`: `~/.muse/threads/<thread_id>/followups.md`
+   - Else: `<session-path>.followups.md` (per-session)
+3. Append one line: `- [<ISO timestamp>, <persona>, stage <stage_id>] <note>`
+4. Checkpoint the session (append `## Bookmark added at stage <N>` block with the note).
+5. Print acknowledgment: `Bookmarked: "<note first 40 chars>..." → <file>`
+6. Re-prompt the original AskUserQuestion that was interrupted.
+
+Bookmark survives across sessions in the same thread. All sessions in a thread see the same `followups.md` at pre-flight (displayed as part of thread digest if thread_id set).
+
+### `/recap`
+
+3-bullet summary on demand without breaking flow.
+
+1. Parse session's prior stages (from session file on disk, not in-memory).
+2. Extract from:
+   - Stage 1 Frame (the working framing)
+   - Stage 2 Examine (the surfaced assumption)
+   - Stage 3 Test (the probe result)
+   - Any `## Bookmark added` blocks (as open questions)
+3. Print:
+   ```
+   === RECAP of <persona_name> session on "<question>" ===
+   Framing: <frame from Stage 1>
+   What we've surfaced so far:
+   • <insight 1>
+   • <insight 2>
+   • <insight 3>
+   Open tangents: <N bookmarks>
+   Stages completed: <stages_run count>
+   Current stage: <current_stage>
+   ===
+   ```
+4. Re-prompt the interrupted AskUserQuestion.
+
+Fast, stateless: just re-parses the current session file. No LLM call. ~50ms.
+
+### `/rewind <n>`
+
+Go back n checkpoints, re-enter the thinking from earlier.
+
+1. Validate: `<n>` is a positive integer, `<n> <= stages_completed` (can't rewind past the beginning).
+2. Read session file. Parse `stages_run[]` from frontmatter. The stage to rewind to is `stages_run[-n-1]` (nth-from-end).
+3. Print banner:
+   ```
+   === REWIND ===
+   Going back <n> stages. Re-entering: <stage_name>
+   Prior state preserved in session file (just tracking a new entry point).
+   ===
+   ```
+4. Truncate session file: keep everything up to the stage block being rewound to (preserve its output); delete later stage blocks' body text but keep their names in a new metadata block: `## Rewound past (preserved): <list of dropped stage names>`.
+5. Update frontmatter: `checkpoint_stage: <target_stage>`, remove the rewound stages from `stages_run[]`.
+6. Re-enter the target stage. Stage outputs are NOT re-run automatically; agent re-enters the STOP point and asks the user what to do differently this time.
+
+**Why not full state rollback**: preserving rewound-past metadata means the user can see "we tried going that way and rewound" later. Pure rollback loses that information.
+
+### Progress indicator in stage banners (v2.16 NEW)
+
+Every stage output begins with a banner line. v2.16 adds dynamic progress info:
+
+```
+=== Stage 3 · Test · <persona_name> · mode=EXPLORE · stage 7/? · pivots:1 ===
+<tagline for this context>
+<stage output>
+```
+
+For fixed-stage modes (QUICK/STANDARD/DEEP/CRITIC):
+```
+=== Stage 3 · Test · <persona_name> · mode=STANDARD · stage 3/5 ===
+```
+
+For EXPLORE: total stage count is unknown upfront. Show `stage N/?` + `pivots:<count>` + convergence info if available:
+```
+=== Stage 3 · Test · <persona_name> · mode=EXPLORE · stage 7/? · pivots:1 · last-verdict:deepen ===
+```
+
+Once convergence detector returns `converged`, the banner for Stage 5 reads `stage 8/8 · CONVERGED`.
+
+### Living-document updates (v2.16 NEW)
+
+The session file is updated AFTER every stage completes (not just Stage 5). This means the user can `cat ~/.muse/sessions/<file>.md` in another terminal while the session runs and see the current state.
+
+**Write pattern**: append-only. Each stage completion appends a new `## Stage <N> — <name>` block to the file body + updates `stages_run[]` + `checkpoint_stage` in frontmatter. Frontmatter updates use an atomic write of the frontmatter region (parse YAML, modify in-memory, overwrite between `---` markers).
+
+**Exception**: Stage 5 / artifact generation does a FINAL full rewrite to normalize formatting, validate frontmatter completeness, and optionally sort stages. This is the only full-file write; all mid-session writes are append-only.
+
+**Editor-friendly**: session file is valid markdown at every intermediate state. Frontmatter always closes. User can open it in an editor mid-session without breakage.
+
+### `/dontknow`
+
+Pause the session cleanly, resumable anytime.
+
+1. Update session file frontmatter: `status: paused`, `ended_at: now()` (treated as session-pause timestamp).
+2. Append a `## Session paused` block explaining it was user-initiated, with `checkpoint_stage: <current>`.
+3. Update thread digest (if thread_id): add this session to `sessions:` with `status: paused`.
+4. Print:
+   ```
+   === SESSION PAUSED ===
+   Persona: <persona_name>
+   Stage paused at: <current_stage>
+   To resume: /muse:continue <session-path>
+   Bookmarks saved: <N> tangents in <bookmark-path>
+   ===
+   ```
+5. Exit.
+
+**Difference from abort**: `/dontknow` is a clean pause (user WILL return). Abort (Ctrl+C) is emergency stop (user may not return). `/dontknow` ensures the session file is complete + valid for resume; abort relies on the checkpoint-every-stage guarantee which is also fine but less graceful.
+
+**User-facing narrative**: `/dontknow` says "I need to sit with this, come back later." It's a first-class mental state, not a failure.
+
+---
+
 ### Stage 5 — COMMIT (all modes)
 
 **Purpose**: Collapse everything into ONE concrete next action. Stop the session. Write the session file. Confirm the path.
@@ -516,49 +867,78 @@ After the recap and before the next action, include:
 
 Answer both in 1-2 sentences each. Then present the next action.
 
-**AskUserQuestion template for Stage 5** (all modes):
+**AskUserQuestion template for Stage 5** (v2.16 — artifact types):
+
+v2.16 Stage 5 offers 4 output types instead of just session log:
 
 ```
-Question: "STOP. Here's the single next action. Accept or refine?"
-Header: "Commit"
-Options (2, single-select):
-  A) Accept — write the session file and close (Recommended)
-  B) Refine the action first — I want to adjust it before committing
+Question: "STOP. Thinking has landed. Which artifact should I produce?"
+Header: "Artifact"
+Options (4, single-select):
+  A) Session log (default — the v2.2-style conversation log, saved to ~/.muse/sessions/)
+  B) Decision memo (committed stance + rationale + next action, saved to ~/.muse/artifacts/)
+  C) RFC (proposal with alternatives + tradeoffs, saved to ~/.muse/artifacts/)
+  D) One-pager (summary + next action for sharing, saved to ~/.muse/artifacts/)
 ```
 
-If **A**: proceed to persistence (below).
-If **B**: ask user what to refine, adjust the action, re-offer A/B. Loop max 2 times, then force A.
+Free-text "E) Spec" is also accepted if the session produced a specification-shaped output (spec template in `artifact-templates/spec.md`).
+
+**Convergence detector's hint**: if we got here via `converged` verdict in EXPLORE mode, the detector's `next_action.if_converged` field suggested an artifact type. That type becomes the option listed FIRST + marked "Recommended".
+
+**Artifact rendering**:
+1. Read `artifact-templates/<type>.md`
+2. Fill in placeholders from session state:
+   - `<session-path>`, `<thread-id>`, `<persona-id>`, `<created_at>`
+   - Pull from session's Stage 1 (framing), Stage 3 (test/probe), Stage 4 (decision), Key Insights, Sources
+3. Write to `~/.muse/artifacts/<thread-id or session-slug>.<type>.md`
+4. Log to `~/.muse/analytics/artifacts.jsonl`
+
+**All options also produce the session log** (the audit trail — always written). The chosen artifact is the DELIVERABLE; the log is the HISTORY.
+
+If **A** (log only): proceed to persistence with just the session log.
+If **B/C/D/E**: render artifact to file, print path, also write session log. Then proceed to persistence.
+
+**Refinement escape**: user can still refine before accepting — AskUserQuestion option "Other" lets them type "refine: <what to change>" and the agent re-runs Stage 5 output once. Loop max 2 times.
 
 ---
 
 ## Mode → stage graph (authoritative)
 
-| Stage | QUICK | STANDARD | DEEP | CRITIC |
-|---|---|---|---|---|
-| **Stage 0** (Mode detection) | ✓ | ✓ | ✓ | ✓ |
-| **Stage 0.5** (Premise challenge) | — | — | ✓ | — |
-| **Stage 1** (Frame) | ✓ (brief) | ✓ | ✓ | — |
-| **Stage 1'** (Load artifact + critique) | — | — | — | ✓ |
-| **Stage 2** (Examine) | — | ✓ | ✓ | — |
-| **Stage 3** (Test) | — | ✓ | ✓ | — |
-| **Stage 3'** (Prioritize findings) | — | — | — | ✓ |
-| **Stage 3.5** (Alternative paths) | — | — | ✓ | — |
-| **Stage 4** (Decide) | — | ✓ | ✓ | ✓ |
-| **Stage 5** (Commit) | ✓ | ✓ | ✓ (with retrospective) | ✓ |
+| Stage | QUICK | STANDARD | DEEP | CRITIC | EXPLORE (v2.16) |
+|---|---|---|---|---|---|
+| **Stage 0** (Mode detection) | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Stage 0.5** (Premise challenge) | — | — | ✓ | — | ✓ |
+| **Stage 1** (Frame) | ✓ (brief) | ✓ | ✓ | — | ✓ (loop-target on `pivot`) |
+| **Stage 1'** (Load artifact + critique) | — | — | — | ✓ | — |
+| **Stage 2** (Examine) | — | ✓ | ✓ | — | ✓ (loop-capable) |
+| **Stage 3** (Test) | — | ✓ | ✓ | — | ✓ (loop-capable on `deepen`) |
+| **Stage 3'** (Prioritize findings) | — | — | — | ✓ | — |
+| **Stage 3.5** (Alternative paths) | — | — | ✓ | — | ✓ (triggered when ≥2 pivots) |
+| **Stage 4** (Decide) | — | ✓ | ✓ | ✓ | optional (agent offers; user can decline → continue exploring) |
+| **Stage 5** (Commit + artifact) | ✓ | ✓ | ✓ (w/ retrospective) | ✓ | ✓ (triggered by `converged` verdict or safety cap) |
 
-**Stage count per mode**: QUICK 3 (0, 1, 5), STANDARD 6 (0, 1, 2, 3, 4, 5), DEEP 8 (0, 0.5, 1, 2, 3, 3.5, 4, 5), CRITIC 5 (0, 1', 3', 4, 5).
+**Stage count per mode**: QUICK 3 (0, 1, 5), STANDARD 6 (0, 1, 2, 3, 4, 5), DEEP 8 (0, 0.5, 1, 2, 3, 3.5, 4, 5), CRITIC 5 (0, 1', 3', 4, 5), EXPLORE VARIABLE (2-15+ stages, convergence-driven).
 
 ---
 
-## Persistence (written at Stage 5 after user picks A)
+## Persistence (v2.16 — checkpoint every stage, not just Stage 5)
 
 ### Directory
 
-All sessions persist to `~/.muse/sessions/`. Create the directory if it doesn't exist:
+All sessions persist to `~/.muse/sessions/`. Thread digests persist to `~/.muse/threads/<slug>/`. Create both if absent:
 
 ```bash
 mkdir -p ~/.muse/sessions
+mkdir -p ~/.muse/threads
 ```
+
+### Write cadence (v2.16 NEW — checkpoint every stage)
+
+**v2.2 behavior (retained as fallback)**: single write at Stage 5 after user picks Accept. On crash, `.partial.md` fallback (see Fallback §9).
+
+**v2.16 behavior (default)**: append-only checkpoint after EVERY stage completes. Each stage appends a new `## Stage <N> — <name>` block to the live session file. Frontmatter `stages_run[]` and `checkpoint_stage` fields update per stage. Fallback still works (abort writes `.partial.md`). Crash recovery: whatever was on disk at last complete stage is readable via `/muse:<persona> --resume <path>`.
+
+Why append-only: 10KB session × 20 stages = 200KB IO amplification if we rewrite the whole file every stage. Append-only is O(1) per stage. Stage 5 / artifact generation does the only full rewrite (cleanup, validation, then artifact file).
 
 ### Filename
 
@@ -572,16 +952,53 @@ Format: `<YYYY-MM-DD-HHMMSS>-<persona>-<slug>.md`
 
 **Example full filename**: `2026-04-16-143052-feynman-rewrite-codebase-refactor.md`
 
+### Resume workflow (v2.16 NEW)
+
+User invokes `/muse:<persona> --resume <path>` OR `/muse:continue <path>` (synonym) to continue an existing session.
+
+**Algorithm**:
+
+1. Validate `<path>` exists, is a muse-session file, and has v2.16 frontmatter (reject v2.2 with "migrate first, run `bash tests/session-regression/migrate-v2-2-to-v2-16.sh`").
+2. Parse the frontmatter. Extract:
+   - `persona` (must match the invoked `/muse:<persona>` — error if mismatch)
+   - `session_mode` — reuse exactly
+   - `checkpoint_stage` — this is where to resume
+   - `stages_run[]` — already-completed stages
+   - `convergence_state` — last verdict (for EXPLORE mode continuation)
+   - `thread_id` — if set, load the thread digest too
+3. Print a resume banner:
+   ```
+   === Resuming session ===
+   Persona: <Full Name>
+   Mode: <MODE>
+   Last stage: <checkpoint_stage>
+   Started: <started_at>
+   Last checkpoint: <file mtime>
+   Stages completed: <stages_run joined>
+   ===
+   ```
+4. Read the existing session file body to reconstruct context (all prior stage outputs become the agent's context for continuing).
+5. Jump to the NEXT stage after `checkpoint_stage` in the mode's stage graph. For EXPLORE, consult `convergence_state` to decide: if `deepen` → re-enter same stage; if `pivot` → jump to Stage 1 with new framing prompt; if `handoff` → this was a handoff point, refuse resume ("use /handoff to continue; this session was handed off to <path>"); if `converged` or null → jump to Stage 5.
+6. Update frontmatter: `status: active`, bump `stages_run` as new stages complete.
+7. At Stage 5 (or when user types `/dontknow`), session closes; final write sets `status: completed` (or `paused`), `ended_at`, `duration_seconds`.
+
+**Edge cases**:
+- `<path>` is a `.partial.md` file → same flow, accept it
+- `<path>` has `status: handed_off` → refuse with the `handed_off_to` pointer
+- `<path>` has `status: completed` → AskUserQuestion: A) View only, B) Start a new session in the same thread
+- `<path>` has `status: aborted` → allow resume from last checkpoint (abort was user-initiated Ctrl+C before v2.16 checkpoint-every-stage)
+- Resume into a completed v2.16 session in a thread → treat as thread continuation, spawn new session file in the thread
+
 ### Session file template
 
 ```markdown
 ---
 type: muse-session
-version: 2.2
-status: completed
+version: 2.16
+status: <active | completed | handed_off | paused | aborted>
 persona: <persona-id>
 persona_name: <Full Name>
-session_mode: <QUICK | STANDARD | DEEP | CRITIC>
+session_mode: <QUICK | STANDARD | DEEP | CRITIC | EXPLORE>
 mode_detected_as: <same as session_mode unless user overrode>
 mode_scores:
   S: <int 1-5>
@@ -589,12 +1006,21 @@ mode_scores:
   C: <int 1-5>
   A: <int 0-5>
 started_at: <ISO 8601 with timezone>
-ended_at: <ISO 8601 with timezone>
-duration_seconds: <int>
+ended_at: <ISO 8601 with timezone, null if still active>
+duration_seconds: <int, null if still active>
 branch: <git branch if in a repo, else null>
 cwd: <current working dir>
 question: "<original user question, verbatim>"
 slug: <slug>
+
+# v2.16 NEW — multi-session continuity + checkpoint
+thread_id: <slug or null>                 # multi-session thread identifier
+parent_session: <path or null>            # if this session continues from another (handoff or /muse:continue)
+checkpoint_stage: <stage_id or null>      # last fully-written stage; null = session complete
+convergence_state: <null | verdict>       # last convergence detector verdict (converged|deepen|pivot|handoff)
+handed_off_to: <path or null>             # if status=handed_off, path of continuation session
+handoff_at_stage: <stage_id or null>      # stage at which handoff occurred
+
 stages_run:
   - <stage_id_1>
   - <stage_id_2>
@@ -605,7 +1031,14 @@ taglines_used:
   - <tagline text used in Stage 1>
   - <tagline text used in Stage 3>
 escape_hatches_used: <int>
-session_format: adaptive-v2.2
+
+# v2.16 NEW — convergence loop metrics (omitted in QUICK mode)
+convergence_calls: <int>                  # total convergence detector invocations
+llm_judge_calls: <int>                    # subset that hit LLM-judge (heuristic skipped otherwise)
+pivots: <int>                             # count of "pivot" verdicts returned
+deepen_loops: <int>                       # count of "deepen" verdicts returned
+
+session_format: adaptive-v2.16
 living_status: <historical | living | estate_protected>
 ---
 

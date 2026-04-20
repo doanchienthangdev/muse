@@ -1,0 +1,28 @@
+expected_verdict: deepen
+input:
+  stage_id: stage_2_examine
+  persona_id: aristotle
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2_examine]
+  pivots_so_far: 0
+  original_question: "Our onboarding conversion is 28%. Why?"
+  current_framing: "What are the four causes of a low conversion funnel?"
+  last_stage_output: |
+    Aristotle's four causes applied:
+    - Material cause: the raw user flow — signup form, email verification, first-use tutorial.
+    - Formal cause: the pattern this flow embodies — a multi-step gated linear journey.
+    - Efficient cause: what moves a user from signup to first value — the tutorial, primarily.
+    - Final cause: why any of this exists — users need to experience "aha" before they'll commit.
+
+    The formal cause is where I'd look: multi-step gated linear = each step sheds users. That's
+    the pattern. Drop-off at each step multiplies. If each step retains 80%, a 4-step funnel gets
+    0.8^4 = 41% through — and you're at 28% which means worse than 80%/step average.
+  outputs_so_far: |
+    Stage 1: Reframed as "four causes analysis of the funnel" — user accepted.
+    Stage 2: Aristotle produced the four causes above.
+notes: |
+  Aristotle named the cause (multi-step gated linear formal) and even gave a mathematical bound
+  (80%/step → 41%; observed 28% → worse). But he didn't connect to a specific next action or
+  tie to the user's actual data. The "why you're below 41%" question isn't answered yet — it
+  needs another probe (look at per-step conversion rates, identify the weakest step).
+  Expected: `deepen`. A `converged` here would skip the actual diagnostic work.

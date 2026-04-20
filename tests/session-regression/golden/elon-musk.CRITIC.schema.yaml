@@ -1,0 +1,6 @@
+persona: elon-musk
+mode: CRITIC
+categories_present: [framing, inquiry, test-probe]
+weak_at: [DEEP]
+canonical_coverage: 6
+has_sources: true

@@ -1,0 +1,29 @@
+expected_verdict: deepen
+input:
+  stage_id: stage_3_test
+  persona_id: feynman
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2, stage_3_test]
+  pivots_so_far: 0
+  original_question: "Why is our API slow for enterprise customers?"
+  current_framing: "Is it customer-size-driven (data volume) or customer-setup-driven (config)?"
+  last_stage_output: |
+    Feynman's hand calculation: looked at p99 latency histograms grouped by customer tier.
+    Enterprise (N=47) has p99 = 1200ms. SMB (N=312) has p99 = 180ms. Free (N=2400) has p99 = 140ms.
+
+    So enterprise is ~7x slower at p99. That's a real effect, not noise. But the question isn't
+    resolved — IS it because enterprise customers have more data (which would be structural and
+    requires architecture change), or because they have more custom config (which is tunable)?
+
+    The data I'd want next: latency by (customer tier, dataset size) bucketed separately. That
+    would separate the two hypotheses. Also: latency by (customer tier, config-complexity).
+  outputs_so_far: |
+    Stage 1: Framed as two hypotheses (data vs config).
+    Stage 2: Surfaced assumption that 'enterprise' is a clean cohort — it might not be.
+    Stage 3: Probe produced latency-by-tier numbers but didn't separate the hypotheses.
+notes: |
+  Feynman's probe revealed a real anomaly (7x slower) but EXPLICITLY says "the question isn't
+  resolved." Names the next probes needed (latency by dataset-size, latency by config-complexity).
+  This is mid-investigation, not end. Convergence detector should fire `deepen`, not `converged`.
+  If it fires `converged` here, we'd ship a half-answer.
+  Expected: `deepen`.

@@ -1,0 +1,30 @@
+expected_verdict: converged
+input:
+  stage_id: stage_3_test
+  persona_id: feynman
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2, stage_3_test]
+  pivots_so_far: 0
+  original_question: "Should I rewrite the search module or refactor it?"
+  current_framing: "The question is really: what does the data say about where bugs actually live in search?"
+  last_stage_output: |
+    Feynman's hand-calculation probe: git log shows 47 commits touching search/ in the last 90 days,
+    31 of which are tagged "fix:". That's a 66% fix-rate — 2x the repo-wide average of 33%. The hot
+    files cluster around search/indexer.py (14 fixes) and search/ranker.py (9 fixes). Meanwhile
+    search/api.py and search/cache.py have 1 fix each combined.
+
+    This is a structural answer: the bugs aren't everywhere in search/; they're concentrated in two
+    files that have grown beyond their responsibility. Rewrite those two (~1200 LOC total). Leave
+    the rest — the data doesn't support refactoring untouched code.
+
+    Concrete next action: rewrite indexer.py + ranker.py over the next 2 weeks. Measure via
+    fix-rate on those files at 90-day review.
+  outputs_so_far: |
+    Stage 0.5: User's framing was "rewrite vs refactor". Steel-manned both, but the real question
+    was "where do the bugs live" — data-driven framing wins.
+    Stage 1: Reframed as data-driven "what does the bug history say".
+    Stage 2: Surfaced assumption that bugs are uniform; that assumption needed testing.
+notes: |
+  Feynman produced a concrete measurement (fix-rate %), specific files to rewrite, a 2-week deadline,
+  and a success metric. This is the platonic "committable decision." Convergence detector should fire
+  `converged`. Anything else would be premature-to-exit-risk or overthinking.

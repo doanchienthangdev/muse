@@ -1,0 +1,34 @@
+expected_verdict: handoff
+input:
+  stage_id: stage_3_test
+  persona_id: paul-graham
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2, stage_3_test]
+  pivots_so_far: 0
+  original_question: "Is our pricing model sustainable given the unit economics?"
+  current_framing: "Is the contribution margin positive after CAC amortization?"
+  last_stage_output: |
+    Paul Graham: OK, you're asking about unit economics. I can talk about this qualitatively —
+    charge what people will pay, don't race to the bottom, avoid the "we'll figure out monetization
+    later" trap. But you're telling me about "contribution margin after CAC amortization" and
+    asking for a rigorous math check.
+
+    I'm not the right tool for this. I don't do spreadsheet-level analysis. Feynman would be
+    better — he'd do the hand calculation on the cohort economics and give you a number, which
+    is what this question actually needs.
+
+    My advice (which is worth something but maybe not what you came for): stop asking "is it
+    sustainable" and start asking "what input to cohort economics am I most uncertain about?"
+    That's a Feynman question. Ask him.
+  outputs_so_far: |
+    Stage 1: Framed as unit economics / contribution margin.
+    Stage 2: Examined the assumptions in the pricing model — PG realized he doesn't have
+    enough technical math depth to actually examine them.
+    Stage 3: Above — PG recommends handoff to Feynman for rigorous calculation.
+notes: |
+  Paul Graham EXPLICITLY says "I'm not the right tool for this. Feynman would be better." The
+  persona itself is suggesting handoff. This is the strongest possible signal for the `handoff`
+  verdict. The convergence detector would be wrong to say `deepen` here — PG has named the
+  limitation.
+
+  Expected: `handoff` with `next_action.if_handoff: "feynman"`.

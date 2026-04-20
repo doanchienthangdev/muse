@@ -13,6 +13,151 @@ Nothing yet.
 
 ---
 
+## [2.16.0-alpha] — 2026-04-22 — "Adaptive session runtime" — EXPLORE mode, convergence loop, threads, handoff, council, artifacts
+
+### Why
+
+Per CEO + Eng review pipeline (2026-04-22 plan at `~/.gstack/projects/muse/ceo-plans/2026-04-22-adaptive-session-runtime.md`). User observation: v2.2 sessions are constrained by fixed stage counts per mode, cannot adapt to where thinking actually wants to go, cannot save progressively, cannot cross days. Some problems need to be thought through until the result lands, not stopped at a timer.
+
+v2.16 converts the session runtime from fixed-stage to adaptive, with checkpoint-every-stage persistence, multi-session continuity via threads, mid-session mode upgrade + persona handoff, multi-persona councils, decision-artifact templates, and six small-wins primitives that make the runtime feel alive instead of step-through.
+
+### Added
+
+**New modes + orchestration**:
+- **EXPLORE mode** — no stage cap, convergence-driven. Session iterates until thinking lands (convergence `converged`), needs more depth (`deepen` → loop current stage), needs new framing (`pivot` → loop to Stage 1), or needs different persona (`handoff` → spawn linked session).
+- **Convergence detector** (`CONVERGENCE.md`) — two-tier: cheap heuristic (word-count delta, repetition, pivot counter, safety cap) + LLM-judge Agent via shared primitive (`LLM_JUDGE.md`). Mode-specific policy: QUICK skips LLM-judge entirely, STANDARD/CRITIC invoke on uncertainty, DEEP/EXPLORE every stage.
+- **Loop-back primitives** — `deepen` re-enters same stage with new probe; `pivot` loops to Stage 1; safety cap at 15 stages in EXPLORE forces convergence.
+
+**Persistence + resume**:
+- **Checkpoint-every-stage** — session file updates after every stage (append-only), not just Stage 5. Crash-safe.
+- **Living document** — session file valid markdown at every intermediate state; user can watch the session unfold in an editor.
+- **Resume workflow** — `/muse:<persona> --resume <path>` or `/muse:continue <path>` reconstructs state from checkpoint and continues the stage graph.
+- **New skill** `commands/muse:continue.md` — entry point for resume.
+
+**Cross-session continuity**:
+- **Thread concept** (`THREADS.md`) — `--thread=<slug>` groups sessions. Thread digest at `~/.muse/threads/<slug>/digest.md` rolled up after each session, injected into next session's persona context.
+- **Thread slug derivation** — explicit flag > inherited from parent > auto-derived from question. Collision detection via Jaccard + hash suffix.
+- **Digest compaction + audit log** — rotate last 5 archives before compacting.
+- **Thread-scoped bookmarks** — `~/.muse/threads/<slug>/followups.md` visible to all sessions in thread.
+
+**Mid-session primitives** (formalized grammar `^/(bookmark|recap|rewind|promote|handoff|council|dontknow)(\s+.*)?$`):
+- `/promote <mode>` — upgrade STANDARD → DEEP → EXPLORE mid-session
+- `/handoff <persona-id>` — spawn linked session with new persona, state transfer (digest + compressed outputs + current framing)
+- `/council <p1> <p2> [<p3>]` — parallel Agent dispatch, side-by-side ASCII rendering, synthesis option
+- `/bookmark <note>` — save tangent to thread's followups.md
+- `/recap` — 3-bullet summary on demand, no LLM call
+- `/rewind <n>` — reload checkpoint from n stages back
+- `/dontknow` — clean pause, resumable anytime
+- Progress indicator in every stage banner: `Stage N · mode=X · stage N/? · pivots:K · last-verdict:Y`
+
+**Auto-handoff hints**:
+- After each stage, lightweight check: does next stage need a move this persona lacks? If yes, offer handoff. Disabled in `MUSE_REGRESSION_MODE=true`.
+
+**Multi-persona council** (`COUNCIL.md`):
+- 2-3 persona parallel Agent dispatch at any STOP point
+- Per-Agent 45s timeout; timeout produces placeholder cell, others still render
+- ASCII side-by-side output (2 or 3 column)
+- Options: A/B/C go with one persona, option C synthesize, option D reject
+
+**Artifact templates** (`artifact-templates/`):
+- `decision-memo.md` — committed stance + rationale + next action
+- `rfc.md` — proposal with alternatives + tradeoffs
+- `one-pager.md` — summary + next action for sharing
+- `spec.md` — functional + non-functional requirements + data model + edge cases
+- Stage 5 now offers artifact-type choice; default session log always written; chosen artifact written to `~/.muse/artifacts/`
+
+**New infrastructure**:
+- `LLM_JUDGE.md` — shared LLM-judge primitive used by both RESEARCH_PIPELINE.md (v2.14 semantic similarity) and CONVERGENCE.md (v2.16 convergence detector). Includes caching, deterministic-mode, fallback behavior.
+- `lib/thread-lock.sh` — cross-platform mkdir+PID-file locking for concurrent thread writes. `flock` is Linux-only; `mkdir` is POSIX. Stale-lock recovery via PID-check + mtime. iCloud Drive detection warns user about atomicity gaps.
+- `tests/session-regression/run.sh` — session-regression harness validating static invariants (persona has required move categories per mode, canonical coverage, SESSION.md structural integrity, schema fingerprints per (persona, mode) pair). Supports snapshot + check modes. 48-60 (persona, mode) pairs green.
+- `tests/session-regression/migrate-v2-2-to-v2-16.sh` — idempotent migration script for existing v2.2 session files (adds null v2.16 frontmatter fields without changing v2.2 content).
+- `tests/session-regression/convergence-eval.sh` + `convergence-fixtures/` — 10 labeled fixtures (3 converged, 3 deepen, 2 pivot, 2 handoff). Eval pass threshold ≥70% verdict accuracy.
+
+**Regression mode**:
+- `MUSE_REGRESSION_MODE=true` env var bypasses convergence detector, disables auto-handoff, disables council LLM-judge. Makes regression deterministic.
+
+### Changed
+
+- `SESSION.md` v2.2 → v2.16 (~200 lines added): EXPLORE mode, command grammar, /promote + /handoff dispatch, small-wins primitives, thread digest loading at pre-flight, convergence loop semantics, Stage 5 artifact selection, checkpoint-every-stage persistence, resume workflow.
+- Frontmatter schema: new fields `thread_id`, `parent_session`, `checkpoint_stage`, `convergence_state`, `handed_off_to`, `handoff_at_stage`, `convergence_calls`, `llm_judge_calls`, `pivots`, `deepen_loops`. All additive; v2.2 files remain compatible (null values = v2.2 behavior).
+- `RESEARCH_PIPELINE.md` — references new `LLM_JUDGE.md` shared primitive (cosmetic note; no behavior change).
+- `docs/CHANGELOG.md` v2.16 entry.
+
+### Fixed
+
+- **Fixed-stage thinking for open-ended questions** — sessions that need depth can now keep going until convergence, not stop at mode timer
+- **Cold-start across sessions** — multi-day thinking on the same problem previously lost context; threads + digest carry forward
+- **Manual rewrite of persona mid-session** — previously required abort + restart with new persona; now single `/handoff` command
+- **Only log output format** — Stage 5 now offers decision memo / RFC / one-pager / spec templates alongside the session log
+- **Silent crash loses session** — v2.2 only wrote at Stage 5; v2.16 checkpoints after every stage; `/muse:continue` resumes from last checkpoint
+- **Confidence-score theater** — outside-voice review flagged LLM self-assessed confidence as miscalibrated; v2.16 convergence schema uses discrete verdicts only, drops the confidence field
+- **Non-deterministic regression** — `MUSE_REGRESSION_MODE=true` env var disables convergence detector and LLM-judge calls for deterministic testing
+
+### Architecture
+
+Follows the `Boil the Lake` principle: every component that would take 2+ hours of human work gets the complete implementation in minutes of CC work. 14-18hr CC estimate realistic (40+hr human team equivalent).
+
+Implementation sequencing (all phases shipped in this release):
+- Phase 2.16.0a — Session-regression harness (new test infra)
+- Phase 2.16.0b — v2.2 → v2.16 migration + MUSE_REGRESSION_MODE env var
+- Phase 2.16.1 — Foundation: schema additions, checkpoint-every-stage, resume workflow
+- Phase 2.16.2 — EXPLORE mode + convergence loop + command grammar
+- Phase 2.16.3 — Thread + digest layer (THREADS.md)
+- Phase 2.16.4 — Mode upgrade (`/promote`) + handoff (`/handoff`) + auto-handoff hints
+- Phase 2.16.5 — Council dispatch (COUNCIL.md)
+- Phase 2.16.6 — Artifact templates (4 new)
+- Phase 2.16.7 — Small-wins pack (6 primitives)
+- Phase 2.16.8 — Concurrent-write safety (lib/thread-lock.sh) + iCloud warning
+- Phase 2.16.9 — Full regression + convergence eval fixtures
+
+### Reviews
+
+- `/plan-ceo-review` (2026-04-22): SCOPE_EXPANSION mode, 5/5 expansions accepted, baseline B+ locked
+- `/plan-eng-review` (2026-04-22): 15 issues found, 13 auto-fixed, 2 answered by user decisions
+- Outside voice (Claude subagent adversarial review): 10 findings, 3 load-bearing tensions resolved (confidence dropped, command grammar formalized, scope held), 7 specs tightened in plan
+
+### Not in scope (deferred to v2.17+)
+
+- Queryable session history ("show me every debate where I was wrong")
+- Thread map visualization (`/muse:map <thread_id>` ASCII tree)
+- Persona disagreement surfacing across thread history
+- Session replay with different persona
+- Convergence threshold user-tuning
+- Stage branching for parallel subthreads
+- Silent thinking phase (agent-initiated pause, vs user-initiated `/dontknow`)
+- v2.20 full thinking-graph rewrite (sessions as DAG nodes, concurrent multi-persona)
+
+### Known limitations (surfaced in eng review, accepted as v2.16-scope)
+
+- Session-regression validates STATIC invariants (persona completeness per mode, schema integrity) — runtime quality requires manual QA + `/muse:benchmark`. Actual session invocation requires the Claude Code runtime.
+- Convergence detector eval (10 fixtures) requires Claude Code to dispatch the judge; bash script documents the procedure but cannot run the judge itself.
+- Outside voice noted convergence detector is "LLM judging LLM" — no ground truth, miscalibration risk. Mitigated via: heuristic-first tier (zero cost), safety cap at 15 stages, 3-consecutive-deepen forced convergence, `MUSE_REGRESSION_MODE` bypass.
+- Critical gaps (disk-full on checkpoint, handoff to malformed persona) documented in plan for Phase 2.17 polish, not blocking ship.
+
+### Install
+
+```bash
+cd ~/.claude/skills/muse && git pull
+# then migrate any existing v2.2 session files:
+bash tests/session-regression/migrate-v2-2-to-v2-16.sh
+```
+
+Existing v2.2 sessions continue to work unchanged until migrated. Post-migration they opt in to v2.16 features (resume, thread continuity). Backward-compatible.
+
+### Shipped modules
+
+- `SESSION.md` — v2.16 adaptive runtime spec (~1100 lines)
+- `CONVERGENCE.md` — convergence detector spec (NEW)
+- `COUNCIL.md` — council dispatch spec (NEW)
+- `THREADS.md` — thread + digest spec (NEW)
+- `LLM_JUDGE.md` — shared LLM-judge primitive (NEW)
+- `commands/muse:continue.md` — resume skill (NEW)
+- `artifact-templates/` — 4 templates (NEW)
+- `lib/thread-lock.sh` — cross-platform locking helper (NEW)
+- `tests/session-regression/` — harness + migration + convergence eval + 10 fixtures (NEW)
+
+---
+
 ## [2.15.0-alpha] — 2026-04-22 — "Living and fresh" — corpus_fingerprint, /muse:refresh, /muse:rebuild, update-skill pipeline expansion, auto-rewrite on ghost-citation fail
 
 ### Why

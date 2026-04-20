@@ -1,0 +1,38 @@
+expected_verdict: pivot
+input:
+  stage_id: stage_2_examine
+  persona_id: seth-godin
+  mode: EXPLORE
+  stages_completed: [stage_0, stage_0_5, stage_1, stage_2_examine, stage_2_examine, stage_2_examine]
+  pivots_so_far: 0
+  original_question: "How do I make my newsletter more engaging?"
+  current_framing: "What makes content remarkable?"
+  last_stage_output: |
+    Seth: Content becomes remarkable when it gives the reader something to share. The Purple Cow
+    is the thing that earns attention. Your newsletter, to be remarkable, needs moments where
+    readers think "I have to show this to someone."
+
+    What does that look like? A surprising data point. A contrarian argument. A reframing of a
+    problem the reader has. A story they've never heard. The opposite of bland summary.
+
+    So: what's the most remarkable idea from your last 5 newsletters? ...
+
+    (Loop — third time we've circled around 'be remarkable' without naming a specific change. User's
+    follow-up responses have been mostly nodding: "yes, remarkable, right, Purple Cow." Circular.)
+  outputs_so_far: |
+    Stage 1: "What makes content remarkable?" — user accepted.
+    Stage 2 (first pass): Seth explained Purple Cow. User nodded.
+    Stage 2 (second pass): Seth explained Tribes. User nodded.
+    Stage 2 (third pass): above. User still nodding.
+notes: |
+  Seth's framing ("what makes content remarkable") is producing Seth's greatest hits rather than
+  specifics about the user's newsletter. Three passes of Stage 2 with the same generic advice.
+  User is nodding but not converging. This is the classic "pivot" signal: the framing is wrong.
+
+  A better framing might be: "What specifically is the job the newsletter's doing for the reader?"
+  (Jobs-to-be-done framing), or "Where in the user's newsletter does the reader tune out?" (diagnostic
+  framing). The current "remarkable" framing is too abstract for the user's concrete newsletter.
+
+  Convergence detector should fire `pivot`, not `deepen`. Deepening on "remarkable" for a 4th time
+  would produce another round of Seth platitudes. Pivot gets the session out of the loop.
+  Expected: `pivot`.

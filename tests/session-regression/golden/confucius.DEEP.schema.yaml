@@ -1,0 +1,6 @@
+persona: confucius
+mode: DEEP
+categories_present: [framing, inquiry, test-probe]
+weak_at: [QUICK]
+canonical_coverage: 6
+has_sources: true
