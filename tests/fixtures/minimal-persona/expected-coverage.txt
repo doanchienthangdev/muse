@@ -1,0 +1,18 @@
+# Paste the pipeline coverage report here after your first manual run.
+# The harness diffs this expected output against actual-coverage.txt.
+#
+# For the minimal-persona fixture, you should see:
+#   - Buckets detected: notes (1 file), root (0 files)
+#   - Buckets succeeded: 1 of 1
+#   - Files read total:    1
+#   - Files skipped total: 0
+#   - Candidates merged:   (some small number, 2-4)
+#   - Candidates verified: 0 (fails cross-domain: only 1 file, 1 bucket)
+#   - Rejected reasons:    all cross-domain
+#
+# Pipeline status: "no_verified_patterns"
+# Caller should STOP with the "too thin" message.
+#
+# Once you run it and confirm the actual coverage matches this description,
+# copy the real pipeline output into this file (replacing this comment block)
+# and commit. That becomes the golden expected coverage for this fixture.

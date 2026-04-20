@@ -1,0 +1,20 @@
+# Expected pipeline coverage for multi-bucket-persona fixture
+#
+# Run once manually, confirm it matches this description, then replace this
+# comment block with the actual pipeline coverage report.
+#
+# Expected:
+#   Buckets detected: articles (2 files), books (1), transcripts (1),
+#                      notes (1), root (1)
+#   Buckets succeeded: 5 of 5
+#   Files read total:    6
+#   Files skipped total: 0
+#
+#   Candidates merged:   3-5 cognitive_patterns, 2-3 questions, 1-2 tensions
+#   Candidates verified (3/3): 3 (frame-surfacing, falsification-test,
+#                               exit-walk)
+#   Rejected reasons:    possibly 1-2 failed predictive (if a candidate had
+#                        no clean trigger), 0-1 failed exclusive
+#
+# Ghost-citation check should PASS — every example in the fixture appears
+# verbatim in its source file.

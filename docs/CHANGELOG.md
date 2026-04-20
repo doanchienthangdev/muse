@@ -13,6 +13,61 @@ Nothing yet.
 
 ---
 
+## [2.10.0-alpha] — 2026-04-19 — Research pipeline rewrite — `/muse:build` + `/muse:update` stop missing books
+
+### Why
+
+User audit surfaced the root cause behind every recent "ghost-citation" and "missed book" hotfix (v2.9 Vance, v2.8 Kotler, v2.4 elon rebuild): `/muse:build` Step 2 had three stacked bugs in the source-reading logic:
+
+1. **Non-recursive glob** — pattern `<src_folder>/*.{md,txt,srt,vtt,json}` matched only top-level files. Every persona folder puts content in subfolders (`articles/ books/ transcripts/ notes/`), so for `.archives/personas/philip-kotler/` the glob hit exactly 1 file (`README.md`). The other 40 files were never read.
+2. **No PDF/EPUB support** — 25 PDFs and 1 EPUB across `.archives/personas/` were invisible to the glob even if recursive. Yet Claude Code's Read tool natively supports PDFs.
+3. **Hard caps** — "up to 10 files in parallel" and "skip files >5MB" silently dropped everything past the thresholds. Even the user's manual PDF→txt extractions (e.g. `principles-of-marketing-19th-edition-rental-edition.txt` at 5.94 MB) got skipped.
+
+Result: every recent persona build was compensating manually with hand-curated README digests and hand-extracted book excerpts in non-standard paths, then still hallucinating citations because the skill had no structured distillation step.
+
+### Added
+
+- **`RESEARCH_PIPELINE.md` at repo root** — shared load-bearing spec for reading persona source folders. Hybrid subfolder map-reduce: detects conventional buckets (`articles/`, `books/`, `transcripts/`, `notes/`, plus root), dispatches one general-purpose subagent per bucket in parallel via the Agent tool (already in `allowed-tools`), merges and dedupes findings across buckets with provenance preserved, runs triple-verification (cross-domain + predictive + exclusive) before emitting candidates. Prints a coverage report every run.
+- **Skim-then-deepen PDF strategy** — subagent reads pages 1-20 (TOC + preface + intro) to identify high-signal chapters, then reads 2-3 targeted chapter ranges. Page budget: 100 per book. Prevents context blowup on 800-page references without hard-skipping the file.
+- **Triple-verification filter (from `alchaincyf/nuwa-skill`)** — adapted into muse's schema. Each candidate must appear in ≥2 buckets OR ≥3 files, must have a non-empty trigger + example, and must Jaccard-overlap <0.6 with every shipped persona's signature moves. Rejected candidates logged to `~/.muse/analytics/research.jsonl`, never fabricated into output.
+- **Ghost-citation gate — mandatory, not AskUserQuestion-able** (`/muse:build` Step 5.95): every `Example:` quote in the draft must trace to its source file via exact substring match or ≥0.8 trigram similarity. FAIL at this gate blocks save absolutely, no "accept anyway" escape hatch. Directly prevents the v2.9 class of bugs by construction.
+- **Subagent prompt sanitization** — each dispatched subagent receives the `[INST]`/`<<SYS>>`/`{{...}}` strip rules in its own prompt template. Prompt-injection surface no longer multiplies with bucket count.
+- **Analytics** — per-pipeline-run line at `~/.muse/analytics/research.jsonl`: buckets detected, buckets succeeded, files read/skipped, candidates merged/verified/rejected with reasons.
+- **`tests/` first-class directory**:
+  - `tests/run.sh` — fixture-based harness
+  - `tests/fixtures/{minimal,multi-bucket,large-corpus,adversarial}-persona/` — 4 fixtures exercising empty-bucket handling, full fanout, stress, and prompt-injection sanitization
+  - `tests/build-regression/run.sh` — regression harness that snapshots signature-move names across all 11 shipped personas and flags ≥30% drift
+  - `tests/build-regression/golden/` — 11 golden snapshots committed (run `--snapshot` to refresh)
+- **`TODOS.md`** at repo root — 3 follow-up items surfaced during `/plan-ceo-review` + `/plan-eng-review`: regression backfill, EPUB convention in CONTRIBUTING, nuwa-interop schema spike.
+
+### Changed
+
+- **`/muse:build` v2.2.1 → v2.10.0-alpha**: Step 2 is now a reference to `RESEARCH_PIPELINE.md`. Step 1.5 existing-persona check dynamically globs `personas/*.md` instead of hardcoding 8. Step 5.3 distinctiveness check compares against all shipped personas, not just the original 8. Step 5.95 ghost-citation gate added.
+- **`/muse:update` tooling bumped to v2.10.0-alpha**: C7 fix (missing sources) and C8 fix (missing analogous problems) both now route `.archives/`-read user options through `RESEARCH_PIPELINE.md`, filtering the envelope to the specific field the fix needs. If the pipeline returns no verified entries, both fixes fall back to manual user-crafted entries rather than fabricating.
+- **`docs/CONTRIBUTING.md`** — EPUB convention added. EPUB files must be pre-converted to `.txt` with `ebook-convert` (Calibre) before placement in persona folders. Zero-dep architecture rule preserved; Read tool's native PDF support covers the other 25 of 26 books.
+
+### Fixed
+
+- **Build skill now reads >1 file per persona folder** — the core regression. A 68 MB 40-file `.archives/personas/philip-kotler/` folder distills via 4 parallel subagents, producing a coverage report with files_read >= 20 instead of 1.
+- **Ghost citations blocked by construction** — Step 5.95 gate makes the v2.9 "honesty fix" class of bugs unreachable. No saved persona can have an Example quote that does not appear in a named source file.
+- **Silent file skips surfaced** — per-bucket `files_skipped[]` array now appears in the coverage report with reasons (too-large / binary-marker / budget-cap). Users can see exactly what was not read.
+
+### Architecture references
+
+- [`alchaincyf/nuwa-skill`](https://github.com/alchaincyf/nuwa-skill) — 6 parallel domain-specialized agents + triple-verification filter. We borrowed the pipeline pattern; kept muse's v2.2 output schema.
+- [`xixu-me/awesome-persona-distill-skills`](https://github.com/xixu-me/awesome-persona-distill-skills) — ecosystem context. 50+ persona-distillation skills in 2026.
+- [`alchaincyf/steve-jobs-skill`](https://deepwiki.com/alchaincyf/steve-jobs-skill/1.2-how-the-skill-was-built:-the-nuwa-distillation-pipeline) — reference implementation of the nuwa pipeline.
+
+Eng design logged as an eureka in `~/.gstack/analytics/eureka.jsonl`: muse's existing `articles/books/transcripts/notes/` subfolder convention is *better* than nuwa's fixed 6-domain schema because format dictates ingestion strategy (chunking, density, skim-vs-full-read).
+
+### Not in scope (deferred to TODOS.md)
+
+- Native EPUB parsing — convention-only in v2.10, `ebook-convert` pre-processing required
+- Nuwa output-format interop — see `NUWA-INTEROP-1` in `TODOS.md` for the measurement spike
+- Re-running all 11 shipped personas under the new pipeline — regression harness proves ≥70% name overlap, no forced rebuild
+
+---
+
 ## [2.9.0-alpha] — 2026-04-18 — `elon-musk` persona v3.1 — Vance EPUB mining + ghost-citation fix
 
 ### Why

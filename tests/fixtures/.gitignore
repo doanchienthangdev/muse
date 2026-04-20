@@ -1,0 +1,8 @@
+# Don't commit stress-test data
+large-corpus-persona/articles/
+large-corpus-persona/books/
+large-corpus-persona/transcripts/
+large-corpus-persona/notes/
+
+# Don't commit actual-coverage outputs (they vary per run)
+**/actual-coverage.txt

@@ -1,4 +1,4 @@
-# Contributing to Muse (v2.3.2-alpha)
+# Contributing to Muse (v2.10.0-alpha)
 
 Muse ships with a curated **starter pack of 8 personas**. The starter pack is a baseline, not a ceiling — the runtime is designed from day one to support arbitrary locally-authored personas, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. Until the catalog ships, the path to expand muse's coverage is **local authoring + upstream PRs**.
 
@@ -26,13 +26,27 @@ Save material to:
 
 ```
 .archives/personas/<persona-id>/
-├── books/                # Book excerpts (text)
-├── transcripts/          # Video/podcast transcripts
-├── articles/             # Blog posts, essays
-└── notes/                # Your own observations
+├── books/                # Book excerpts (text or PDF)
+├── transcripts/          # Video/podcast transcripts (.md, .txt, .srt, .vtt)
+├── articles/             # Blog posts, essays (.md, .txt, .pdf)
+└── notes/                # Your own observations (.md, .txt)
 ```
 
 Note: `.archives/personas/**` is gitignored. Your research stays local.
+
+**Supported source formats** (as of v2.10.0-alpha): `.md`, `.txt`, `.srt`, `.vtt`, `.json`, `.pdf`. The v2.10 research pipeline (`RESEARCH_PIPELINE.md`) will recursively find and read these across your whole persona folder, dispatching one parallel subagent per bucket subfolder. Large PDFs use a skim-then-deepen strategy (read TOC + intro, then targeted chapter ranges, with a 100-page budget per book).
+
+**EPUB convention**: EPUB files are NOT read natively by `/muse:build`. Muse's zero-dependency architecture prohibits shipping an EPUB parser. Convert EPUB to `.txt` before placement:
+
+```
+# Using Calibre's ebook-convert (install: https://calibre-ebook.com/)
+ebook-convert input.epub output.txt --no-default-epub-cover
+
+# Result: place output.txt in your persona's books/ subfolder
+cp output.txt .archives/personas/<persona-id>/books/
+```
+
+Native PDF support (via Claude Code's Read tool) covers ~25 of 26 books typically encountered across persona folders. EPUB appears rarely enough that one-time conversion is the cleaner tradeoff than bundling a parser.
 
 ### Step 2: Run /muse:build
 

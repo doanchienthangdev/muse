@@ -1,4 +1,4 @@
-# Muse Architecture (v2.3.2-alpha — agentic persona runtime)
+# Muse Architecture (v2.10.0-alpha — agentic persona runtime)
 
 This document explains the architecture: **agent runtime as runtime, markdown as content, zero external deps**. For v1 historical context, see `docs/archive/CEO-PLAN-v1.md`.
 
@@ -7,6 +7,8 @@ This document explains the architecture: **agent runtime as runtime, markdown as
 **v2.2 additions**: adaptive session modes (QUICK/STANDARD/DEEP/CRITIC), enriched persona schema (multi-tagline, voice rules, cognitive patterns, when-to-reach), `/muse:build` + `/muse:update` + `/muse:benchmark` slash commands, spec review loop, blind Turing distinctiveness measurement.
 
 **v2.3 additions**: 6 new orchestration commands (`/muse:chain`, `/muse:all`, `/muse:debate`, `/muse:critic`, `/muse:list`, `/muse:spike`) completing the original v1 CEO plan, plus `/muse:who` cold-start triage in v2.3.1. 18 slash commands total.
+
+**v2.10 additions**: research pipeline rewrite (`RESEARCH_PIPELINE.md`). `/muse:build` and `/muse:update` archive-read paths now use a 4-subagent map-reduce over the conventional `articles/ books/ transcripts/ notes/` subfolders with triple-verification filter and mandatory ghost-citation gate. Fixes the v2.2 glob bug where large persona folders were read as 1 file. `tests/` first-class directory with fixtures + regression harness ships alongside.
 
 **Starter pack + runtime positioning**: muse is a persona runtime. The repo ships with a curated starter pack of 8 personas, but the runtime supports arbitrary locally-authored personas via `/muse:build`, and a future persona catalog (v3+) will let users clone individual personas without cloning the whole framework. Everything in this doc describes runtime behavior that scales from 8 personas to 80 without changing the architecture.
 
@@ -144,6 +146,14 @@ muse/
 │   └── archive/             # v1 historical docs
 │       ├── CEO-PLAN-v1.md
 │       └── TODOS-v1.md
+│
+├── RESEARCH_PIPELINE.md    # v2.10 — shared research pipeline spec
+│                           # (4-subagent map-reduce over source folders)
+│
+├── tests/                  # v2.10 — fixture-based tests + regression harness
+│   ├── run.sh
+│   ├── fixtures/
+│   └── build-regression/
 │
 └── .archives/               # Local persona research vault (gitignored)
     ├── .gitkeep

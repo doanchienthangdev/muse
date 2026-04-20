@@ -1,0 +1,5 @@
+Beginner's mind — drop the expert frame
+Cargo cult detection
+Curiosity first — "Why does it actually work?"
+Hand calculation — back-of-envelope math
+Simplification test — "Explain it to a 6-year-old"
