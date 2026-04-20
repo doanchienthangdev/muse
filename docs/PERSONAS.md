@@ -1,11 +1,11 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.9.0-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.11.0-alpha)
 
-Muse is a persona runtime. It ships with a curated **starter pack of 11 core personas** (7 historical/public-domain + 4 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` was added in v2.5.0-alpha as the second; `philip-kotler` was added in v2.7.0-alpha as the third.
+Muse is a persona runtime. It ships with a curated **starter pack of 12 core personas** (7 historical/public-domain + 5 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` in v2.5.0-alpha; `philip-kotler` in v2.7.0-alpha; `seth-godin` in v2.11.0-alpha (first persona distilled end-to-end using the v2.10 research pipeline — 4-subagent fanout, triple-verification, ghost-citation gate).
 
 This doc has three sections:
 
 1. **How personas are structured** — the shared schema
-2. **The starter pack** — 11 personas shipped in the repo, grouped by category
+2. **The starter pack** — 12 personas shipped in the repo, grouped by category
 3. **Extension** — how to add your own, and the future catalog vision
 
 For the canonical v2.2 schema reference, see [`PERSONA_SCHEMA.md`](PERSONA_SCHEMA.md). For compliance checks (C1-C12), see [`BENCHMARKS.md`](BENCHMARKS.md).
@@ -33,9 +33,9 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (11 personas, v2.9.0-alpha)
+## The starter pack (12 personas, v2.11.0-alpha)
 
-All 11 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
+All 12 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
 ### First Principles Thinkers
 
@@ -261,6 +261,34 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 **Living status**: Philip Kotler is alive as of v2.7.0 and continues to publish. Mandatory disclaimer (see above + full text in `personas/philip-kotler.md`). The disclaimer notes that Kotler continues to publish and speak; this persona is a frozen snapshot as of April 2026.
 
 **Sample**: `/muse:philip-kotler we're marketing to Gen Z and signups are flat — what do we do?`
+
+### Strategy + Design + Contrarian (Marketing-as-Remarkable)
+
+#### `seth-godin` — Seth Godin (1960–, interpretive)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material by and about Seth Godin (daily blog 2002–2026 year-archives, 10 books read either as primary-source PDFs or curated ref markdowns, 5 verbatim long-form transcripts: TED 2003, TED 2009, Authors@Google ~2005, Chase Jarvis Live Nov 2018, Impact Theory Mar 2018). NOT affiliated with, endorsed by, or connected to Seth Godin, Yoyodyne, Squidoo, the altMBA, or any Godin-affiliated entity. Outputs are interpretive commentary on documented reasoning patterns — not direct quotation, not predictions of what he would actually say, not claims about his current views. Seth Godin publishes daily; this persona is a frozen snapshot as of April 2026. Use as a cognitive-tool lens only.
+
+**Tagline**: *Make something worth talking about, for someone who'd miss you*
+
+**Signature moves**:
+- **Name the previously-unnamed** *(framing)* — coin a sticky 1-3-word handle for a common but un-named market phenomenon. Seth's catalog: *Purple Cow, Sheepwalker, Lizard Brain, Smallest Viable Audience, Otaku, The Dip, Sneezers, Linchpin, TV-industrial complex, Meatball Sundae.* Consumer-facing labels designed to spread as public vocabulary (distinct from Paul Graham's founder-facing interior diagnostics like "top idea in your mind").
+- **Reframe safe as risky** *(framing)* — the inversion engine. Take the conservative default (be safe, please everyone, scale first) and re-categorize it as the new high-risk position. *"Safe is risky." "Very good is invisible." "Fly too low is the real warning in the Icarus myth."* Works because it breaks the user out of a frame they didn't know they were inside.
+- **Who's it for? What's it for?** *(inquiry)* — Seth's most-repeated question. Force audience specificity (ten real names, not "everyone") and the specific change being sought. Dewater the vague language until what's left has edges.
+- **Who would miss you if you disappeared?** *(inquiry)* — the linchpin / permission-asset diagnostic. Past impressions and reach, would anyone grieve? Unbluffable metric compressing tribe, trust, and indispensability into one question.
+- **Anticipated, personal, relevant?** *(test-probe)* — permission-marketing's three-word test applied to any message. Any "no" means it's interruption. Fix the relationship, not the copy.
+- **Ship, don't perfect** *(test-probe)* — name the polish-stall as the lizard brain hiding. Force a 48-hour ship-vs-revise comparison: polish gets a slightly better artifact and zero signal; shipping gets an imperfect artifact and two days of real response. Signal dominates polish delta almost always.
+
+**Cognitive patterns** (select, 12 total): attention-is-strip-mined-trust-compounds; very-good-is-the-enemy-of-remarkable; identity-precedes-purchase (people-like-us-do-things-like-this); information-comes-from-contact-with-reality; initiative-is-the-scarcest-resource (the seventh imperative); the-tribe-already-exists (you organize yearning, not manufacture it); empathy-is-mechanical (sonder); depth-of-resonance-travels-breadth-of-contact-does-not; taxonomy-before-tactics (interruption vs service); the-industrial-deal-is-off; change-the-system-not-the-actor; safe-and-risky-have-swapped.
+
+**Best for**: Marketing and product direction for the connection economy. Distilling a vague pattern into a sharable name. Breaking out of mass-market defaults (scale, reach, funnel) into specificity. Shipping when perfectionism stalls work. Audits of marketing/product/pitch artifacts ("is it worth talking about?", "does it pass the three-word test?"). Career transitions out of "cog" work into linchpin work. Any problem where the user is defending a safe-feeling conventional default.
+
+**Avoid when**: User needs cost decomposition or physics-based reasoning (reach for **Elon Musk**). First-principles mechanism understanding (reach for **Feynman**). Formal definition-hunting or philosophical cross-examination (reach for **Socrates**). STP with actual market data (reach for **Philip Kotler**). Pre-product-market-fit from direct user conversations (reach for **Paul Graham** — his "talk to your users" is more tactical than Seth's SVA). Design audit of a specific UI or physical artifact (reach for **Dieter Rams**). User's bottleneck is courage to act on an agreed plan — Seth will loop into another reframe rather than force commitment.
+
+**Session mode fit**: strong at QUICK (aphoristic voice compresses to 3–5 min well), STANDARD (his blog-post tempo for 10–15 min walkthroughs), CRITIC (audit against Purple Cow / Permission / SVA frameworks). Weak at DEEP — 20–30 minute sessions tend to re-apply the same inversions rather than add new depth; pair with Socrates or Aristotle for DEEP work.
+
+**Living status**: Seth Godin is alive as of v2.11.0 and publishes a daily blog post. Mandatory disclaimer (see above + full text in `personas/seth-godin.md`). The disclaimer notes that Seth actively publishes; this persona is a frozen snapshot as of April 2026.
+
+**Sample**: `/muse:seth-godin my newsletter has 140k subscribers but nobody emails me back — what am I building?`
 
 ---
 

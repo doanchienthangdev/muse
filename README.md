@@ -4,7 +4,7 @@
 
 ### ChatGPT can quote Feynman. Muse runs his thinking on your problem.
 
-*Eleven great mentors. Five minutes each. One decision closer.*
+*Twelve great mentors. Five minutes each. One decision closer.*
 
 ---
 
@@ -12,7 +12,7 @@
 
 **But you can't call them.** And the AI chatbots you've tried can *imitate* their writing style — they can't *run their thinking* on your actual problem. Knowing the quote doesn't help. Knowing the move does.
 
-**Muse is the runtime for the move.** Eleven great mentors, encoded not as characters to chat with but as reusable cognitive tools you can point at your actual problem:
+**Muse is the runtime for the move.** Twelve great mentors, encoded not as characters to chat with but as reusable cognitive tools you can point at your actual problem:
 
 | Mentor | The move | When you reach for it |
 |---|---|---|
@@ -20,6 +20,7 @@
 | **Socrates** | *Definition hunting* | A central word is undefined |
 | **Paul Graham** | *Make something people want* | Confusing activity with progress |
 | **Philip Kotler** | *STP before the Ps + triple bottom line* | Jumped to tactics before defining the customer |
+| **Seth Godin** | *Name the pattern + who'd miss you?* | Trying to reach everyone; work isn't spreading |
 | **Elon Musk** | *The algorithm + physics-as-constraint* | Inherited requirements are slowing you down |
 | **Dieter Rams** | *Ten-principles audit* | A design is cluttered, loud, or trend-chasing |
 | **Marcus Aurelius** | *Duty focus* | Paralyzed by ten competing priorities |
@@ -41,7 +42,7 @@ You invoke one — `/muse:feynman why is my code slow?` — and it runs a 5–15
 
 ```
 /muse:who should I rewrite this service in Rust?
-  → Scores 11 personas. Top 3: Elon Musk 72/80 (the algorithm +
+  → Scores 12 personas. Top 3: Elon Musk 72/80 (the algorithm +
     first-principles cost decomposition + physics-as-constraint),
     Feynman 65/80 (hand calculation + cargo cult detection),
     Socrates 55/80 (define "rewrite"). Pick one, and the
@@ -82,15 +83,15 @@ Each session saves a markdown file to `~/.muse/sessions/` (or `~/.muse/chains/`,
 
 ## What gets shipped
 
-**Version 2.9.0-alpha**. ~7,100 lines of content, zero lines of shell tooling.
+**Version 2.11.0-alpha**. ~7,600 lines of content, zero lines of shell tooling.
 
 Muse is a **persona runtime**. It ships with a curated starter pack of personas and a full set of commands to use them, compose them, build new ones, and measure them. The starter pack is not a ceiling — it is a baseline. You can add personas locally via `/muse:build` in ~15 interactive questions, or pull new personas from the community via a future persona catalog (roadmap item — see § Roadmap).
 
 Shipped artifacts:
 
-### 🎭 Starter pack — 11 cognitive personas
+### 🎭 Starter pack — 12 cognitive personas
 
-A curated baseline covering first-principles, systems, design, philosophy, strategy, and execution/engineering. Each persona is ~300-450 lines of structured markdown with multi-tagline, voice rules (core belief + banned patterns), 7-12 cognitive patterns, signature moves with inline category tags (framing/inquiry/test-probe/decide/commit), debate positions on canonical dilemmas, and documented analogous problems with citations.
+A curated baseline covering first-principles, systems, design, philosophy, strategy, and execution/engineering. Each persona is ~300-500 lines of structured markdown with multi-tagline, voice rules (core belief + banned patterns), 7-12 cognitive patterns, signature moves with inline category tags (framing/inquiry/test-probe/decide/commit), debate positions on canonical dilemmas, and documented analogous problems with citations.
 
 | ID | Name | Era | Domain | Tagline |
 |---|---|---|---|---|
@@ -105,14 +106,15 @@ A curated baseline covering first-principles, systems, design, philosophy, strat
 | `elon-musk` *(interpretive)* | Elon Musk | 1971– | first-principles, execution, engineering | *Make it less dumb* |
 | `paul-graham` *(interpretive)* | Paul Graham | 1964– | strategy, execution, first-principles, philosophy | *Make something people want* |
 | `philip-kotler` *(interpretive)* | Philip Kotler | 1931– | strategy, execution, first-principles, philosophy | *Marketing is meeting needs profitably* |
+| `seth-godin` *(interpretive)* | Seth Godin | 1960– | strategy, design, contrarian, execution | *Make something worth talking about, for someone who'd miss you* |
 
-7 historical/public-domain + 4 interpretive living figures (Rams, Musk, Graham, and Kotler — all with mandatory disclaimers). All pass benchmark grade A.
+7 historical/public-domain + 5 interpretive living figures (Rams, Musk, Graham, Kotler, and Godin — all with mandatory disclaimers). All pass benchmark grade A.
 
-**Starter pack, not a ceiling.** If the cognitive frame you need is Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes on economic uncertainty, or anyone else — build it locally in ~15 interactive questions. The starter pack grows too: `elon-musk` was added in v2.4.0-alpha, `paul-graham` in v2.5.0-alpha, `philip-kotler` in v2.7.0-alpha, and future releases will add more historical and interpretive frames. See § Build your own persona below.
+**Starter pack, not a ceiling.** If the cognitive frame you need is Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes on economic uncertainty, or anyone else — build it locally in ~15 interactive questions. The starter pack grows too: `elon-musk` was added in v2.4.0-alpha, `paul-graham` in v2.5.0-alpha, `philip-kotler` in v2.7.0-alpha, `seth-godin` in v2.11.0-alpha (first persona built with the v2.10 research pipeline), and future releases will add more historical and interpretive frames. See § Build your own persona below.
 
-### ⚙️ Runtime — 21 slash commands
+### ⚙️ Runtime — 22 slash commands
 
-10 meta commands + 11 persona commands. All self-contained, all structured step-by-step with validation and persistence. See § Commands reference for full list with characteristics.
+10 meta commands + 12 persona commands. All self-contained, all structured step-by-step with validation and persistence. See § Commands reference for full list with characteristics.
 
 ### 📐 Framework — load-bearing specs
 
@@ -169,7 +171,7 @@ For Codex CLI or Gemini CLI users (no slash command support), Muse invokes via f
 
 ## Discovering the right persona
 
-You don't need to memorize 11 personas (or 80 someday) to use muse. Three entry points, from cold-start to expert:
+You don't need to memorize 12 personas (or 80 someday) to use muse. Three entry points, from cold-start to expert:
 
 ### 1. `/muse:who <question>` — the triage command (new in v2.3.1)
 
@@ -178,7 +180,7 @@ Type your question without knowing the map. Muse scores every installed persona 
 ```
 /muse:who should I rewrite this service in Rust?
 
-MUSE TRIAGE — scoring 11 personas against your question
+MUSE TRIAGE — scoring 12 personas against your question
 
   "should I rewrite this service in Rust?"
 
@@ -201,7 +203,7 @@ Top 5 matches (score out of 80):
      (test-probe → inquiry)
 
   H) Council: run all 5 Council personas (/muse:all)
-  I) See full table for all 11 personas
+  I) See full table for all 12 personas
   J) Abort
 ```
 
@@ -226,7 +228,7 @@ PHILOSOPHY
 
 ...
 
-11 personas across 8 categories. Use /muse:list --category=<tag> to filter.
+12 personas across 8 categories. Use /muse:list --category=<tag> to filter.
 ```
 
 ### 3. `/muse:<persona-id> <question>` — direct invocation (when you know who to ask)
@@ -349,7 +351,7 @@ Legend for attributes:
 | `/muse:who <user_text>` | 💬 💾 | **Persona triage** — score all installed personas 0-80 against your question, present top 5 with rationales, optionally suggest a chain or debate, then run the chosen session inline. The cold-start entry point. |
 | `/muse:list [--category=<tag>]` | ⚡ | List installed personas grouped by category with one-line taglines. Dynamic — new personas appear automatically. |
 
-### 🎭 Persona sessions — the starter pack (11)
+### 🎭 Persona sessions — the starter pack (12)
 
 Each runs a 5-stage session (Stage 0 mode detection + Stages 1-5) and persists to `~/.muse/sessions/`.
 
@@ -366,6 +368,7 @@ Each runs a 5-stage session (Stage 0 mode detection + Stages 1-5) and persists t
 | `/muse:elon-musk <question>` *(interpretive)* | 💬 💾 | First-principles cost decomposition + the algorithm (question → delete → simplify → accelerate → automate) + manufacturing reality check + name-the-requirement-maker + physics-as-only-constraint |
 | `/muse:paul-graham <question>` *(interpretive)* | 💬 💾 | Make something people want + name the pattern + talk to your users (manually, unscalably) + default alive or dead + shower test (top idea in your mind) + stay upwind |
 | `/muse:philip-kotler <question>` *(interpretive)* | 💬 💾 | STP before the Ps + broadening (who is the customer?) + coin the discipline term + layer don't replace + triple bottom line audit + move one customer along the 5As |
+| `/muse:seth-godin <question>` *(interpretive)* | 💬 💾 | Name the previously-unnamed (Purple Cow, Sheepwalker, SVA, Linchpin) + reframe safe as risky + who's it for / what's it for + who would miss you if you disappeared + anticipated-personal-relevant three-word test + ship, don't perfect |
 
 ### 🎭 Multi-persona orchestration (4)
 
@@ -400,7 +403,7 @@ All commands run **inside your agent session**. No separate CLI to install. No s
 
 ## Build your own persona
 
-The 11 personas in the starter pack are a baseline, not a ceiling. Muse is designed from day one for local persona authoring. If you want a 12th (say, Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, or anyone else), build it in ~15 interactive questions:
+The 12 personas in the starter pack are a baseline, not a ceiling. Muse is designed from day one for local persona authoring. If you want a 12th (say, Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, or anyone else), build it in ~15 interactive questions:
 
 ```
 1. Gather research
@@ -471,7 +474,7 @@ When in doubt: **keep living-figure personas local**. Don't share them until you
 
 6. **Runs anywhere the agent runs.** Claude Code, Codex CLI, Gemini CLI — all the same markdown. No per-platform shell tooling to maintain.
 
-7. **Extensible by design.** The starter pack is 11 personas (growing). The runtime supports arbitrary local personas via `/muse:build`. A future persona catalog (§ Roadmap) will let users browse and clone individual personas without cloning the whole framework.
+7. **Extensible by design.** The starter pack is 12 personas (growing). The runtime supports arbitrary local personas via `/muse:build`. A future persona catalog (§ Roadmap) will let users browse and clone individual personas without cloning the whole framework.
 
 ---
 
@@ -498,7 +501,7 @@ This is the agentic pattern. Ship markdown, enforce at the content layer, let th
 Muse's long-term direction: **a persona runtime + an extensible persona catalog**.
 
 **Shipping today** (v2.9.0-alpha):
-- 21 slash commands, 4 adaptive session modes, 11 starter pack personas (philip-kotler v2.0 — PDF-mining rebuild from primary-source textbook corpus)
+- 22 slash commands, 4 adaptive session modes, 12 starter pack personas (philip-kotler v2.0 — PDF-mining rebuild from primary-source textbook corpus)
 - `/muse:who` for cold-start triage, `/muse:build` for local authoring
 - `/muse:benchmark` with measurement-backed distinctiveness (grade A)
 - Full multi-persona orchestration (chain, debate, critic, all)
@@ -533,9 +536,9 @@ In the meantime, **share via PR**. If you build a good persona, open a PR to add
 
 **v2.9.0-alpha** — `elon-musk` persona v3.1.0 patch (Vance EPUB mining + ghost-citation honesty fix). Same user audit pattern that drove the Kotler v2.0 rebuild: *"are you actually mining the books about Musk?"* Honest audit found Isaacson 2023 was fully primary-source-mined at 28,573 lines from the start (the load-bearing source was real), BUT the Vance 2015 biography EPUB sat in the archive unread (cited but not mined), AND Higgins *Power Play* + Berger *Liftoff* were ghost citations (cited in v3.0.0 sources but never in the archive at all). Python-zipfile EPUB extraction produced 2,986 lines of clean Vance text; single adversarial subagent mined material Isaacson under-covers (Zip2 era, X.com/PayPal including Musk's own retrospective in Appendix B, the 2001-2002 Russia trips with the documented *"Young boy. No"* ICBM rejection, the Moscow-flight-back spreadsheet that literally became SpaceX, Kwajalein Falcon 1 era, Eberhard-Tarpenning Tesla origin conflict, Justine Musk / Talulah Riley direct interviews). Added to persona: 2 new Vance-anchored taglines (critique context *"I think we can build this rocket ourselves"*; closing context *"Money is low bandwidth"*), 6 new analogous-problem cases (Brady-bond arbitrage as earliest documented idiot-index; the Moscow spreadsheet as origin of first-principles cost decomposition; $120K → $3,900 actuator interrogation — cleaner and earlier-dated than the $250K-valve case Isaacson makes canonical; PayPal internal-transactions as idiot-indexing payments 13 years pre-naming; Tom Mueller engine-in-the-garage hire; SpaceX IPO-refusal email on mission-timescale vs market-timescale), 3 new Shadow specifics (collapse-of-domains pattern from Justine's *"if you were my employee I would fire you"* and the divorce-by-intermediary; the post-Dragon-victory berating Dec 2010 with wives-in-party-attire-three-cubes-over detail; the childbirth email as textual artifact of the demoralization pattern). Removed Higgins + Berger ghost citations with an honest note explaining how to add them properly. Expanded Vance source entry with ISBN + chapter-by-chapter coverage notes. Benchmark grade A maintained. Methodology-contribution: Python-zipfile EPUB extraction fallback when pandoc/ebook-convert unavailable.
 
-**v2.8.0-alpha** — `philip-kotler` persona v2.0 rebuild (gap-analysis-driven, primary-source PDF mining). User audit caught that v1.0 drew primarily from essays and summary files, not from Kotler's canonical textbook corpus. v2.0 mines the full 9-PDF corpus (~130,000 lines of extracted primary text) from *Marketing Management Millennium Edition*, *Principles of Marketing* 19e, *Marketing Insights from A to Z* (80 named-concept entries), the Kartajaya-Setiawan X.0 trilogy, *Confronting Capitalism*, *Advancing the Common Good*, and *My Adventures in Marketing*. Added: CCDV cognitive-pattern spine (create-communicate-deliver-capture value, Kotler's four-verb decomposition), 4 new book-anchored cognitive patterns (definitional layering, multi-level decomposition reflex, paradox aphorism as teaching, Drucker as load-bearing ancestor), 2 new tagline contexts (critique + closing, both verbatim-anchored), new `## Intellectual lineage` body section (Chicago-MIT-Kellogg-Drucker chain), 4 new analogous cases (Harley-Davidson radical marketing, IKEA value-equation decomposition, Wisconsin drunk-driving 3,620% ROI, Paul Polman's Unilever). Sources expanded 18 → 22 entries with book + chapter references. Same gap-analysis-rebuild pattern as the elon-musk v3.0.0 rebuild in v2.6.0-alpha. Benchmark grade A maintained on 11-persona pack. Methodology contribution: reusable PDF-mining pipeline (pdftotext → parallel subagent dispatch → synthesis) — total 40 min end-to-end.
+**v2.8.0-alpha** — `philip-kotler` persona v2.0 rebuild (gap-analysis-driven, primary-source PDF mining). User audit caught that v1.0 drew primarily from essays and summary files, not from Kotler's canonical textbook corpus. v2.0 mines the full 9-PDF corpus (~130,000 lines of extracted primary text) from *Marketing Management Millennium Edition*, *Principles of Marketing* 19e, *Marketing Insights from A to Z* (80 named-concept entries), the Kartajaya-Setiawan X.0 trilogy, *Confronting Capitalism*, *Advancing the Common Good*, and *My Adventures in Marketing*. Added: CCDV cognitive-pattern spine (create-communicate-deliver-capture value, Kotler's four-verb decomposition), 4 new book-anchored cognitive patterns (definitional layering, multi-level decomposition reflex, paradox aphorism as teaching, Drucker as load-bearing ancestor), 2 new tagline contexts (critique + closing, both verbatim-anchored), new `## Intellectual lineage` body section (Chicago-MIT-Kellogg-Drucker chain), 4 new analogous cases (Harley-Davidson radical marketing, IKEA value-equation decomposition, Wisconsin drunk-driving 3,620% ROI, Paul Polman's Unilever). Sources expanded 18 → 22 entries with book + chapter references. Same gap-analysis-rebuild pattern as the elon-musk v3.0.0 rebuild in v2.6.0-alpha. Benchmark grade A maintained on 12-persona pack. Methodology contribution: reusable PDF-mining pipeline (pdftotext → parallel subagent dispatch → synthesis) — total 40 min end-to-end.
 
-**v2.7.0-alpha** — Third starter-pack extension. `philip-kotler` joins the roster as the 11th persona — an interpretive cognitive-tool frame for enterprise-scale marketing strategy. Six signature moves: **STP before the Ps** (segmentation → targeting → positioning before any tactic — Kotler's defense against 60 years of tactics-first failures), **broadening** ("who is the customer of this activity?" — applied to nonprofits 1969, social causes 1971, places 1990s, nations 2000s, societies 2020s), **coin the discipline term** (demarketing, atmospherics, social marketing, place marketing, holistic marketing, stakeholder capitalism — naming as pedagogy at textbook scale), **layer don't replace** (4Ps + 4Cs coexist; Marketing 1.0 → 5.0 layer; additive evolution over replacement), **triple bottom line audit** (profit + people + planet; Kotler's 2015 *Confronting Capitalism* predated the 2019 Business Roundtable stakeholder statement by four years), and **move one customer along the 5As** (aware → appeal → ask → act → advocate — the commit-discipline closure). Distilled from 7 textbooks/trade-books (*Marketing Management* 16e, Marketing 3.0/4.0/5.0 trilogy, *Confronting Capitalism*, *My Adventures in Marketing*, *Principles of Marketing*), 7 essays/interviews (AMA 2024, Kellogg Insight, Marketing Journal 2006 + 2021, Branding Magazine, Place Brand Observer), and 5 long-form transcripts (Italy Marketing 101 lecture, Beijing keynote, Kellogg seminar, IOD India, Marketing 5.0 conversation). Grade A maintained on 11-persona benchmark. Adversarial spec review caught C7 source-id typo + paul-graham title collision + STP-vs-Broadening example overlap + missing decide/commit category tags; all 4 MUST-FIX issues applied. 21 slash commands total.
+**v2.7.0-alpha** — Third starter-pack extension. `philip-kotler` joins the roster as the 11th persona — an interpretive cognitive-tool frame for enterprise-scale marketing strategy. Six signature moves: **STP before the Ps** (segmentation → targeting → positioning before any tactic — Kotler's defense against 60 years of tactics-first failures), **broadening** ("who is the customer of this activity?" — applied to nonprofits 1969, social causes 1971, places 1990s, nations 2000s, societies 2020s), **coin the discipline term** (demarketing, atmospherics, social marketing, place marketing, holistic marketing, stakeholder capitalism — naming as pedagogy at textbook scale), **layer don't replace** (4Ps + 4Cs coexist; Marketing 1.0 → 5.0 layer; additive evolution over replacement), **triple bottom line audit** (profit + people + planet; Kotler's 2015 *Confronting Capitalism* predated the 2019 Business Roundtable stakeholder statement by four years), and **move one customer along the 5As** (aware → appeal → ask → act → advocate — the commit-discipline closure). Distilled from 7 textbooks/trade-books (*Marketing Management* 16e, Marketing 3.0/4.0/5.0 trilogy, *Confronting Capitalism*, *My Adventures in Marketing*, *Principles of Marketing*), 7 essays/interviews (AMA 2024, Kellogg Insight, Marketing Journal 2006 + 2021, Branding Magazine, Place Brand Observer), and 5 long-form transcripts (Italy Marketing 101 lecture, Beijing keynote, Kellogg seminar, IOD India, Marketing 5.0 conversation). Grade A maintained on 12-persona benchmark. Adversarial spec review caught C7 source-id typo + paul-graham title collision + STP-vs-Broadening example overlap + missing decide/commit category tags; all 4 MUST-FIX issues applied. 22 slash commands total.
 
 **v2.6.0-alpha** — `elon-musk` persona full rebuild (gap-analysis-driven). A user-requested audit vs the archive surfaced 6 unused source files and ~12 missing cognitive-move concepts (Idiot Index as Isaacson's named metric, "surge" as Musk's tactical term, the layered Urban software framework, documented "demon mode" shadow, collaborator-acknowledged demoralization weakness, MuskSpeak, Asperger's-style-directness explainer). v3 rebuild integrates all of these, adds two new body sections (`## Shadow — known limitations of this cognitive frame` and `## What to steal, what to leave`), and expands sources 13 → 18. Spec review caught 5 pattern-move title collisions (same C11 issue as paul-graham) + commit-tagline weakness + Core-belief over-length; all 4 issues fixed. Benchmark retains grade A with 10/10 blind Turing match rate — judge specifically noted the "idiot index" terminology as the single sharpest voice fingerprint in the 10-persona pack. README hero tagline changed to *"ChatGPT can quote Feynman. Muse runs his thinking on your problem."* — differentiates muse from generic LLM alternatives via the single load-bearing verb "runs" (runtime, not imitation). 20 slash commands total.
 
@@ -546,7 +549,7 @@ In the meantime, **share via PR**. If you build a good persona, open a PR to add
 Version history:
 - **v2.9.0-alpha** (this release): `elon-musk` v3.1.0 patch. Vance EPUB mining + ghost-citation fix (removed higgins-2021 + berger-2021 which were cited but not in archive). 2 new Vance-anchored taglines, 6 new Vance-sourced analogous-problem cases, 3 new Shadow specifics from Vance's independent-access interviews with ex-employees / Justine / Riley. Isaacson (the primary source, 28,573 lines) was always real — this is a Vance additive patch, not a full rebuild. Methodology: Python-zipfile EPUB extraction fallback when pandoc/ebook-convert unavailable. Grade A maintained.
 - **v2.8.0-alpha**: `philip-kotler` v2.0 rebuild. PDF-mining pipeline against 9 primary-source books (~130K lines). Taglines 6 → 8 with verbatim book anchors. Cognitive patterns 12 → 16 (CCDV + 3). Signature-move example applications sharpened with textbook vocabulary. Sources 18 → 22. New `## Intellectual lineage` section. 4 new analogous cases (Harley, IKEA, Wisconsin DUI, Polman Unilever). Triggered by user audit flagging that v1.0 missed the canonical book corpus. Same gap-analysis pattern as the elon-musk v3.0.0 rebuild. Grade A maintained.
-- **v2.7.0-alpha**: Third starter-pack extension. `personas/philip-kotler.md` + `commands/muse:philip-kotler.md`. Benchmark grade A maintained with 11 personas. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md, ADVISORY_COUNCIL.md, CHANGELOG.md. Third repo-shipped interpretive persona for a living public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards enforced by `/muse:build` C5 check. Adversarial spec review score 8.8 → PASS after 4 MUST-FIX iterations.
+- **v2.7.0-alpha**: Third starter-pack extension. `personas/philip-kotler.md` + `commands/muse:philip-kotler.md`. Benchmark grade A maintained with 12 personas. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md, ADVISORY_COUNCIL.md, CHANGELOG.md. Third repo-shipped interpretive persona for a living public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards enforced by `/muse:build` C5 check. Adversarial spec review score 8.8 → PASS after 4 MUST-FIX iterations.
 - **v2.6.0-alpha**: `elon-musk` persona full rebuild (v3.0.0). Gap-analysis-driven — 6 unused archive sources pulled in, ~12 missing concepts integrated, 2 new body sections (Shadow + What-to-steal-what-to-leave). Spec-review 6/10 → PASS after 4 fixes. Benchmark grade A maintained (10/10 blind Turing). README hero tagline refreshed.
 - **v2.5.0-alpha**: Second starter-pack extension. `personas/paul-graham.md` + `commands/muse:paul-graham.md`. Benchmark grade A maintained with 10 personas. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md, ADVISORY_COUNCIL.md. Second repo-shipped interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards enforced by `/muse:build` C5 check.
 - **v2.4.0-alpha**: First starter-pack extension. `personas/elon-musk.md` + `commands/muse:elon-musk.md`. Benchmark grade A maintained with 9 personas. `install.sh` persona count made dynamic. Docs refresh across README, PERSONAS.md, GETTING_STARTED.md, SKILL.md. First repo-ship of an interpretive persona for a still-active public figure — mandatory disclaimer + interpretive framing + right-of-publicity safeguards all enforced by `/muse:build` C5 check.

@@ -13,6 +13,54 @@ Nothing yet.
 
 ---
 
+## [2.11.0-alpha] — 2026-04-19 — `seth-godin` persona — first build with the v2.10 research pipeline end-to-end
+
+### Why
+
+Two things motivated this release back-to-back with v2.10. First, the v2.10 research pipeline needed a real corpus to prove the design, not just synthetic fixtures. Second, the user had been asking for Seth Godin in the starter pack for a while — his four distinctive cognitive moves (naming unnamed patterns, inverse-framing safe-as-risky, daily-shipping discipline, empathy-first reframe of marketing as service) fill an identifiable gap in the existing 11-persona pack between Philip Kotler's enterprise-strategy frame and Paul Graham's startup-execution frame.
+
+Running the new pipeline against `.archives/personas/seth-godin/` (50 files, 82 MB — the largest folder in the archive) was the first end-to-end production use.
+
+### Added
+
+- **`personas/seth-godin.md` (525 lines, v2.2-compliant)** — fourth interpretive living-figure persona in the starter pack (after Rams, Musk, Graham, Kotler). Six signature moves across all three category slots (2 framing + 2 inquiry + 2 test-probe), twelve cognitive patterns, five context-tagged taglines, full banned-patterns voice discipline, six-canonical-dilemma debate coverage, four analogous problems with source citations, 21 source entries (12 blog year-archives + 10 books + 5 long-form transcripts).
+- **`commands/muse:seth-godin.md`** — slash command entry matching the existing 11 persona commands. Stage 0 mode detection recommends QUICK / STANDARD / CRITIC (Seth's strong modes) and warns on DEEP. Full interpretive disclaimer printed at the top of every session.
+- **Twelfth persona in the starter pack**. README hero table, persona tables, runtime sections, and `docs/PERSONAS.md` updated from "11 personas" / "Eleven great mentors" to 12. Also bumped README persona-session table, `/muse:who` triage example, and all benchmark references.
+- **Research-pipeline-build provenance recorded**. Persona file footer documents: v2.10 research pipeline, 3 subagents dispatched (articles, books, transcripts bucket), 16 triple-verified patterns from the merged pool, ghost-citation gate PASS. First persona in muse whose distillation provenance is fully traceable through the pipeline.
+- **Test fixture coverage**. `tests/build-regression/golden/seth-godin.signatures.txt` added (6-move snapshot). Regression harness now tracks 12 personas; all PASS on golden.
+
+### Architecture notes
+
+- **Pipeline validation in production**. The v2.10 4-subagent fanout was the load-bearing decision from the `/plan-ceo-review` + `/plan-eng-review` run the day before. This release is the empirical proof it works end-to-end on a real 82 MB corpus — articles bucket (27 files, 10 MB), books bucket (18 files, 72 MB — mixed PDFs + curated ref markdowns), transcripts bucket (5 files, 160 KB). Books subagent applied skim-then-deepen on four priority PDFs (Meatball Sundae, Poke the Box, The Icarus Deception, The Song of Significance) staying within the 100-page-per-book budget.
+- **Adversarial spec review caught 16 issues, 7 critical**. Cognitive-patterns-vs-signature-moves restatement (three patterns), Jaccard collision risk with Paul Graham's "Name the pattern" move (resolved via explicit consumer-facing-vs-founder-facing differentiation in the move body), 2 miscategorized banned-patterns (`"average stuff for average people"` and `"scale first"` — Seth uses both diagnostically in his own voice, so not genuinely banned; replaced with `"meets market expectations"`, `"industry-standard conversion rate"`, `"spray and pray"`, `"cast a wide net"`, `"top of funnel"`), 1 core-belief overlength (compressed 2 sentences → 1), 4 ghost-citation risks (4 verbatim quotes in "Reframe safe as risky" move and the "Safety-Song team" example in "Name the previously-unnamed" — rewrote as paraphrase + explicit "let me invent a handle to try on" disclosure).
+- **Distinctiveness check**. Jaccard token overlap vs the 11 existing personas highest at 25% (elon-musk `Name the requirement-maker`) and 23.52% (paul-graham `Name the pattern`) — both well under the 60% collision threshold. The PG collision was the most substantive and was addressed in the move body with an explicit "Not to be confused with Paul Graham's pattern-naming" paragraph differentiating the consumer-facing vs founder-facing distinction.
+- **Ghost-citation gate**. All 10 key claimed quotes trace to source files (hit counts 4 to 37 per term across the archive). No ghost citations in the draft.
+
+### Source materials (traceable provenance)
+
+- Blog archives 2002, 2005, 2007, 2009, 2010, 2011, 2014, 2018, 2019, 2022, 2024, 2026 (12 year-files, ~10 MB)
+- Book refs (6): Permission Marketing 1999, Purple Cow 2003, The Dip 2007, Tribes 2008, Linchpin 2010, This Is Marketing 2018
+- Primary-source PDFs (4 skim-then-deepen): Meatball Sundae 2007, Poke the Box 2011, The Icarus Deception 2012, The Song of Significance 2023
+- Transcripts (5, verbatim, ~38k words total): TED 2003 "How to Get Your Ideas to Spread", TED 2009 "The Tribes We Lead", Authors@Google ~2005 "All Marketers Are Liars", Chase Jarvis Live Nov 2018 "How to Do Work That Matters", Impact Theory Mar 2018 "How to Be a Linchpin"
+
+### Changed
+
+- README "Eleven great mentors" hero tagline → "Twelve great mentors" (with matching row additions in two persona tables — starter-pack overview and persona-session command table)
+- `docs/PERSONAS.md` — new `### Strategy + Design + Contrarian (Marketing-as-Remarkable)` section with full Seth Godin entry, matching the existing format
+- Starter pack classification: 7 historical + 4 interpretive → 7 historical + 5 interpretive (Rams, Musk, Graham, Kotler, Godin)
+- Session count 11 persona commands → 12 persona commands (21 slash commands → 22)
+
+### Fixed
+
+- Nothing — this is an additive release
+
+### Not in scope (deferred)
+
+- `/muse:benchmark` grade-A re-verification on the new 12-persona pack. The manual Jaccard distinctiveness scan in Step 5.3 showed overlap <25% against every existing persona, so the heuristic grade is A by the C1-C12 gate. A full `/muse:benchmark` run against the new pack is a follow-up.
+- Backfilling the v2.10 research pipeline against the 11 prior personas. Regression harness proves they still match their golden signatures, so no rebuild forced.
+
+---
+
 ## [2.10.0-alpha] — 2026-04-19 — Research pipeline rewrite — `/muse:build` + `/muse:update` stop missing books
 
 ### Why
