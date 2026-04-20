@@ -76,3 +76,41 @@ Work deferred from planning reviews. Each entry explains the why, not just the w
 ---
 
 *Generated 2026-04-19 from `/plan-ceo-review` on the `/muse:build` coverage problem.*
+
+---
+
+## P2 — Persona-quality overhaul deferred items (2026-04-21 review)
+
+From `/plan-ceo-review` "Persona Quality Overhaul" — Approach C tiered 3-phase plan committed. These 10 items deferred to post-Phase-3 opportunistic work. Full CEO plan at `~/.gstack/projects/muse/ceo-plans/2026-04-21-persona-quality-overhaul.md`.
+
+### [QOVER-1] Disclaimer entity completeness check
+**What:** C5 currently verifies disclaimer exists in frontmatter + body. Extend to verify disclaimer text mentions the persona's affiliated entities (persona's company, estate, associated orgs). Silent pass today if an entity is missing. **Effort:** S (CC ~15 min). **Priority:** P2.
+
+### [QOVER-2] `/muse:explore <id>` corpus-preview skill
+**What:** Before building, show bucket breakdown, file counts, format breakdown, estimated pipeline duration, missing suggested buckets. Currently build is blind-flight — user must inspect folder manually. **Effort:** M (CC ~30 min). **Priority:** P2.
+
+### [QOVER-3] Multi-persona batch build
+**What:** `/muse:build --batch=a,b,c` runs interactive build for 3 personas back-to-back with shared context. Currently 3 separate skill invocations. **Effort:** M (CC ~30 min). **Priority:** P2.
+
+### [QOVER-4] `/muse:update --all --snapshot` before bulk changes
+**What:** When running update on all personas, snapshot the set to `personas-snapshot-{date}/` before applying any fixes so rollback is straightforward. **Effort:** S (CC ~15 min). **Priority:** P2.
+
+### [QOVER-5] Fingerprint-based "which personas need update" detector
+**What:** After Phase 3 ships corpus fingerprints, add `/muse:update --stale` that reports which personas have corpus-mtime newer than last-mined-at and warrant re-mine. **Effort:** S (CC ~15 min). **Priority:** P2. **Depends on:** Phase 3 fingerprint work.
+
+### [QOVER-6] Session-quality feedback loop
+**What:** Users run sessions with personas. No signal back to persona quality. Add: session file captures a post-session rating (1-5) from the user. Aggregate across sessions. Flag personas with consistent low ratings for rebuild. **Effort:** L (CC ~1 hr). **Priority:** P2. Own future CEO plan.
+
+### [QOVER-7] Specialized adversarial reviewers
+**What:** Current spec review dispatches `general-purpose` Agent. Quality is context-dependent. Could use multiple reviewers with different specializations (voice-discipline reviewer, distinctiveness reviewer, citation-honesty reviewer) + consensus synthesis. **Effort:** M (CC ~45 min). **Priority:** P2.
+
+### [QOVER-8] EPUB native support (bundle converter)
+**What:** 1 EPUB in archive today, documented workaround is `ebook-convert` (Calibre). Hidden dependency. Could bundle a tiny Python/bash converter in `tools/`. **Effort:** M (CC ~30 min). **Priority:** P2.
+
+### [QOVER-9] Per-era / per-bucket weighting in merge
+**What:** Stage 3 merge unions findings equally across buckets. Could weight by bucket file count / bucket corpus size. A pattern appearing in 5 article posts + 1 book chapter is stronger than 1 article + 1 book. **Effort:** M (CC ~30 min). **Priority:** P2. Note: semantic-similarity (Phase 2 #10) is a bigger lever.
+
+### [QOVER-10] Mid-build interactive redirect
+**What:** If pipeline returns 48 candidates and user wants only moves relating to "shipping discipline," no way to filter mid-run. Add a pre-brainstorm filter-by-keyword step. **Effort:** M (CC ~30 min). **Priority:** P2. Low-demand edge case.
+
+*All 10 above deferred from `/plan-ceo-review` 2026-04-21. Phases 1-3 (20 accepted items) have their own release cadence per CEO plan.*
