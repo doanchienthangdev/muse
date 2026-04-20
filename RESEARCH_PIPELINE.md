@@ -195,7 +195,7 @@ Step 2B — Per-file read, format-aware + granularity-aware (v2.13 UPDATED)
     Size check: if >50MB OR has null byte in first 1KB, skip and record:
       files_skipped[] += { path, reason: "too-large" | "binary-marker" }
 
-    **Granularity heuristic (v2.13.0-alpha NEW)**: Before reading a text file,
+    **Granularity heuristic (v2.14.0-alpha NEW)**: Before reading a text file,
     check whether it is a single-essay file or a concatenated-multi-document
     collection (e.g. a year-archive of daily blog posts):
       - Count markdown `##` headings and `#` top-level headings via grep.
@@ -209,7 +209,7 @@ Step 2B — Per-file read, format-aware + granularity-aware (v2.13 UPDATED)
       - Otherwise → treat as SINGLE-DOCUMENT → use direct full-read or
         chunk-read per format dispatch below.
 
-    Stratified Sampling (Step 2B-strat, v2.13.0-alpha NEW):
+    Stratified Sampling (Step 2B-strat, v2.14.0-alpha NEW):
       For a multi-document file (e.g., seth-godin/articles/2007.md with ~570
       daily posts concatenated), do NOT read end-to-end. Sample across the
       file to get diversity, not depth-on-one-essay:
@@ -235,23 +235,40 @@ Step 2B — Per-file read, format-aware + granularity-aware (v2.13 UPDATED)
     (usually the `## <title>` heading nearest the quote), not just the year-
     archive file.
 
-Step 2C — PDF skim-then-deepen strategy
+Step 2C — PDF skim-then-deepen strategy (v2.14.0-alpha: adaptive budget)
   For each .pdf file:
     1. Read pages 1-20 first (TOC, preface, introduction, first chapter).
        If the PDF has <20 pages, read all of it.
-    2. Scan the 20-page skim for:
+    2. Estimate total book pages from TOC or front-matter pagination.
+       If TOC unclear, estimate from file size: ~10KB per page average for
+       text-heavy PDFs, ~30KB per page for image-heavy.
+    3. **Compute adaptive page budget** (v2.14 NEW, replaces fixed 100):
+         total_pages = <estimated from TOC or file size>
+         adaptive_budget = min(200, max(50, round(0.20 * total_pages)))
+       Examples:
+         - 50-page pamphlet → budget = 50 (read all)
+         - 200-page book → budget = 50 (floor, 25% coverage)
+         - 500-page book → budget = 100 (20% coverage, preserves v2.13 behavior)
+         - 800-page textbook → budget = 160 (20% coverage)
+         - 1500-page tome → budget = 200 (ceiling, 13% coverage)
+    4. Scan the 20-page skim for:
        - Chapter headings or TOC entries pointing to high-signal content
          (keywords: "principles", "method", "framework", "rules", "laws",
           "cases", "examples", "lessons", "conclusion", "recap")
        - Self-referential phrases the persona uses across many pages
        - Concentration of domain-relevant terms
-    3. Identify up to 2 chapter page ranges that look load-bearing.
-    4. Read those chapter ranges (still 20 pages per Read call; if chapter
-       is longer, read its first 20 pages only).
-    5. Total page budget per PDF: 100 pages. Stop if exceeded; record in
-       warnings[] "budget:100pg-cap".
-    6. If pages 1-20 extract zero findings, skip the deepen step; record
-       "low-signal:skim-only".
+    5. Identify up to 4 chapter page ranges that look load-bearing (was 2 —
+       adaptive budget may permit more). Prioritize diversity over depth.
+    6. Read those chapter ranges (still 20 pages per Read call; if chapter
+       is longer, read its first 20 pages only). Stop when cumulative pages
+       read >= adaptive_budget.
+    7. If pages 1-20 extract zero findings, skip the deepen step; record
+       "low-signal:skim-only" in warnings[].
+    8. Record in chunk_id metadata:
+       - pages_read: <int, actual pages consumed>
+       - book_total_pages: <int, estimated>
+       - adaptive_budget: <int, computed>
+    9. If budget exceeded, record in warnings[] "budget:adaptive-N-page-cap"
 
 Step 2D — Extract findings from each file
   For each file read and sanitized, identify:
@@ -276,6 +293,38 @@ Step 2D — Extract findings from each file
   return an empty array for it. Empty is truthful; fabricated is the bug
   this pipeline prevents.
 
+=== BUDGET TRACKING (v2.14.0-alpha NEW) ===
+
+You operate inside a finite context window (1M tokens). Track your rough
+token consumption as you read files and switch strategy as you approach
+the budget ceiling.
+
+Approximations:
+  - Plain English prose: 1 byte ≈ 0.25 tokens
+  - Dense markdown with code blocks: 1 byte ≈ 0.33 tokens
+  - Use file_size (from Bash `ls -la` or `stat`) to estimate before reading
+
+Budget: 500k tokens total per subagent (conservative — leaves ~500k headroom
+for prompt, findings JSON, and reasoning).
+
+Thresholds:
+  - Under 50% (< 250k tokens consumed): read files fully, extract findings
+    verbatim. Default mode.
+  - At 50% threshold (~250k tokens): log a warning in warnings[] with
+    text "budget:50%-threshold-hit-switching-to-summary-mode". Switch to
+    per-file summary extraction: read each remaining file, extract findings
+    directly, then discard the raw file text from your working memory.
+    Record only the findings, not the source buffer.
+  - At 80% threshold (~400k tokens): log a warning
+    "budget:80%-threshold-hit-stopping-reads". Do NOT read any new files.
+    Produce the output envelope from whatever has been processed. Add
+    the unread files to files_skipped[] with reason "budget-cap".
+
+Record in the output envelope:
+  - budget_used_tokens: <estimated total tokens consumed>
+  - budget_hit_threshold: null | "50%" | "80%"
+  - budget_switched_to_summary_at_file: <filename where 50% kicked in, or null>
+
 === OUTPUT ENVELOPE ===
 
 Return ONLY a single JSON object matching this schema. No prose, no preamble,
@@ -288,6 +337,11 @@ no markdown code fence:
   "files_read": [<path>, ...],
   "files_skipped": [{ "path": <string>, "reason": <string> }, ...],
   "subagent_duration_s": <number>,
+  "budget_used_tokens": <int>,
+  "budget_hit_threshold": null | "50%" | "80%",
+  "budget_switched_to_summary_at_file": null | "<filename>",
+  "subagent_retry_count": <int, 0 on first attempt>,
+  "retry_succeeded": null | true | false,
   "findings": {
     "cognitive_patterns": [ ... ],
     "distinctive_questions": [ ... ],
@@ -320,32 +374,56 @@ If you cannot complete due to an error, return instead:
 Begin.
 ```
 
-### Timeout and partial-failure behavior
+### Timeout and partial-failure behavior (v2.14.0-alpha: auto-retry)
 
-Per eng review decision: **warn + continue with partial data**.
-
-After dispatch, collect subagent results. For each bucket:
+Default TIMEOUT_S = 600 (10 min). After dispatch, collect subagent results. For each bucket:
 
 ```
 CASE: subagent returns envelope with status="ok" (fields populated)
   → merge into global pool (Stage 3)
 
-CASE: subagent returns envelope with status="failed"
-  → log to warnings[], do NOT merge; do NOT retry automatically
-  → continue pipeline with other buckets' data
+CASE: subagent returns envelope with status="failed" (first attempt)
+  → trigger AUTO-RETRY (v2.14.0-alpha NEW): see retry protocol below
 
-CASE: subagent times out or returns unparseable garbage
-  → treat as status="failed"; log "subagent_timeout" or "malformed_json"
-  → continue pipeline
+CASE: subagent times out OR returns unparseable garbage (first attempt)
+  → log the failure reason: "subagent_timeout" or "malformed_json"
+  → trigger AUTO-RETRY
 
-CASE: 0 of N buckets succeed
+CASE: retry also fails
+  → log to warnings[] "retry_failed: <reason>"
+  → do NOT merge; continue pipeline with other buckets' data
+  → envelope records: subagent_retry_count=1, retry_succeeded=false
+
+CASE: 0 of N buckets succeed (after all retries)
   → Stage 4 triple-verify will produce zero verified candidates
   → pipeline emits status="no_verified_patterns"; caller STOP with message:
-    "All N buckets failed to produce research output. Check the source folder,
-     check Agent tool availability, and re-run."
+    "All N buckets failed to produce research output (including retries).
+     Check the source folder, check Agent tool availability, and re-run."
 ```
 
-Never hard-fail if at least 1 bucket succeeded. The user can re-run later to fill gaps.
+**Auto-retry protocol (v2.14.0-alpha NEW)**:
+
+When a subagent fails or times out, dispatch ONCE more with a simplified prompt:
+
+1. Drop optional findings categories. Require only: `cognitive_patterns`, `sources`, `distinctive_questions`. Skip tensions, analogous_cases, banned_phrases, signature_phrases — the primary categories alone are enough to unblock downstream stages.
+
+2. Reduce per-file budget by 40%: if bucket had 100-file cap, retry with 60-file cap. If PDF adaptive-budget was 100 pages, retry with 60 pages.
+
+3. Shorter output envelope schema: drop `budget_*` and `distinctive_questions[].count` fields. Just the minimum viable findings list.
+
+4. Same TIMEOUT_S (600s) budget for the retry.
+
+5. Record in retry envelope:
+   - `subagent_retry_count: 1`
+   - `retry_reason`: "timeout" | "malformed_json" | "explicit_status_failed"
+   - `retry_succeeded`: true | false
+
+The retry is a once-and-done pattern: if it fails, the bucket is dropped
+(not re-retried). This bounds the worst-case wall-clock time at 2 × TIMEOUT_S
+per bucket.
+
+Never hard-fail if at least 1 bucket succeeded. The user can re-run later
+to fill gaps via `/muse:refresh` (v2.15) or manual `/muse:build` rerun.
 
 ---
 
@@ -406,26 +484,78 @@ pass = (trigger_pattern is non-empty AND example_quote is non-empty AND
 
 Rationale: a pattern without a trigger rule cannot be applied to new user questions at session runtime. Without that, it is a description, not a reusable move.
 
-### Test 3: exclusive
+### Test 3: exclusive (v2.14.0-alpha: two-tier Jaccard + LLM-judge)
 
-Reuse the Jaccard logic from `/muse:build` Step 5.3, extended to ALL files under `personas/*.md` (not just the original 8):
+v2.13 was lexical-only (Jaccard at 0.6). v2.14 adds a semantic-similarity tier via LLM-judge Agent dispatch for borderline cases. Catches "Purple Cow" vs "remarkable product" class of semantic collisions that Jaccard misses.
+
+**Two-tier algorithm**:
 
 ```
-for each existing persona p in personas/*.md:
-  for each signature_move m in p:
-    compute Jaccard overlap between
-      tokens(candidate.name + candidate.trigger_pattern + candidate.description[:first_sentence])
-    and
-      tokens(m.name + m.Trigger + m.body[:first_sentence])
-    (stopwords removed, lowercased)
-    if overlap > 0.6:
-      candidate.exclusive_fail = p.id + "." + m.name
-      break
+for each candidate c in merged_pool:
+  for each existing persona p in personas/*.md (excluding *.bak.*):
+    for each signature_move m in p:
+      jaccard = jaccard_overlap(
+        tokens(c.name + c.trigger_pattern + c.description[:first_sentence]),
+        tokens(m.name + m.Trigger + m.body[:first_sentence])
+      )
 
-pass = (candidate.exclusive_fail is None)
+      # Tier 1 — cheap lexical filter (preserves v2.13 behavior at the extremes)
+      if jaccard < 0.3:
+        continue                       # clearly distinct, skip LLM call
+      if jaccard > 0.9:
+        c.exclusive_fail = f"{p.id}.{m.name} (lexical-near-identical, Jaccard {jaccard:.2f})"
+        break
+
+      # Tier 2 — LLM-judge for the borderline 0.3-0.9 band
+      similarity = llm_judge(c, m)     # Agent dispatch, 0.0-1.0 score
+      if similarity > 0.7:
+        c.exclusive_fail = f"{p.id}.{m.name} (semantic similarity {similarity:.2f}, Jaccard {jaccard:.2f})"
+        break
+
+  pass = (c.exclusive_fail is None)
 ```
 
-Rationale: if a candidate pattern is >60% token-identical to an already-shipped move, it is not exclusive enough to justify a new persona field. This is the `/muse:build` Step 5.3 test, but applied EARLY (before synthesis) instead of LATE (after the draft is composed). Earlier catch = less wasted work.
+**LLM-judge Agent dispatch prompt**:
+
+```
+You are an adversarial move-distinctiveness judge. Given two cognitive moves,
+judge whether they express the SAME cognitive frame (regardless of wording)
+or GENUINELY DIFFERENT frames.
+
+Move A (new candidate):
+  Name: <candidate.name>
+  Trigger: <candidate.trigger_pattern>
+  Description: <candidate.description[:200]>
+
+Move B (existing in shipped persona):
+  Name: <existing_move.name>
+  Persona: <existing_persona.id>
+  Trigger: <existing_move.trigger>
+  Description: <existing_move.body[:200]>
+
+Return ONLY this format, nothing else:
+  SIMILARITY: <0.0-1.0>
+  REASON: <one sentence>
+
+Calibration anchor points:
+  1.0   = identical cognitive move, same frame, same diagnostic
+  0.8-0.9 = same underlying frame, minor domain differences
+  0.6-0.7 = related family of moves but operationally distinct
+  0.3-0.5 = tangentially related, different diagnostic goals
+  0.0-0.2 = unrelated
+
+Be strict. Different authors can arrive at the same move via different vocabulary
+(e.g., Seth's "Purple Cow" and "make something remarkable" = SAME move).
+But surface similarity can hide substantive difference (e.g., Socrates's
+"ask why" as elenchus vs Feynman's "ask why" as first-principles reduction
+= DIFFERENT moves).
+```
+
+**Fallback**: On Agent timeout or unavailable, fall back to Jaccard-only at 0.6 threshold (v2.13 behavior). Log in warnings: "llm_judge_unavailable_fallback_to_jaccard".
+
+**Budget**: For a median persona build (8 new moves × ~100 existing moves = 800 pairs), expect ~60-80 pairs in the Jaccard 0.3-0.9 band, triggering Tier 2. At ~4s per Agent judgment, adds 4-5 min to a build. Record `semantic_judge_calls: <int>` in the envelope.
+
+**Rationale**: Lexical Jaccard at the extremes is nearly free and high-confidence. The 0.3-0.9 band is where semantic judgment matters most — either a genuine collision that Jaccard misses (low Jaccard, high semantic), or surface similarity without substance (high Jaccard, low semantic). Two-tier keeps Tier 1 performance while upgrading Tier 2 accuracy.
 
 ### Filter output
 
@@ -528,6 +658,36 @@ jq -n \
 
 Analytics is best-effort. `jq` unavailable → skip silently.
 
+### Envelope persistence (v2.14.0-alpha NEW)
+
+After emitting the envelope to the caller, persist the full envelope JSON to disk for forensic debugging and to support Phase 3's `/muse:refresh` cached-findings lookup.
+
+**File path**: `.archives/personas/<persona_id>/_pipeline_output/<ISO-timestamp>.json`
+- `<ISO-timestamp>` uses colon-safe format: `2026-04-22T10-30-00Z` (no `:` characters to avoid filesystem-portability issues)
+
+**Persisted JSON schema** = full envelope from Stage 5 emit, plus metadata:
+```json
+{
+  "pipeline_version": "2.14.0-alpha",
+  "persona_id": "<id>",
+  "src_folder": "<absolute path>",
+  "run_at": "<ISO 8601 UTC>",
+  "caller_skill": "muse:build" | "muse:refresh" | "muse:update",
+  "status": "ok" | "partial" | "no_verified_patterns",
+  ...<rest of envelope as emitted>
+}
+```
+
+**Rotation policy**: keep last 5 envelopes per persona. On new write:
+```bash
+mkdir -p .archives/personas/<id>/_pipeline_output
+ls -t .archives/personas/<id>/_pipeline_output/*.json 2>/dev/null | tail -n +6 | xargs rm -f 2>/dev/null || true
+```
+
+**Gitignore**: the root `.gitignore` excludes `.archives/personas/*/_pipeline_output/` so raw forensic data stays local. Verify that `.gitignore` contains this pattern; add it if missing.
+
+**Failure mode**: if write fails (permission denied, disk full), log warning "envelope_persistence_failed" and continue. This is forensic data, not correctness data — pipeline success does not depend on it.
+
 ---
 
 ## Security
@@ -572,6 +732,6 @@ See `tests/README.md` for how to run.
 
 ## Versioning note
 
-This file is introduced in v2.13.0-alpha. `/muse:build` and `/muse:update` versions are bumped to v2.3 when they adopt this pipeline. v2.2 personas remain fully compatible — nothing in this pipeline changes the output schema; it changes only how the input (source folder) is read.
+This file is introduced in v2.14.0-alpha. `/muse:build` and `/muse:update` versions are bumped to v2.3 when they adopt this pipeline. v2.2 personas remain fully compatible — nothing in this pipeline changes the output schema; it changes only how the input (source folder) is read.
 
 If a user is on an old agent runtime that cannot dispatch subagents, both skills fall back automatically (see "Fallback" above). No breaking change.

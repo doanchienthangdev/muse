@@ -1,10 +1,10 @@
 ---
-description: Upgrade an existing persona to v2.2 compliance (v2.10.0-alpha tooling). Detects gaps against SESSION.md (C1–C12 checks), proposes fixes interactively with concrete synthesis recipes, runs spec review loop (max 3 iterations), writes with backup + draft + diff + confirm. C7 (missing sources) and C8 (missing analogous problems) fixes use the v2.10 research pipeline (RESEARCH_PIPELINE.md) when the user opts to pull from `.archives/`. Supports --check (dry-run), --all (batch scan), and --rollback (restore from most recent backup).
+description: Upgrade an existing persona to v2.2 compliance (v2.14.0-alpha tooling). Detects gaps against SESSION.md (C1–C12 checks), proposes fixes interactively with concrete synthesis recipes, runs spec review loop (max 3 iterations), writes with backup + draft + diff + confirm. C7 (missing sources) and C8 (missing analogous problems) fixes use the v2.14 research pipeline (RESEARCH_PIPELINE.md) when the user opts to pull from `.archives/`. Supports --check (dry-run), --all (batch scan), and --rollback (restore from most recent backup).
 allowed-tools: Read, Glob, Bash, Write, Edit, AskUserQuestion, Agent
 argument-hint: <persona-id> [--check | --rollback] | --all [--check]
 ---
 
-# muse:update — persona v2.2 compliance upgrader (v2.10.0-alpha tooling)
+# muse:update — persona v2.2 compliance upgrader (v2.14.0-alpha tooling)
 
 **Args**: $ARGUMENTS
 
@@ -218,7 +218,7 @@ Write the approved disclaimer to BOTH frontmatter `disclaimer:` field AND a body
 
 ### C7 missing sources
 **Do not fabricate citations.** Tell the user: *"This persona has no `## Sources` section. I will not invent citations."*
-- A) Point me at `.archives/personas/<id>/` — I'll run the v2.10 research pipeline (`RESEARCH_PIPELINE.md`) on that folder, filter the `sources[]` output, and propose a `## Sources` section (confirm each source via AskUserQuestion before writing)
+- A) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline (`RESEARCH_PIPELINE.md`) on that folder, filter the `sources[]` output, and propose a `## Sources` section (confirm each source via AskUserQuestion before writing)
 - B) Skip this fix — sessions will run but citations section stays empty
 - C) Abort
 
@@ -227,7 +227,7 @@ Write the approved disclaimer to BOTH frontmatter `disclaimer:` field AND a body
 ### C8 missing on_analogous_problems
 Ask: *"Missing analogous problems section. Options:"*
 - A) I'll propose 2 candidates from this persona's existing moves and you confirm/edit
-- B) Point me at `.archives/personas/<id>/` — I'll run the v2.10 research pipeline and filter to `analogous_cases[]`
+- B) Point me at `.archives/personas/<id>/` — I'll run the v2.14 research pipeline and filter to `analogous_cases[]`
 - C) Skip (Stage 5 citation grounding will be thinner)
 
 **On option B** (v2.10.0-alpha): invoke the research pipeline. Filter the envelope's `findings.analogous_cases[]` array. Triple-verification already applied inside the pipeline (Stage 4) — if the pipeline returns zero verified analogous cases, fall back to option A (ask user to craft from existing moves) rather than fabricating. For each verified case, propose via AskUserQuestion with `case`, `lesson`, `source_ref` pre-filled. Require user confirmation on each before writing.

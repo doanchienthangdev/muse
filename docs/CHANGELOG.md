@@ -13,6 +13,58 @@ Nothing yet.
 
 ---
 
+## [2.14.0-alpha] — 2026-04-22 — "Pipeline brains" — envelope persistence, semantic similarity, context budget, adaptive PDF, rejected-candidates visibility, auto-retry
+
+### Why
+
+Phase 2 of the persona-quality overhaul (per CEO plan `~/.gstack/projects/muse/ceo-plans/2026-04-21-persona-quality-overhaul.md`). Phase 1 (v2.13) gated the drafter. Phase 2 gives the pipeline smarter brains: forensic debuggability (envelope preservation + rejected-candidates-to-reviewer) and robustness (semantic similarity beyond lexical, auto-retry, context-budget awareness, adaptive book budgets).
+
+### Added
+
+- **Context-budget awareness per subagent** (Item 8) in `RESEARCH_PIPELINE.md` Stage 2 subagent prompt. Subagents track ~token consumption via file-size approximations; switch to summary-mode at 50% of 500k budget, hard-stop at 80%. Envelope now records `budget_used_tokens`, `budget_hit_threshold`, `budget_switched_to_summary_at_file`.
+- **Book-length adaptive skim-then-deepen budget** (Item 9) in `RESEARCH_PIPELINE.md` Step 2C. Replaces fixed 100-page-per-PDF cap with `adaptive_budget = min(200, max(50, round(0.20 * total_pages)))`. Example: 200-page book → 50-page budget (25% coverage), 800-page textbook → 160 pages (20% coverage). Preserves v2.13 behavior for 500-page books.
+- **LLM-judge semantic similarity** (Item 10) in `RESEARCH_PIPELINE.md` Stage 4 Test 3. Two-tier filter: Jaccard as Tier 1 (cheap, <0.3 skip / >0.9 fail-fast), LLM-judge Agent as Tier 2 for 0.3-0.9 borderline band. Catches "Purple Cow" vs "remarkable product" class of semantic collisions that lexical Jaccard missed. Fallback to Jaccard-only on Agent unavailable. Budget: ~60-80 Agent calls per median persona (~5 min added latency).
+- **Pipeline envelope persistence** (Item 11) in `RESEARCH_PIPELINE.md` Stage 5. Full envelope JSON written to `.archives/personas/<id>/_pipeline_output/<ISO>.json` after each pipeline run. Rotation keeps last 5 per persona. Gitignore already excludes `.archives/personas/**`. Enables Phase 3 `/muse:refresh` to load cached findings + lets spec review see rejected candidates.
+- **Rejected candidates surfaced to spec reviewer** (Item 12) in `commands/muse:build.md` Step 5.5. Agent prompt extended with new `=== PIPELINE REJECTED CANDIDATES ===` section loaded from the latest envelope. Dimension 6 added to spec review: "did the filter correctly drop low-signal, or reject high-signal candidates?" Spots over-strict filter issues before save.
+- **Auto-retry on subagent timeout** (Item 13) in `RESEARCH_PIPELINE.md` Stage 2 timeout-and-partial-failure section. On first failure, re-dispatch with simplified prompt (drop optional findings categories, reduce per-file budget 40%, shorter envelope schema). One retry total, then skip. Logs `subagent_retry_count`, `retry_reason`, `retry_succeeded`.
+- **`tests/fixtures/semantic-collision-persona/`** — 2-article fixture designed to fool Jaccard (low lexical overlap) but trigger LLM-judge (high semantic similarity with Seth's Purple Cow). Validates Item 10.
+- **`tests/fixtures/timeout-resilience-persona/`** — documentation fixture describing expected auto-retry behavior. Doc-only (real timeouts aren't deterministic fixtures). Validates Item 13 contract.
+
+### Changed
+
+- `commands/muse:build.md` v2.13.0-alpha → v2.14.0-alpha
+- `commands/muse:update.md` v2.10.0-alpha tooling → v2.14.0-alpha tooling (cosmetic version catch-up)
+- `RESEARCH_PIPELINE.md` v2.13.0-alpha → v2.14.0-alpha
+- Envelope output schema: new fields `pipeline_version`, `persona_id`, `src_folder`, `run_at`, `caller_skill`, `budget_*`, `subagent_retry_count`, `retry_succeeded`
+- Spec review Agent prompt: dimensions expanded 5 → 6 (new filter-quality dimension)
+
+### Fixed
+
+- **Over-strict exclusive filter** — v2.13 Jaccard at 0.6 could reject legitimately distinctive candidates whose wording happens to overlap with an existing persona's (false positive). v2.14 two-tier with LLM-judge reduces false positives by distinguishing surface similarity from substantive similarity.
+- **Silent subagent failures** — v2.13 logged timeouts but didn't retry. One transient timeout could lose an entire bucket's findings. v2.14 gives one retry with a simplified prompt, recovering most transient failures.
+- **Forensic blindness** — v2.13 logged analytics summary but discarded full envelope data. Can't answer "why was this candidate rejected three sessions ago?" v2.14 preserves envelopes to disk, rotating last 5.
+
+### Architecture
+
+This is **Phase 2 of 3** per CEO plan:
+- Phase 1 (v2.13, 2026-04-21) — Gate the drafter: synthesis audit, inline gates, save-time gates, year-archive heuristic
+- **Phase 2 (v2.14, this release) — Pipeline brains** (current)
+- Phase 3 (v2.15, planned) — Living and fresh: corpus fingerprint, staleness detection, /muse:refresh, /muse:rebuild, update-skill pipeline expansion
+
+### Reviews
+
+- `/plan-eng-review` on 2026-04-22: HOLD_SCOPE, 2 key decisions resolved (LLM-judge over embeddings/trigrams; separate v2.14→v2.15 releases over combined).
+
+### Not in scope (deferred)
+
+- Corpus fingerprint + staleness detection (Phase 3)
+- `/muse:refresh` + `/muse:rebuild` skills (Phase 3)
+- `/muse:update` C3/C6/C9/C10/C11 pipeline expansion (Phase 3)
+- Auto-rewrite on ghost-citation failure (Phase 3)
+- Full `/muse:benchmark` Grade-A re-verification on v2.14 (separate QA session)
+
+---
+
 ## [2.13.0-alpha] — 2026-04-21 — "Gate the drafter" — synthesis-plan + save-time benchmark + year-archive heuristic
 
 ### Why
