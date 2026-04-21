@@ -13,6 +13,55 @@ Nothing yet.
 
 ---
 
+## [2.19.0-alpha] — 2026-04-22 — "Steve Jobs joins the starter pack"
+
+### Why
+
+User requested a Steve Jobs persona for ongoing startup work. Corpus was dense with primary-source material: 5 verbatim long-form articles (Playboy 1985 15k words; Wired 1996; TIME 1997; Rolling Stone 2003; Fortune 2008) totaling ~38k words, 7 books (Isaacson 2011 authorized biography; Schlender & Tetzeli 2015 insider-preferred; Kocienda's Creative Selection 2018; Segall's Insanely Simple 2012; Lashinsky's Inside Apple 2012; Moritz's Return to the Little Kingdom 2009; Make Something Wonderful 2023 Steve Jobs Archive), and 6 verbatim video transcripts (Stanford commencement 2005; Lost Interview with Cringely 1995; MIT Sloan 1992; WWDC 1997 Fireside Q&A; iPhone keynote Macworld 2007; D5 Gates+Jobs joint 2007) totaling ~60k words. User-authored README pre-identified 6 core cognitive moves + named the reality-distortion tension (positive vs negative faces).
+
+Built using the full v2.14 research pipeline (4 parallel subagents) per `/muse:build`.
+
+### Added
+
+- **`personas/steve-jobs.md`** — interpretive persona with 7 signature moves (balanced 2 framing + 3 inquiry + 2 test-probe), 12 cognitive patterns (6 user-identified + 6 surfaced: A-players-only/bozo-explosion, process-vs-content diagnostic, craftsmanship-in-5000-subtleties, customer-experience-backwards, cannibalize-yourself-before-competitors, memento-mori-decision-filter), 5 rich analogous cases with verbatim quotes (1997 Apple return 350→4 product cut; iPhone 2007 three-revolutions keynote; Xerox PARC 1979 "obvious in 10 minutes"; Stanford 2005 commencement three stories; iPod Fadell Lego-mockup demo 2001), 7 benchmark prompts, 18 verified sources. All 6 canonical dilemmas covered via `canonical_mapping`.
+- **`commands/muse:steve-jobs.md`** — slash command entry point matching v2.16 template. Mandatory interpretive-frame disclaimer printed at session start (Apple + Jobs estate are IP-protective). Explicit instruction that the persona does NOT endorse Jobs's gratuitous cruelty or cancer-delay reality-distortion — only the constructive subset (direct honesty, bar-holding, demo-demanding, memento mori).
+- **`tests/build-regression/golden/steve-jobs.signatures.txt`** + **`tests/session-regression/golden/steve-jobs.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 14 → 15 personas. New "Strategy + Design + Execution (Focus-by-Subtraction + Taste-as-Constraint)" category introduced for Jobs.
+- Regression harnesses green at 15/15 personas (build-regression) and 75 pairs (session-regression, 15 personas × 5 modes).
+
+### Pipeline notes
+
+- Articles subagent: 5 verbatim articles, full-read, ~78k tokens. 25 cognitive patterns + 19 signature moves + 21 analogous cases + 28 signature phrases extracted. Surfaced the "hero-shithead roller coaster" and "competent tyrant" patterns beyond user-identified.
+- Transcripts subagent: 6 transcripts skim-then-deepen (~60k total words, ~50k read). Key canonical phrases verified: "focusing is about saying no" (WWDC 1997), "stay hungry stay foolish" (Stanford 2005), "good artists copy, great artists steal" attributing Picasso (Lost Interview 1995). 40 signature phrases + 15 distinctive questions + 15 cognitive patterns.
+- Books subagent: 5 of 7 PDFs skim-read (~200 pages total: Isaacson 60pp, Make Something Wonderful 40pp, Kocienda 40pp, Segall 20pp, Schlender 40pp). Inside Apple and Return to Little Kingdom not needed for first pass. Kocienda's Creative Selection is the canonical demo-driven-development source; cited for the iPad keyboard decision story.
+- Root subagent (README): user-authored curation captured 6 cognitive moves explicitly, named reality-distortion as positive+negative, listed 15 analogous cases, identified 5 canonical tensions.
+- Ghost-citation verified: "focusing is about saying no" + "can only do three" 5 hits in WWDC 1997; "stay hungry / stay foolish / connect the dots" 5 hits in Stanford 2005; Xerox/PARC/"obvious" 14 hits in Lost Interview 1995; "bicycle for the mind" 2 hits in Rolling Stone 2003.
+
+### Reality-distortion honesty
+
+The persona explicitly encodes the two faces of reality-distortion (positive: Corning glass, iPhone ship date, Mac circuit board thinner; negative: nine-month pancreatic cancer surgery delay) and instructs the agent to classify the domain before applying the move — *negotiable* (supplier capability, engineering tolerance, deadline) vs *non-negotiable* (biology, thermodynamics, time-past). Refuse to apply reality-distortion to non-negotiable domains. That's the fatal misapplication of the move, and Jobs's own worst moment.
+
+### Cruelty disclaimer
+
+The persona does NOT endorse or adopt Jobs's gratuitous cruelty — the "bozo" name-calling, public humiliation, and employee damage documented in Fortune 2008 and Schlender/Tetzeli 2015. The constructive subset (direct honesty, refusal to accept "good enough", bar-holding, demo-demanding, memento mori decision-filter) is what this persona encodes. Voice rules explicitly ban the cruelty patterns.
+
+### Not in scope (deferred to future updates)
+
+- D8 All Things Digital 2010 (Mossberg/Swisher) — Jobs's last major public interview before 2011 death
+- D5 Jobs Solo Interview (May 2007, before Gates joint)
+- Smithsonian Oral History April 1995 (Daniel Morrow)
+- "Think Different" 1997 internal Apple meeting
+- Gladwell's "The Tweaker" New Yorker 2011 (adversarial counter-interpretation)
+- Andy Hertzfeld, Revolution in the Valley (2005) — original Mac team's version
+- Jony Ive, Designed by Apple in California (2016)
+- Steven Levy, The Perfect Thing (2006) — iPod story
+- Lee Clow interviews on advertising with Jobs
+
+---
+
 ## [2.18.0-alpha] — 2026-04-22 — "Naval Ravikant joins the starter pack"
 
 ### Why
