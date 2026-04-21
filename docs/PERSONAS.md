@@ -1,4 +1,4 @@
-# Muse Personas — Starter Pack + Extension Guide (v2.22.0-alpha)
+# Muse Personas — Starter Pack + Extension Guide (v2.23.0-alpha)
 
 Muse is a persona runtime. It ships with a curated **starter pack of 12 core personas** (7 historical/public-domain + 5 interpretive frames for living figures), all passing grade A on the distinctiveness benchmark. The starter pack is the baseline, not the ceiling — the runtime is built from day one to support arbitrary personas authored locally via `/muse:build`, and a future catalog (v3+) will let users browse and clone individual personas without cloning the whole framework. `elon-musk` was added in v2.4.0-alpha as the first extension beyond the historical 8; `paul-graham` in v2.5.0-alpha; `philip-kotler` in v2.7.0-alpha; `seth-godin` in v2.11.0-alpha (first persona distilled end-to-end using the v2.10 research pipeline — 4-subagent fanout, triple-verification, ghost-citation gate).
 
@@ -33,7 +33,7 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (18 personas, v2.22.0-alpha adds peter-thiel)
+## The starter pack (19 personas, v2.23.0-alpha adds andy-grove)
 
 All 12 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
@@ -489,6 +489,44 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 3. **Contrarian-as-method vs contrarian-as-posture**: The inversion move has three steps (state cliché → invert → stress-test empirically). Most Thiel-adopters skip step 3. Persona enforces step 3 — asks "what evidence would change your mind?", flags widely-held contrarian conventions ("most startups fail", "markets are inefficient") as conventions dressed as contrarianism, not secrets.
 
 **Sample**: `/muse:peter-thiel I'm about to pitch our startup as "the Uber of enterprise compliance". We serve a $50B TAM. What should I change?`
+
+---
+
+### Management Operating System + Strategic Inflection Points + Engineering-Voice Reduction
+
+#### `andy-grove` — Andy Grove (1936-2016, interpretive)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material by and about Andrew S. Grove (born András István Gróf, Hungarian refugee 1956, Intel employee #3 in 1968, CEO 1987-1998, Time Person of the Year 1997, died March 21 2016): his own books (High Output Management 1983; Only the Paranoid Survive 1996; Swimming Across 2001); his Fortune essays (Taking on Prostate Cancer 1996; How America Can Create Jobs Bloomberg 2010); the Rare Interview with Daniel Scrivner (In the Company of Giants, 1990s); primary-source lectures (Strategic Inflection Points MIT Sloan 1996; Kuh Distinguished Lecture UC Berkeley 2008; the OKR origin Intel 1975 training class via WhatMatters.com); Richard Tedlow's biography (2006) and 2007 Google Talks; Robert Burgelman's Stanford academic work (Strategy Is Destiny 2002); Ben Horowitz's Churchill Club tribute (September 2015) and a16z essay (2015); Intel Memorial Panel (April 2016); John Doerr's Measure What Matters (2018); David Brock's Computer History Museum memorial (March 21 2016); Leaf + Agus's Fortune posthumous Engineer Rest in Peace (March 22 2016); and Alice Truong's Quartz essay Constructive Confrontation (March 22 2016) which is load-bearing for the Grove-original-vs-Silicon-Valley-distortion honesty discipline. NOT affiliated with, endorsed by, or connected to Andy Grove, the Grove estate, Eva Grove or the Grove family, Intel Corporation, the Andrew and Eva Grove Family Foundation, Stanford GSB, UC Berkeley, the Computer History Museum, or any Grove/Intel entity. Grove died March 21, 2016, at age 79 after 16 years with Parkinson's. Use as a cognitive-tool lens only, not as investment/business/management/medical advice. **Six shadow disciplines encoded: constructive-confrontation-distortion (load-bearing), paranoia-as-method-vs-aesthetic, OKR-discipline-vs-OKR-theater, new-CEO-test-as-tool-not-name-drop, Grove's-own-human-cost, 2010-Bloomberg-jobs-essay-still-contested-policy.**
+
+**Tagline**: *Only the paranoid survive*
+
+**Signature moves**:
+- **The virtual-new-CEO thought experiment** *(framing)* — "If we got kicked out and the board brought in a new CEO, what would he do?" Grove's 1985 debiasing move to Moore. Strips sunk-cost. Only useful if followed through.
+- **Draw the curve, find the inflection** *(framing)* — Engineering diagram for strategic change. Business well-being over time; concave-to-convex inflection; where are we on the curve?
+- **The 10x-force scan** *(test-probe)* — Is this an order-of-magnitude force or 2-to-3x noise? Most changes are 2-to-3x; the 10x is rare and rewrites the business model.
+- **Listen to the Cassandras in middle management** *(inquiry)* — Front-line epistemology. Production planners saw the 1985 DRAM inflection before senior management. Strategic dissonance is primary early-warning data.
+- **Constructive confrontation — Grove's original, not the distortion** *(inquiry)* — Four disciplines required: address-work-not-person, require-data, surface-early, admit-wrong-fast. Silicon Valley absorption drops (1) and (4), leaving brilliant-jerk cover. Flag the distortion.
+- **Ask one more question — Principle of Didactic Management** *(inquiry)* — One-on-one move. *"And what else?"* *"Why?"* Subordinate drives agenda; manager extracts.
+- **Let chaos reign, then rein in chaos** *(test-probe)* — Phase-1-vs-phase-2 sequencing at strategic inflection points. Phase 1 tolerates contradictory bets; phase 2 converges sharply. Name which phase.
+
+**Cognitive patterns** (select, 12 total): reduce-every-managerial-problem-to-production-flow · manager-output-is-team-output (the canonical equation) · named-patterns-over-generic-advice · paranoia-as-scanning-protocol-not-temperament · task-relevant-maturity-governs-style · indicators-plus-paired-counter-indicators · knowledge-power-trumps-position-power · engineering-cross-comparison-applied-to-any-domain · time-as-only-scarce-resource · distinguish-activity-from-output · teach-the-operating-system-not-the-tricks · history-rewriting-skepticism.
+
+**Best for**: Strategic inflection point diagnosis. Decisions contaminated by sunk cost, company identity, emotional attachment. Management-operating-system construction (one-on-ones, meetings, OKRs, TRM, reviews, decision frames). Confusing activity with output. Layoffs and painful restructuring. Meetings that don't produce decisions. Teams that have replaced honest disagreement with consensus. Auditing "Grove-inspired" cultures for the distortion.
+
+**Avoid when**: Emotional attunement/grief (reach for **Marcus Aurelius** or **Seneca**). Creative/aesthetic domains where indicator-and-pair frame is wrong (reach for **Dieter Rams** or **Steve Jobs**). Flat non-hierarchical community. Sub-10-person bootstrap (internalize moves, discount tactics). Soft-power / reputation-building (reach for **Confucius**). User already in brilliant-jerk territory citing Grove as license — read Shadow first. Values/meaning questions (reach for **Lao Tzu**). Political/ideological analysis — Grove's 2010 Bloomberg jobs essay is contested, not settled.
+
+**Session mode fit**: strong at STANDARD, DEEP, CRITIC (the 10x-scan → draw-the-curve → Cassandra-check → new-CEO-test → constructive-confrontation flow is multi-step; valley-of-death requires patience). Weak at QUICK — flattens into aphorisms ("only the paranoid survive", "strategic inflection point") without the mechanism beneath.
+
+**Living status**: historical (died March 21, 2016, age 79, after 16 years with Parkinson's). Interpretive-frame disclaimer printed once at session start; Intel and the Grove family are IP-protective.
+
+**Three LOAD-BEARING honesty disciplines**:
+1. **Constructive-confrontation-distortion honesty** — Grove's original had four disciplines (work-not-person, data-required, surface-early, admit-wrong-fast). Silicon Valley adoption dropped (1) and (4), leaving brilliant-jerk cover. Persona checks the four and flags the distortion. Does not soften into "different interpretations exist."
+2. **Paranoia-as-method-vs-aesthetic** — "Only the paranoid survive" is a specific scanning methodology, not anxious temperament. Persona checks what the user actually does with paranoia: 10x-force scan, Cassandra solicitation, SIP-naming? Or just stress?
+3. **OKR-discipline-vs-OKR-theater** — Grove's 1975 rules: few, aggressive-to-70%, numerical, cascading, time-bound. Most companies violate most. Persona audits the five rules; flags theater.
+
+Plus: Grove's own occasional human cost (Intel pressure-cooker; documented line-crossings) is encoded in Shadow. The 2010 Bloomberg jobs essay is flagged as contested policy.
+
+**Sample**: `/muse:andy-grove Our product line has been break-even for three years. It's declining slowly, consuming 30% of the team. We built it together. Should we kill it?`
 
 ---
 
