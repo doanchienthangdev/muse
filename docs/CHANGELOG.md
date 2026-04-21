@@ -13,6 +13,64 @@ Nothing yet.
 
 ---
 
+## [2.24.0-alpha] — 2026-04-21 — "Warren Buffett joins the starter pack"
+
+### Why
+
+User requested a Warren Buffett persona for ongoing startup work (Vietnamese user message: *"toi rat thich nhan vat nay va dang rat lien quan den startup cua toi"* — they resonate strongly with the figure and find his frames directly relevant to their startup). Buffett is the canonical value-investing and capital-allocation voice of the past seven decades — circle of competence, margin of safety, Mr. Market, the four-criteria filter, moat-first business evaluation, owner earnings, the 20-slot rule, "our favorite holding period is forever", the inner scorecard, admit-mistakes-by-name. Archive was unusually rich with primary Buffett-authored material: the 1977 and 1987 annual letters verbatim, the 1984 Columbia Superinvestors speech, the 2008 NYT "Buy American. I Am." op-ed, and ~75,000 words of verbatim transcripts from five long-form lectures and interviews spanning 1996-2019. User-authored README identified 10 core cognitive moves explicitly AND flagged the load-bearing living-persona interpretive-frame note ("any extrapolation is NOT Buffett's actual view, only an interpretive frame built from his documented work").
+
+Corpus: 5 books on disk (Cunningham's *Essays of Warren Buffett* 3rd ed. 2013 as PRIMARY distillation; Graham's *The Intelligent Investor* as FOUNDATIONAL text with Zweig 2003 commentary; Schroeder's *The Snowball* 2008 authorized biography; Lowenstein's *Buffett: The Making of an American Capitalist* 1995/2008; Pecaut-Wrenn's *University of Berkshire Hathaway* 2017 — 30 years of annual-meeting Q&A notes). 5 articles (1977 letter verbatim, 1987 Mr. Market letter verbatim, 1984 Columbia Superinvestors summary, Oct 2008 NYT "Buy American. I Am." verbatim, Carol Loomis Fortune 1999 summary). 5 long-form verbatim transcripts totaling ~75,000 words (UF MBA 1998 ~18,700 words — THE most-cited single Buffett lecture with LTCM as cautionary tale; UNC MBA 1996 ~9,900 words with See's Candies canonical wonderful-business case; Columbia 2017 Gates+Buffett+Rose ~14,600 words; Charlie Rose 2009 post-BNSF ~10,900 words; Becky Quick CNBC 2019 ~20,400 words — morning after the 2018 annual letter with Kraft-Heinz writedown self-critique).
+
+Built using the v2.14 research pipeline (3 parallel subagents: transcripts, articles, books).
+
+### Added
+
+- **`personas/warren-buffett.md`** — interpretive persona with 7 signature moves (balanced 2 framing + 3 inquiry + 2 test-probe): apply-the-four-criteria-filter *(framing)*; summon-Mr-Market *(framing)*; circle-of-competence-gate *(test-probe)*; check-the-moat-widening-or-narrowing *(inquiry)*; sleep-well-at-night / five-year-market-closed test *(test-probe)*; compute-owner-earnings-not-GAAP *(inquiry)*; admit-the-mistake-by-name-and-quantify-it *(inquiry)*. 12 cognitive patterns (10 user-identified + 2 surfaced: institutional-imperative as explanatory mechanism, concentration-over-diversification scale-appropriate discipline). 8 rich analogous cases with verbatim-quoted attributions (American Express salad-oil scandal 1964 — canonical concentration bet; See's Candies 1972 — first wonderful-business acquisition; Washington Post 1973 — $80M priced, $400M private value; Berkshire Hathaway textile mill 1985 closure — worst-investment admission; Coca-Cola 1988 — the Inevitable and the long hold; Salomon Brothers 1991 — reputation-ruthless Congressional testimony; Buffett Partnership 1956-69 — voluntarily wound down at go-go peak with Inner Scorecard discipline; Kraft-Heinz 2013-2019 — admitted overpayment on CNBC). 7 benchmark prompts including `bp_circle_of_competence_refusal` (tests the persona's crypto/quantum/frontier-tech refusal), `bp_concentration_vs_diversification_advice` (tests scale-appropriate asymmetry), `bp_admit_mistake_by_name` (tests the epistemic-hygiene discipline). 15 verified sources including Graham's Intelligent Investor as foundational and Cunningham's Essays as primary distillation. All 6 canonical dilemmas covered via `canonical_mapping`. LIVING SUBJECT — mandatory disclaimer with explicit interpretive-frame note.
+- **`commands/muse:warren-buffett.md`** — slash command entry point matching v2.16 template. Mandatory disclaimer printed at session start. **Six load-bearing honesty disciplines encoded**:
+  1. **Living-subject honesty (positions evolve)** — Buffett is 95, still publishing, still evolving; Graham-cigar-butts → Munger-wonderful-businesses (1972+); tech-avoidance pre-2016 → Apple 2016+; airlines 2016-2020 → sold March 2020 → later acknowledged premature. Verify current positions against most recent annual letter.
+  2. **Admit-mistakes-by-name applied to the persona itself** — When user asks about Dexter Shoe, Kraft-Heinz, USAir, textile mill, airlines-during-COVID, persona does NOT defend; names, quantifies, extracts principle. Refusing to defend is the discipline.
+  3. **Political-scope discipline** — Endorsements (Obama, Clinton, Biden), "Buffett Rule" on capital gains tax are documented publicly but OUT-OF-SCOPE. Structurally parallel to Thiel's political-scope-boundary and Dalio's Copeland-gap.
+  4. **Munger-influence honesty** — Wonderful-business evolution, invert-always-invert, institutional imperative, "time is friend of the wonderful business," See's Candies 1972 decision — all credit Charlie explicitly. Omitting Munger is a documented honesty failure Buffett himself has repeatedly criticized.
+  5. **Concentration-vs-diversification scale-appropriate advice asymmetry** — Buffett personally concentrates (40% into AmEx 1964, Coca-Cola 20%+); his public retail recommendation is low-cost S&P 500 index funds. Do NOT import Berkshire-scale tactics at retail-individual-investor scale.
+  6. **Circle-of-competence honesty on the persona itself** — Crypto, quantum, specific AI, frontier-tech → "too-hard pile." Persona refuses to fabricate opinions outside the documented circle. Paired with forecast-refusal honesty (no short-term calls).
+- **`tests/build-regression/golden/warren-buffett.signatures.txt`** + **`tests/session-regression/golden/warren-buffett.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 19 → 20 personas. New "Value Investing + Capital Allocation + Long-Term Business Ownership" category introduced for Buffett. Header version bumped v2.23.0-alpha → v2.24.0-alpha.
+- Regression harnesses green at 20/20 personas (build-regression) and 100 pairs (session-regression, 20 personas × 5 modes).
+
+### Pipeline notes
+
+- **Transcripts subagent**: 5 files, full-read (~75,000 words total). Key verbatim extractions: the perimeter-first circle-of-competence frame (UNC 1996, UF 1998); the LTCM cautionary tale with 16 PhDs and 2 Nobel laureates (UF 1998); the 10%-of-a-classmate thought experiment on integrity over IQ (UF 1998); See's Candies as canonical wonderful-business with $4.2M → $12.6M earnings growth and minimal capex (UNC 1996); the 5+ hours/day reading discipline (UNC 1996); the "American tailwind" framing with GDP-per-capita 6x growth over Buffett's lifetime (Becky Quick 2019); the Kraft-Heinz writedown admission "I was wrong on Kraft-Heinz. We overpaid." (Becky Quick 2019); the Apple consumer-ecosystem thesis (Becky Quick 2019); the all-in-wager-on-the-American-economy BNSF framing (Charlie Rose 2009); the Giving Pledge and Gates Foundation context (Columbia 2017).
+- **Articles subagent**: 5 files, full-read. Key verbatim: the 1977 letter's four-criteria framework; the 1987 letter's canonical Mr. Market passage ("His pocketbook is inexhaustible; his emotions are volatile; he is there to serve you, not to guide you."); the Sainted Seven capital-light Berkshire businesses framing; the elephant-gun metaphor ("if you want to shoot rare, fast-moving elephants, you should always carry a loaded gun"); the 1984 Superinvestors N=9 empirical refutation of the efficient-market hypothesis; the 2008 NYT "be fearful when others are greedy" at the height of panic; the Fortune 1999 dot-com-peak prescient bear case decomposing returns into rates × margins × growth × frictional cost.
+- **Books subagent**: 5 PDFs skim-then-deepen. Deep read on Cunningham's Essays (~180 pages across all four major sections). Key extractions from Graham's Intelligent Investor Chapter 8 (Mr. Market) and Chapter 20 (Margin of Safety); Schroeder's Snowball Part Two on the Inner Scorecard origin with Howard Buffett as father-influence; Lowenstein's AmEx salad-oil chapters and Washington Post chapter as canonical concentration-bet cases; Pecaut's 30-year annual-meeting notes for recurring themes and unfiltered Munger-voice quotes.
+- **Ghost-citation spot checks**: "Mr. Market" = 12 hits in 1987 letter; "margin of safety" = 3 hits in Superinvestors speech (Graham's bridge-for-30,000-driven-by-10,000 analogy verified); "circle of competence" = 5 hits in UF 1998. Canonical Buffett phrases in persona ("Rule No. 1", "Price is what you pay, value is what you get", "Be fearful when others are greedy", "Our favorite holding period is forever", "Time is the friend of the wonderful business", "Only when the tide goes out", "There is seldom just one cockroach in the kitchen", "Lethargy bordering on sloth", "Diversification is protection against ignorance") attributed at source-file level per standard practice for well-documented canon.
+
+### Six load-bearing honesty disciplines (the v2.24 contribution)
+
+The Buffett persona encodes MORE shadow disciplines than any prior persona because (a) Buffett is a living, publicly-scrutinized figure whose positions evolve visibly; (b) his documented record extends seven decades and includes explicit self-criticism by name; (c) the investment-advice domain has regulatory exposure requiring explicit "not investment advice" disclosure; (d) his retail-investor recommendation (index funds) is often omitted by followers who cite his personal concentration; (e) Munger's co-architect role is often unacknowledged; (f) his circle of competence is documented specifically (consumer brands, insurance, banking, railroads/utilities) and specifically excludes the frontier-tech domains most users ask about. All six disciplines are load-bearing for honest interpretive use:
+
+1. **Living-subject honesty** — Documented evolutions include cigar-butts → wonderful-businesses (1972+), tech-avoidance → Apple (2016+), airlines 2016-2020 → March 2020 sale → later acknowledged premature. Freezing positions as of April 2026 and flagging potential future revisions.
+2. **Admit-mistakes-by-name applied to the persona** — Models the discipline Buffett himself practices in every annual letter. When asked about documented mistakes, names them.
+3. **Political-scope discipline** — Endorsements + Buffett Rule tax advocacy OUT-OF-SCOPE. Declines political takes, routes back to investing/business.
+4. **Munger-influence honesty** — Attributions where Munger's co-development is documented, not erased.
+5. **Concentration-vs-diversification scale-appropriate advice asymmetry** — Buffett's retail recommendation is index funds, not Berkshire-scale concentration.
+6. **Circle-of-competence honesty on the persona** — Crypto, quantum, AI startups, frontier-tech → too-hard pile. Refuses to fabricate opinions. Paired with forecast-refusal (no short-term calls).
+
+### Not in scope (deferred to future updates)
+
+- The 2008 Berkshire annual letter — "Beware of geeks bearing formulas" (ranked many-best-single-letter); PDF fetch failed
+- The 2014 50th-anniversary special letters (Buffett "Berkshire — Past, Present and Future" and Munger companion piece); PDF fetch failed
+- HBO documentary "Becoming Warren Buffett" (2017) — if captioned source can be found
+- 2008 University of Florida talk by Buffett alone (Q&A with Becky Quick in wake of Lehman collapse)
+- 1998 Berkshire Annual Meeting transcript (5+ hours; richest single annual meeting)
+- Buffett's 2017 letter chapter on share repurchases
+- Buffett's 1991 Salomon Brothers Congressional testimony in full
+- Munger's 1995 "Psychology of Human Misjudgment" Harvard speech (the closest available companion to Buffett's framework; use `/muse:charlie-munger` for Munger-specific frames)
+
+---
+
 ## [2.23.0-alpha] — 2026-04-21 — "Andy Grove joins the starter pack"
 
 ### Why
