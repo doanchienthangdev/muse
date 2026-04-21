@@ -1,0 +1,6 @@
+persona: philip-kotler
+mode: EXPLORE
+categories_present: [commit, decide, framing, inquiry, test-probe]
+weak_at: [QUICK]
+canonical_coverage: 6
+has_sources: true

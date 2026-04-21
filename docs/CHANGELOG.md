@@ -13,6 +13,42 @@ Nothing yet.
 
 ---
 
+## [2.17.0-alpha] — 2026-04-22 — "David Ogilvy joins the starter pack"
+
+### Why
+
+User requested a David Ogilvy persona for ongoing startup work. Corpus at `.archives/personas/david-ogilvy/` is the richest external submission to date: 6 curated articles, 9 books (8 PDFs + 1 EPUB, including Confessions, Ogilvy on Advertising, Unpublished Ogilvy, Blood Brains & Beer, the 1935 AGA cooker manual, and Kenneth Roman's 2009 biography), 5 verbatim video transcripts totaling ~16,000 words (Touffou 1982, Crichton interview c.1977, We Sell — Or Else 1985, Letterman 1983, Salesman documentary), and a user-authored README pre-identifying the five core cognitive moves.
+
+Built using the full v2.14 research pipeline (4 parallel subagents, triple-verification, Synthesis Plan + Audit, inline gates) per `/muse:build`. This is the first persona built end-to-end under the v2.16 adaptive-runtime release.
+
+### Added
+
+- **`personas/david-ogilvy.md`** — interpretive persona with 7 signature moves (balanced across framing/inquiry/test-probe categories), 12 cognitive patterns, 5 analogous cases (Rolls-Royce 1958 with 3-week research and 26 headlines, Hathaway eye-patch 27-year run, Commander Whitehead at Schweppes 19 years, Pepperidge Farm 2 a.m. wagon dream 25+ year run, Eleanor Roosevelt margarine confessed flop), 6 benchmark prompts, 18 verified sources (7 books/memos + 5 transcripts + 6 secondary). All 6 canonical dilemmas covered via `canonical_mapping`.
+- **`commands/muse:david-ogilvy.md`** — slash command entry point matching v2.16 template. Interpretive-frame disclaimer printed at session start.
+- **`tests/build-regression/golden/david-ogilvy.signatures.txt`** + **`tests/session-regression/golden/david-ogilvy.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 12 → 13 personas. New "Strategy + Execution + Empirical (Copy-as-Measurable-Science)" category introduced for Ogilvy.
+- Regression harnesses now green at 13/13 personas (build-regression) and 65 pairs (session-regression, 13 personas × 5 modes).
+
+### Pipeline notes
+
+- Articles subagent: 6 files, 38k tokens used, 0 prompt-injection patterns detected
+- Transcripts subagent: 5 files, ~16k words verbatim Ogilvy speech, 30 signature phrases + 12 distinctive questions + 12 banned phrases + 12 analogous cases + 13 cognitive patterns extracted
+- Books subagent: text-first strategy after initial PDF-size failure — 6 ref/books/*.md summaries + targeted PDF skim (Confessions pp.1-20, AGA 1935 full 15pp, Unpublished Ogilvy pp.1-40, Blood Brains Beer pp.1-20). 15 signature moves + 17 sources + 30 signature phrases from books alone.
+- Root subagent (README): user-authored curation captured the 5 cognitive moves + Eleanor Roosevelt / Manet AGA / Xerox / Sorrell flops as analogous cases
+- Ghost-citation: all key quotes verified to appear in source files via Grep (three weeks + electric clock in Touffou; Eleanor Roosevelt + margarine in Letterman; Russian doll + giants + dwarfs in Touffou; Hathaway + eyepatch in Touffou)
+
+### Not in scope (for future updates)
+
+- Forbes 1982 Hicks profile (not fetched — link in archive)
+- Drayton Bird's Ogilvy memo archive (blog)
+- Founders podcast Ep. 82 on Ogilvy (David Senra, Spotify)
+- Additional Magic Lantern training films beyond Touffou
+
+---
+
 ## [2.16.0-alpha] — 2026-04-22 — "Adaptive session runtime" — EXPLORE mode, convergence loop, threads, handoff, council, artifacts
 
 ### Why

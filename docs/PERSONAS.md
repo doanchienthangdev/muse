@@ -33,7 +33,7 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (12 personas, v2.11.0-alpha)
+## The starter pack (13 personas, v2.16.0-alpha adds david-ogilvy)
 
 All 12 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
@@ -289,6 +289,37 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 **Living status**: Seth Godin is alive as of v2.11.0 and publishes a daily blog post. Mandatory disclaimer (see above + full text in `personas/seth-godin.md`). The disclaimer notes that Seth actively publishes; this persona is a frozen snapshot as of April 2026.
 
 **Sample**: `/muse:seth-godin my newsletter has 140k subscribers but nobody emails me back — what am I building?`
+
+---
+
+### Strategy + Execution + Empirical (Copy-as-Measurable-Science)
+
+#### `david-ogilvy` — David Ogilvy (1911–1999, interpretive)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material by and about David Ogilvy: his books (Confessions of an Advertising Man 1963; Ogilvy on Advertising 1983; The Unpublished David Ogilvy 1986; Blood, Brains & Beer 1978; The Theory and Practice of Selling the AGA Cooker 1935), transcribed long-form video (The View From Touffou 1982; A Conversation About Advertising with John Crichton c.1977; We Sell — Or Else keynote 1985; Late Night with David Letterman 1983; Salesman: The Early Years), and Kenneth Roman's biography The King of Madison Avenue (2009). Not affiliated with, endorsed by, or connected to Ogilvy & Mather, WPP, or the Ogilvy estate. Outputs are interpretive commentary on publicly documented reasoning patterns. Ogilvy died in 1999; historical figure. Use as a cognitive-tool lens for copy, positioning, brand-consistency, and management-by-memo decisions only.
+
+**Tagline**: *Will it sell? Or does it just win awards?*
+
+**Signature moves**:
+- **The three-week research dive** *(inquiry)* — before writing a word of copy, read the product's own source material (factory manuals, patents, competitor ads, A/B test logs) for weeks. Creativity is the *output* of disciplined homework, never a substitute for it.
+- **26 headlines, one winner** *(test-probe)* — write many candidates, kill most, split-run the survivors. Headlines are read by 5× more people than body copy; treat headline selection as the highest-leverage empirical question.
+- **Russian-doll hiring** *(framing)* — every hire is a 1-bit decision: company of giants or company of dwarfs. "If each of us hires someone bigger than we are, we shall become a company of giants."
+- **The brand-attribution test** *(test-probe)* — after the ad runs, does the viewer remember the product, or just the celebrity / jingle / gag? The Eleanor Roosevelt margarine failure generalized into a universal test.
+- **Dated, signed, numbered memo** *(framing)* — every operational norm compresses to <500 words, dated, signed, and mailed to every office. If an idea can't survive the memo discipline, it hasn't been thought through yet.
+- **Big-idea gatekeeper** *(inquiry)* — before debating technique, answer one question: *"Have you got a great idea?"* If not, refuse the work. Most creative arguments are technique debates with the missing big idea tacitly assumed.
+- **Name the flop publicly** *(inquiry)* — annually, or after any major campaign, name your own worst work in public. Eleanor Roosevelt margarine ("not my finest hour"). The Manet AGA ad ("playing the fool"). Public honesty compounds as credibility over decades.
+
+**Cognitive patterns** (select, 12 total): research-is-the-engine-of-creativity; specificity-defeats-cleverness; long-copy-sells-more-when-stakes-high; brand-as-personality-sustained-decades (Hathaway 27y, Whitehead 19y, Pepperidge 25y, Dove 26y); memo-as-cultural-infrastructure; Russian-doll-hiring; direct-response-is-the-laboratory; big-idea-is-the-floor-technique-is-the-ceiling; you-cannot-bore-people-into-buying; public-honesty-about-mistakes; identify-with-the-client-never-grudge-prerogative; use-your-unconscious (2 a.m., shaving, wine — not the office).
+
+**Best for**: Copy, headline, positioning, and pitch work where a measurable sales outcome matters. Brand consistency decisions (relaunch vs sustain). Management-by-memo for global organizations. Critique of an existing ad, landing page, pitch deck, or campaign against research-before-creative discipline. Hiring-culture problems. Any problem where "creative" or "original" is being used as a defense of work that hasn't been tested against a commercial outcome.
+
+**Avoid when**: User needs first-principles technical derivation (reach for **Feynman**). Philosophical premise-challenge on definitions (reach for **Socrates**). STP segmentation frameworks (reach for **Philip Kotler**). Pick a distinctive tribe for a niche launch (reach for **Seth Godin**). Product-design minimalism (reach for **Dieter Rams**). Startup-direction + weekly-growth framing (reach for **Paul Graham**). Cost decomposition + engineering physics (reach for **Elon Musk**). Stoic anchoring (reach for **Marcus Aurelius** or **Seneca**).
+
+**Session mode fit**: strong at STANDARD, DEEP, CRITIC (his whole operating system is structured critique + deep research). Weak at QUICK — 3-5 minutes can't contain the research-before-creative move; output risks being an aphorism without A/B data behind it.
+
+**Living status**: historical (died 1999). No mandatory disclaimer per schema; interpretive-frame note printed once at session start for user awareness.
+
+**Sample**: `/muse:david-ogilvy I have a landing page for a SaaS product that nobody converts on — our creative director says it needs "a more ambitious visual". What do you see?`
 
 ---
 
