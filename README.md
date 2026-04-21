@@ -56,7 +56,7 @@ You invoke one — `/muse:warren-buffett should I buy this company?` or `/muse:m
 
 ```
 /muse:who should I rewrite this service in Rust?
-  → Scores all 24 personas. Top 3: Elon Musk 72/80 (the algorithm +
+  → Scores all 25 personas. Top 3: Elon Musk 72/80 (the algorithm +
     first-principles cost decomposition + physics-as-constraint),
     Feynman 65/80 (hand calculation + cargo cult detection),
     Andy Grove 60/80 (wartime-or-peacetime classification).
@@ -105,11 +105,11 @@ Each session saves a markdown file to `~/.muse/sessions/` (or `~/.muse/chains/`,
 
 **Version 2.26.0-alpha**. ~15,000+ lines of content, zero lines of shell tooling.
 
-Muse is a **persona runtime**. It ships with a curated starter pack of 24 great mentors and a full set of commands to use them, compose them, build new ones, and measure them. The starter pack is not a ceiling — it is a baseline. You can add personas locally via `/muse:build` in ~15 interactive questions, or pull new personas from the community via a future persona catalog (roadmap item — see § Roadmap).
+Muse is a **persona runtime**. It ships with a curated starter pack of 25 great mentors and a full set of commands to use them, compose them, build new ones, and measure them. The starter pack is not a ceiling — it is a baseline. You can add personas locally via `/muse:build` in ~15 interactive questions, or pull new personas from the community via a future persona catalog (roadmap item — see § Roadmap).
 
 Shipped artifacts:
 
-### 🎭 Starter pack — 24 cognitive personas
+### 🎭 Starter pack — 25 cognitive personas
 
 A curated baseline covering first-principles, systems, design, philosophy, strategy, execution, investing, management, culture-design, and AI-industry strategy. Each persona is ~400-550 lines of structured markdown with multi-tagline, voice rules (core belief + banned patterns), 7-12 cognitive patterns, signature moves with inline category tags (framing/inquiry/test-probe/decide/commit), debate positions on canonical dilemmas, documented analogous problems with citations, and (for living figures) a Shadow section encoding the specific honesty disciplines the persona requires.
 
@@ -139,14 +139,15 @@ A curated baseline covering first-principles, systems, design, philosophy, strat
 | `ben-horowitz` *(interpretive)* | Ben Horowitz | 1966– | CEO-operating, culture-design, founder-coaching | *The Struggle is where greatness comes from* |
 | `chris-voss` *(interpretive)* | Chris Voss | 1957– | negotiation, communication, tactical-empathy | *You don't need to win the conversation — you need a "that's right"* |
 | `clayton-christensen` *(interpretive)* | Clayton Christensen | 1952-2020 | innovation, strategy, jobs-to-be-done, disruption-theory | *What theory are you using?* |
+| `eugene-schwartz` *(interpretive)* | Eugene Schwartz | 1927-1995 | copywriting, direct-response, marketing | *Copy cannot create desire. It can only channel desire that already exists.* |
 
-7 historical/public-domain + 17 interpretive (Rams, Musk, Graham, Kotler, Godin, Ogilvy, Naval, Jobs, Munger, Dalio, Thiel, Grove, Buffett, Altman, Horowitz, Voss, Christensen — all with mandatory disclaimers and, where applicable, load-bearing Shadow sections encoding specific honesty disciplines). All pass benchmark grade A.
+7 historical/public-domain + 18 interpretive (Rams, Musk, Graham, Kotler, Godin, Ogilvy, Naval, Jobs, Munger, Dalio, Thiel, Grove, Buffett, Altman, Horowitz, Voss, Christensen, Schwartz — all with mandatory disclaimers and, where applicable, load-bearing Shadow sections encoding specific honesty disciplines). All pass benchmark grade A.
 
-**Starter pack, not a ceiling.** If the cognitive frame you need is Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes on economic uncertainty, or anyone else — build it locally in ~15 interactive questions. The starter pack grows every few weeks: `elon-musk` added v2.4, `paul-graham` v2.5, `philip-kotler` v2.7 (rebuilt v2.8), `seth-godin` v2.11, `david-ogilvy` v2.17, `naval-ravikant` v2.18, `steve-jobs` v2.19, `charlie-munger` v2.20, `ray-dalio` v2.21, `peter-thiel` v2.22, `andy-grove` v2.23, `warren-buffett` v2.24, `sam-altman` v2.25, `ben-horowitz` v2.26, `chris-voss` v2.27, `clayton-christensen` v2.28 — each one built end-to-end via the same research pipeline that's available to any contributor. See § Build your own persona below.
+**Starter pack, not a ceiling.** If the cognitive frame you need is Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes on economic uncertainty, or anyone else — build it locally in ~15 interactive questions. The starter pack grows every few weeks: `elon-musk` added v2.4, `paul-graham` v2.5, `philip-kotler` v2.7 (rebuilt v2.8), `seth-godin` v2.11, `david-ogilvy` v2.17, `naval-ravikant` v2.18, `steve-jobs` v2.19, `charlie-munger` v2.20, `ray-dalio` v2.21, `peter-thiel` v2.22, `andy-grove` v2.23, `warren-buffett` v2.24, `sam-altman` v2.25, `ben-horowitz` v2.26, `chris-voss` v2.27, `clayton-christensen` v2.28, `eugene-schwartz` v2.29 — each one built end-to-end via the same research pipeline that's available to any contributor. See § Build your own persona below.
 
 ### ⚙️ Runtime — 35+ slash commands
 
-13 meta/orchestration commands + 24 persona commands. All self-contained, all structured step-by-step with validation and persistence. See § Commands reference for full list with characteristics.
+13 meta/orchestration commands + 25 persona commands. All self-contained, all structured step-by-step with validation and persistence. See § Commands reference for full list with characteristics.
 
 ### 📐 Framework — load-bearing specs
 
@@ -155,7 +156,7 @@ A curated baseline covering first-principles, systems, design, philosophy, strat
 - **`docs/PERSONA_SCHEMA.md`** (~450 lines) — canonical v2.2 schema reference for building or upgrading personas. C1-C12 compliance checks documented.
 - **`docs/BENCHMARKS.md`** (~400 lines) — methodology explainer for `/muse:benchmark` (4 categories, 11 measures, 7 run modes, baseline management, worked confusion examples).
 
-**v2.3 completed the original v1 CEO plan** — all 7 meta commands from the initial spec (`muse:all`, `muse:chain`, `muse:debate`, `muse:critic`, `muse:build`, `muse:spike`, `muse:list`) ship as slash commands, joined by `muse:update`, `muse:benchmark`, `muse:who`, `muse:refresh`, `muse:rebuild`, and `muse:continue` for the full meta surface. v2.11+ added research-pipeline infrastructure (4-subagent fanout, triple-verification, ghost-citation gates). v2.21-2.26 brought Shadow-section discipline for living figures with multiple-honesty-discipline encoding. Measurement-backed distinctiveness (grade A, 24/24 blind Turing) maintained across all 24 personas.
+**v2.3 completed the original v1 CEO plan** — all 7 meta commands from the initial spec (`muse:all`, `muse:chain`, `muse:debate`, `muse:critic`, `muse:build`, `muse:spike`, `muse:list`) ship as slash commands, joined by `muse:update`, `muse:benchmark`, `muse:who`, `muse:refresh`, `muse:rebuild`, and `muse:continue` for the full meta surface. v2.11+ added research-pipeline infrastructure (4-subagent fanout, triple-verification, ghost-citation gates). v2.21-2.26 brought Shadow-section discipline for living figures with multiple-honesty-discipline encoding. Measurement-backed distinctiveness (grade A, 24/24 blind Turing) maintained across all 25 personas.
 
 Zero dependencies. Zero shell scripts. Zero build step. The agent is the runtime.
 
@@ -211,7 +212,7 @@ For Codex CLI or Gemini CLI users (no slash command support), Muse invokes via f
 
 ## Discovering the right persona
 
-You don't need to memorize 24 personas (or 80 someday) to use muse. Three entry points, from cold-start to expert:
+You don't need to memorize 25 personas (or 80 someday) to use muse. Three entry points, from cold-start to expert:
 
 ### 1. `/muse:who <question>` — the triage command
 
@@ -220,7 +221,7 @@ Type your question without knowing the map. Muse scores every installed persona 
 ```
 /muse:who should I invest $50K in this AI startup at 30x revenue?
 
-MUSE TRIAGE — scoring 24 personas against your question
+MUSE TRIAGE — scoring 25 personas against your question
 
   "should I invest $50K in this AI startup at 30x revenue?"
 
@@ -360,7 +361,7 @@ The mode is surfaced to you at Stage 0 via AskUserQuestion. You pick. The sessio
 
 ---
 
-## Commands reference (35+ total — v2.28.0-alpha)
+## Commands reference (35+ total — v2.29.0-alpha)
 
 Legend for attributes:
 - 💬 **Interactive** — uses AskUserQuestion to stop at decision points
@@ -376,7 +377,7 @@ Legend for attributes:
 | `/muse:who <user_text>` | 💬 💾 | **Persona triage** — score all installed personas 0-80 against your question, present top 5 with rationales, optionally suggest a chain or debate, then run the chosen session inline. The cold-start entry point. |
 | `/muse:list [--category=<tag>]` | ⚡ | List installed personas grouped by category with one-line taglines. Dynamic — new personas appear automatically. |
 
-### 🎭 Persona sessions — the starter pack (24)
+### 🎭 Persona sessions — the starter pack (25)
 
 Each runs a 5-stage session (Stage 0 mode detection + Stages 1-5) and persists to `~/.muse/sessions/`. Listed roughly in order of addition to the starter pack.
 
@@ -404,6 +405,7 @@ Each runs a 5-stage session (Stage 0 mode detection + Stages 1-5) and persists t
 - `/muse:ben-horowitz` *(interpretive)* — Name-the-state + wartime-vs-peacetime + lead bullets + sharpen contradictions
 - `/muse:chris-voss` *(interpretive)* — Tactical empathy + label ("It sounds like…") + mirror + calibrated "how am I supposed to do that?" + summarize-until-"that's right" + accusation audit
 - `/muse:clayton-christensen` *(interpretive)* — "What theory are you using?" + failure-is-good-management reframe + Jobs-to-be-Done + sustaining-vs-disruptive classification + resource-allocation pathology test + marginal-cost trap + "Anomalies Wanted"
+- `/muse:eugene-schwartz` *(interpretive)* — Diagnose Awareness × Sophistication matrix + channel mass desire (never create it) + two-week front-loaded research + 33:33 Liberator timer + copy-is-assembled-not-written + words-as-windows + claim-exhaustion → mechanism → identity
 
 ### 🎭 Multi-persona orchestration (4)
 
@@ -427,7 +429,7 @@ Each runs a 5-stage session (Stage 0 mode detection + Stages 1-5) and persists t
 
 | Command | Attrs | What it does |
 |---|---|---|
-| `/muse:benchmark [--baseline \| --diff \| --quick \| --persona=<id>]` | 💾 | Measure persona distinctiveness + voice discipline + schema compliance + mode fit. 4 categories, 11 measures. Grade A maintained across all 24 personas. |
+| `/muse:benchmark [--baseline \| --diff \| --quick \| --persona=<id>]` | 💾 | Measure persona distinctiveness + voice discipline + schema compliance + mode fit. 4 categories, 11 measures. Grade A maintained across all 25 personas. |
 | `/muse:spike [--personas=<csv>] [--seed=<n>] [--mode=gather\|dry\|score]` | 💾 🔑 | Scientific distinctiveness eval via real Claude API calls. |
 
 ### 🔁 Continuity (1)
@@ -446,7 +448,7 @@ All commands run **inside your agent session**. No separate CLI to install. No s
 
 ## Build your own persona
 
-The 24 personas in the starter pack are a baseline, not a ceiling. Muse is designed from day one for local persona authoring. If you want to add, say, Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes, Simone Weil, or anyone else — build it in ~15 interactive questions:
+The 25 personas in the starter pack are a baseline, not a ceiling. Muse is designed from day one for local persona authoring. If you want to add, say, Jane Jacobs on cities, Claude Shannon on information theory, Hayao Miyazaki on craft, Nassim Taleb on antifragility, John Maynard Keynes, Simone Weil, or anyone else — build it in ~15 interactive questions:
 
 ```
 1. Gather research
@@ -503,7 +505,7 @@ When in doubt: **keep living-figure personas local**. Don't share them until you
 
 7. **Runs anywhere the agent runs.** Claude Code, Codex CLI, Gemini CLI — all the same markdown. No per-platform shell tooling to maintain.
 
-8. **Extensible by design.** The starter pack is 24 personas (growing). The runtime supports arbitrary local personas via `/muse:build`. A future persona catalog (§ Roadmap) will let users browse and clone individual personas without cloning the whole framework.
+8. **Extensible by design.** The starter pack is 25 personas (growing). The runtime supports arbitrary local personas via `/muse:build`. A future persona catalog (§ Roadmap) will let users browse and clone individual personas without cloning the whole framework.
 
 ---
 
@@ -519,7 +521,7 @@ The quality bar comes from the content, not the infrastructure:
 - Every persona must pass C1-C12 compliance before save.
 - Every session stage has a named quality bar (distinctiveness, mode fit, voice discipline, concreteness, citation).
 - Every SESSION.md rule has a fallback for when a persona is incomplete.
-- `/muse:benchmark` measures distinctiveness empirically, not just by taste. Grade A across all 24 personas.
+- `/muse:benchmark` measures distinctiveness empirically, not just by taste. Grade A across all 25 personas.
 - Living-figure personas have Shadow sections that encode specific honesty disciplines — the persona declines its own misuse.
 
 This is the agentic pattern. Ship markdown, enforce at the content layer, let the agent run the workflow.
@@ -530,9 +532,9 @@ This is the agentic pattern. Ship markdown, enforce at the content layer, let th
 
 Muse's long-term direction: **a persona runtime + an extensible persona catalog**.
 
-**Shipping today** (v2.28.0-alpha):
-- 24 starter-pack personas across 8+ categories (philosophy, first-principles, design, systems, strategy, execution, investing, management/culture, AI-industry)
-- 35+ slash commands (13 meta + 24 persona), 5 adaptive session modes (QUICK, STANDARD, DEEP, CRITIC, EXPLORE)
+**Shipping today** (v2.29.0-alpha):
+- 25 starter-pack personas across 8+ categories (philosophy, first-principles, design, systems, strategy, execution, investing, management/culture, AI-industry)
+- 35+ slash commands (13 meta + 25 persona), 5 adaptive session modes (QUICK, STANDARD, DEEP, CRITIC, EXPLORE)
 - `/muse:who` for cold-start triage, `/muse:build` + `/muse:refresh` + `/muse:rebuild` for local authoring and maintenance
 - `/muse:benchmark` with measurement-backed distinctiveness (grade A maintained)
 - Full multi-persona orchestration (chain, debate, critic, all)
@@ -555,7 +557,7 @@ Muse's longest-term direction is a public catalog of community-authored personas
 4. **Update** cloned personas with a single command when authors ship improvements
 5. **Contribute** by publishing their own locally-built persona via PR, with an automated distinctiveness check gate
 
-v2.28 is the mature foundation; v3.0 is when the catalog becomes real.
+v2.29 is the mature foundation; v3.0 is when the catalog becomes real.
 
 In the meantime, **share via PR**. If you build a good persona, open a PR to add it to the starter pack, and if the distinctiveness check passes, it ships.
 
@@ -563,11 +565,13 @@ In the meantime, **share via PR**. If you build a good persona, open a PR to add
 
 ## Status
 
-**v2.28.0-alpha** — `clayton-christensen` persona joins the starter pack (24 personas). Theory-before-prescription discipline + failure-is-good-management reframe + Jobs-to-be-Done causal analysis + sustaining-vs-disruptive classification + resource-allocation pathology test + marginal-cost trap detection + "Anomalies Wanted" theory-refinement. 7 signature moves (2F/2I/3T — theory-before-prescription, failure-is-good-management reframe, JTBD, Anomalies Wanted, sustaining-vs-disruptive classification, resource-allocation pathology test, marginal-cost trap), 12 cognitive patterns, 10 analogous cases (disk drives as model organism, Nucor steel mini-mills, milkshake study, Blockbuster-Netflix marginal trap, Nick Leeson / Barings, Uber 2015 self-correction, Andy Grove "just tell us what it means for Intel" teaching moment, basketball-on-Sunday, Kaiser dental sealant healthcare, market-creating innovation in developing economies), 10 benchmark prompts. Built from 6 books (*The Innovator's Dilemma* 1997, *The Innovator's Solution* 2003, *Disrupting Class* 2008, *How Will You Measure Your Life?* 2012 McKinsey Award, *Competing Against Luck* 2016, *The Prosperity Paradox* 2019) + 7 articles + 5 verbatim transcripts totaling ~46,200 words (Talks at Google 2016, UVA Law Capitalist's Dilemma 2013, Nieman Foundation 2013, Oxford Saïd 2013, Startup Grind with Marc Andreessen 2016). **Seven load-bearing honesty disciplines encoded**: living-vs-deceased / frozen-2020 snapshot (LOAD-BEARING — Christensen died Jan 23 2020, coaching-tree post-2020 extensions OUT-OF-SCOPE), "disruption" as buzzword — Christensen's own 2015 HBR correction applied (LOAD-BEARING — Uber as canonical non-classical case; business-model incompatibility as load-bearing causal element), Jill Lepore 2014 "Disruption Machine" academic critique (cherry-picking + unfalsifiability + marketing-slogan concerns surfaced not dismissed), LDS / Mormon faith scope discipline (100%-easier-than-98% principle usable independent of Sabbath theology), Innosight LLC + Christensen Institute commercial vested-interest (for-profit consulting + think-tank advocacy), JTBD over-generalization risk (B2B enterprise-sales procurement / champion / economic-buyer / gatekeeper dynamics), theory's success-conditioned unfalsifiability concern (prospective classification with three-test check is the discipline). Grade A maintained. 120 regression pairs green (24 personas × 5 modes).
+**v2.29.0-alpha** — `eugene-schwartz` persona joins the starter pack (25 personas). The most influential direct-response copywriter of the 20th century, 27/30 Rodale mail-order hit ratio, 8M+ books sold, $200M+ revenue. Diagnose market Awareness × Sophistication BEFORE writing copy + channel existing mass desire (never create it) + two-week front-loaded research (underline every claim with red pencil) + 33:33 Liberator timer (boredom forces engagement, not willpower) + copy-is-assembled-not-written anti-creativity + words-as-windows transparency + claim-exhaustion → mechanism → enlarged-mechanism → identity ladder + "you never sell anything once" pool-shot positioning. 7 signature moves (2F/3I/2T), 12 cognitive patterns, 8 analogous cases (Sneaky Little Arthritis Tricks headline dissection, Milt Pierce / Boardroom Stage 4 mechanism mastery, Rodale 27/30 hit ratio, NYT obituary paradox, 1994 Rodale workshop self-proposed, "building larger mice" fear-amplification ethics, Kurtz torch-bearer lineage), 10 benchmark prompts. Built from 3 books (*Breakthrough Advertising* 1966 THE CANONICAL TEXT, *The Brilliance Breakthrough* 1989, Worstell *Breakthrough Copywriter* 2017) + 6 articles + 5 verbatim transcripts INCLUDING THE ONLY KNOWN VERBATIM SCHWARTZ-SPEAKING SESSION (Rodale Press Copywriting Workshop May 11 1994 ~60 min ~13,140 words with live 33:33 demo). **Seven load-bearing honesty disciplines encoded**: living-vs-deceased / frozen-1995 snapshot (LOAD-BEARING — Schwartz died Oct 6 1995; Kurtz / Bencivenga / Schwalm post-1995 digital-channel extensions OUT-OF-SCOPE), direct-response mail-order historical context vs modern digital channels (LOAD-BEARING — 1966 print tactics require translation to landing pages / email / VSLs / social / AI copy), Brian Kurtz commercial training ecosystem vested-interest (LOAD-BEARING — Titans + Overdeliver + 2004 reissue depend on Schwartz foundational status), "building larger mice" fear-amplification ethics + FTC substantiation environment (LOAD-BEARING — technique works but modern regulation imposes real constraints), National Enquirer + Charles Dickens reading discipline time-cost reality (2+ hrs/day sustained across 4+ domains is the substrate), the 33:33 method survivorship bias + individual variance concern (principle transfers; specific number idiosyncratic), framework scope discipline (direct-response vs brand vs education vs B2B enterprise). Grade A maintained. 125 regression pairs green (25 personas × 5 modes).
 
-**v2.27.0-alpha** — `chris-voss` persona joins the starter pack (24 personas). Tactical empathy + FBI-Crisis-Negotiation-Unit methodology ported to business + "that's right" vs "you're right" discipline. 7 signature moves (tactical-empathy, label-with-"It-seems/sounds/looks-like", mirror-last-1-3-critical-words, chase-"no"-not-"yes", calibrated-how/what-questions-never-why, summarize-until-"that's right", pre-empt-with-accusation-audit), 12 cognitive patterns, 10 analogous cases (Chase Manhattan 1993, Philippines Sabaya $10M→zero, Haiti $150K→$17K, DC Tractor Man 2003, bar-fight, brother-email, son-as-linebacker, Mrs Voss "sound angry", Christmas tree, Black Swan Group commercial translation), 10 benchmark prompts. Built from 2 books (*Never Split the Difference* 2016, *The Full Fee Agent* 2023) + 6 articles + 6 verbatim transcripts totaling ~93,853 words (TEDx 2018, Talks at Google 2019, Lex Fridman 2023, Huberman 2023, Impact Theory 2022, Diary of a CEO 2022). **Six load-bearing honesty disciplines encoded**: living-subject honesty + Black Swan Group commercial vested-interest (for-profit consultancy sells the methodology being assessed), life-or-death FBI origin vs everyday-application misapplication (Mrs Voss "sound angry" case self-cited), contested neuroscience claims (amygdala/prefrontal, 7-38-55 Mehrabian, "name it to tame it" Lieberman 2007, mirror neurons — real but compressed; Voss himself notes caveats), Fisher/Ury contested frame rejection (academic negotiation research disagreement), overdeployment-from-dominance-is-manipulation (power-asymmetric deployment reads as surveillance), "never split the difference" contested for ongoing relationships (high-stakes-one-shot calibration, not repeated-game maintenance). Grade A maintained. 115 regression pairs green (24 personas × 5 modes).
+**v2.28.0-alpha** — `clayton-christensen` persona joins the starter pack (25 personas). Theory-before-prescription discipline + failure-is-good-management reframe + Jobs-to-be-Done causal analysis + sustaining-vs-disruptive classification + resource-allocation pathology test + marginal-cost trap detection + "Anomalies Wanted" theory-refinement. 7 signature moves (2F/2I/3T — theory-before-prescription, failure-is-good-management reframe, JTBD, Anomalies Wanted, sustaining-vs-disruptive classification, resource-allocation pathology test, marginal-cost trap), 12 cognitive patterns, 10 analogous cases (disk drives as model organism, Nucor steel mini-mills, milkshake study, Blockbuster-Netflix marginal trap, Nick Leeson / Barings, Uber 2015 self-correction, Andy Grove "just tell us what it means for Intel" teaching moment, basketball-on-Sunday, Kaiser dental sealant healthcare, market-creating innovation in developing economies), 10 benchmark prompts. Built from 6 books (*The Innovator's Dilemma* 1997, *The Innovator's Solution* 2003, *Disrupting Class* 2008, *How Will You Measure Your Life?* 2012 McKinsey Award, *Competing Against Luck* 2016, *The Prosperity Paradox* 2019) + 7 articles + 5 verbatim transcripts totaling ~46,200 words (Talks at Google 2016, UVA Law Capitalist's Dilemma 2013, Nieman Foundation 2013, Oxford Saïd 2013, Startup Grind with Marc Andreessen 2016). **Seven load-bearing honesty disciplines encoded**: living-vs-deceased / frozen-2020 snapshot (LOAD-BEARING — Christensen died Jan 23 2020, coaching-tree post-2020 extensions OUT-OF-SCOPE), "disruption" as buzzword — Christensen's own 2015 HBR correction applied (LOAD-BEARING — Uber as canonical non-classical case; business-model incompatibility as load-bearing causal element), Jill Lepore 2014 "Disruption Machine" academic critique (cherry-picking + unfalsifiability + marketing-slogan concerns surfaced not dismissed), LDS / Mormon faith scope discipline (100%-easier-than-98% principle usable independent of Sabbath theology), Innosight LLC + Christensen Institute commercial vested-interest (for-profit consulting + think-tank advocacy), JTBD over-generalization risk (B2B enterprise-sales procurement / champion / economic-buyer / gatekeeper dynamics), theory's success-conditioned unfalsifiability concern (prospective classification with three-test check is the discipline). Grade A maintained. 120 regression pairs green (25 personas × 5 modes).
 
-**v2.26.0-alpha** — `ben-horowitz` persona joins the starter pack (24 personas). CEO-operating system + named CEO states + culture-as-action design. 7 signature moves (name-and-define-the-thing, wartime-vs-peacetime, silver-vs-lead-bullets, did-you-already-know, culture-as-action, good-X/bad-X, sharpen-contradictions), 12 cognitive patterns, 8 analogous cases, 8 benchmark prompts. Built from 2 books (*The Hard Thing About Hard Things* 2014, *What You Do Is Who You Are* 2019) + 11 articles + 8 verbatim transcripts totaling ~99,500 words. **Seven load-bearing honesty disciplines encoded**: living-subject honesty (early-a16z vs 2020s a16z voice), political/a16z-joint-position scope discipline (DeSantis/Trump endorsement + crypto advocacy + 2023 Techno-Optimist Manifesto OUT-OF-SCOPE), vested-interest flag (a16z GP $45B+ AUM), "The Struggle" romanticization risk (state-not-identity discipline), "Wartime CEO" misapplication (cruelty/laziness cover), hip-hop literacy (Paid in Full Foundation documented substance vs performative citation), founder-CEO-advantage vs founder-CEO-incompetence tension. Grade A maintained. 110 regression pairs green (22 personas × 5 modes).
+**v2.27.0-alpha** — `chris-voss` persona joins the starter pack (25 personas). Tactical empathy + FBI-Crisis-Negotiation-Unit methodology ported to business + "that's right" vs "you're right" discipline. 7 signature moves (tactical-empathy, label-with-"It-seems/sounds/looks-like", mirror-last-1-3-critical-words, chase-"no"-not-"yes", calibrated-how/what-questions-never-why, summarize-until-"that's right", pre-empt-with-accusation-audit), 12 cognitive patterns, 10 analogous cases (Chase Manhattan 1993, Philippines Sabaya $10M→zero, Haiti $150K→$17K, DC Tractor Man 2003, bar-fight, brother-email, son-as-linebacker, Mrs Voss "sound angry", Christmas tree, Black Swan Group commercial translation), 10 benchmark prompts. Built from 2 books (*Never Split the Difference* 2016, *The Full Fee Agent* 2023) + 6 articles + 6 verbatim transcripts totaling ~93,853 words (TEDx 2018, Talks at Google 2019, Lex Fridman 2023, Huberman 2023, Impact Theory 2022, Diary of a CEO 2022). **Six load-bearing honesty disciplines encoded**: living-subject honesty + Black Swan Group commercial vested-interest (for-profit consultancy sells the methodology being assessed), life-or-death FBI origin vs everyday-application misapplication (Mrs Voss "sound angry" case self-cited), contested neuroscience claims (amygdala/prefrontal, 7-38-55 Mehrabian, "name it to tame it" Lieberman 2007, mirror neurons — real but compressed; Voss himself notes caveats), Fisher/Ury contested frame rejection (academic negotiation research disagreement), overdeployment-from-dominance-is-manipulation (power-asymmetric deployment reads as surveillance), "never split the difference" contested for ongoing relationships (high-stakes-one-shot calibration, not repeated-game maintenance). Grade A maintained. 115 regression pairs green (25 personas × 5 modes).
+
+**v2.26.0-alpha** — `ben-horowitz` persona joins the starter pack (25 personas). CEO-operating system + named CEO states + culture-as-action design. 7 signature moves (name-and-define-the-thing, wartime-vs-peacetime, silver-vs-lead-bullets, did-you-already-know, culture-as-action, good-X/bad-X, sharpen-contradictions), 12 cognitive patterns, 8 analogous cases, 8 benchmark prompts. Built from 2 books (*The Hard Thing About Hard Things* 2014, *What You Do Is Who You Are* 2019) + 11 articles + 8 verbatim transcripts totaling ~99,500 words. **Seven load-bearing honesty disciplines encoded**: living-subject honesty (early-a16z vs 2020s a16z voice), political/a16z-joint-position scope discipline (DeSantis/Trump endorsement + crypto advocacy + 2023 Techno-Optimist Manifesto OUT-OF-SCOPE), vested-interest flag (a16z GP $45B+ AUM), "The Struggle" romanticization risk (state-not-identity discipline), "Wartime CEO" misapplication (cruelty/laziness cover), hip-hop literacy (Paid in Full Foundation documented substance vs performative citation), founder-CEO-advantage vs founder-CEO-incompetence tension. Grade A maintained. 110 regression pairs green (22 personas × 5 modes).
 
 **v2.25.0-alpha** — `sam-altman` persona (21 personas). Compounding as master frame + exponential-capture + 10x/12mo check. Seven load-bearing disciplines including political/drama-scope (Nov 2023 firing via Altman's own Reflections only), Hao/Hagey critical-counter-perspective, vested-interest (OpenAI + Helion + Worldcoin), forecast-refusal, reframe-vs-deflection distinction.
 
@@ -666,7 +670,7 @@ The v3 persona catalog vision is modeled on [agentskills](https://github.com/ant
 
 Persona research draws on primary-source texts — letters, books, long-form interviews, talks — with explicit citations and ghost-citation gates. Eval framework pattern owes to the reverse Turing literature.
 
-Built because everyone I know has had the experience of reading a letter by Buffett or a passage by Aurelius or Feynman — or watching a talk by someone alive today cutting through a problem in a way nobody else does — and thinking *"if they were in the room right now, they'd ask me the question that dissolves this problem in 30 seconds."* Muse is the attempt to make that room accessible, one markdown file at a time — whether the room has 24 great mentors in the starter pack, or 90 in a future catalog, or the single mentor you built yourself yesterday from the books on your shelf.
+Built because everyone I know has had the experience of reading a letter by Buffett or a passage by Aurelius or Feynman — or watching a talk by someone alive today cutting through a problem in a way nobody else does — and thinking *"if they were in the room right now, they'd ask me the question that dissolves this problem in 30 seconds."* Muse is the attempt to make that room accessible, one markdown file at a time — whether the room has 25 great mentors in the starter pack, or 90 in a future catalog, or the single mentor you built yourself yesterday from the books on your shelf.
 
 ---
 
