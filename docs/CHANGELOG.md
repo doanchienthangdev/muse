@@ -13,6 +13,72 @@ Nothing yet.
 
 ---
 
+## [2.22.0-alpha] — 2026-04-21 — "Peter Thiel joins the starter pack"
+
+### Why
+
+User requested a Peter Thiel persona for ongoing startup work (Vietnamese user message: *"toi rat thich nhan vat nay va dang rat lien quan den startup cua toi"* — they resonate strongly with the figure and find his frames directly relevant to their startup). User's archive at `.archives/personas/peter-thiel/` arrived with an explicit scope boundary pre-authored into the README: *"This archive focuses on Thiel's business, strategic, and philosophical thinking — his cognitive moves as founder, investor, and public intellectual. It deliberately de-emphasizes his explicitly political work. Thiel is a politically active and politically controversial figure; sources that are primarily political commentary have been filtered out."* This political-scope boundary is load-bearing for honest interpretive use and is the persona's primary honesty discipline.
+
+Corpus: 3 books on disk (Zero to One 2014 as primary source; The Founders Jimmy Soni 2022 for PayPal biographical texture; The Diversity Myth Sacks+Thiel 1995 mined only for methodological-seed content). 6 articles (Against Edenism First Things 2015 verbatim; End of the Future National Review 2011 summary; Education of a Libertarian Cato Unbound 2009 verbatim — contains the canonical "freedom and democracy compatible" retraction line; Blake Masters's CS183 Class 4/11/13 notes from 2012 — the Last Mover Advantage, Secrets, You Are Not a Lottery Ticket lectures that became Zero to One). 6 verbatim transcripts totaling ~45,000+ words (Competition is for Losers YC/Stanford 2014 = 9,478 words verbatim, Cambridge Union 2024 = 13,595 words verbatim, Conversations with Tyler 2015 + 2024, Hamilton commencement 2016 verbatim, JRE #2190 2024 summary format). Max Chafkin's *The Contrarian* (2021) referenced as critical-perspective counter-source (structurally parallel to Copeland's *The Fund* for Dalio).
+
+Built using the full v2.14 research pipeline (3 parallel subagents — articles, transcripts, books — root subagent folded into synthesis given the rich user-curated README).
+
+### Added
+
+- **`personas/peter-thiel.md`** — interpretive persona with 7 signature moves (balanced 2 framing + 3 inquiry + 2 test-probe): contrarian diagnostic question *(inquiry)*; Tolstoy-inversion / received-wisdom stress-test *(framing)*; the 2×2 civilizational map *(framing)*; monopolist's-lies / non-monopolist's-lies duality test *(test-probe)*; last-mover / 10-year DCF audit *(test-probe)*; two-channel secrets probe *(inquiry)*; Girardian mimetic diagnostic *(inquiry)*. 12 cognitive patterns (7 user-identified + 5 surfaced: X×Y-decomposition as value-created vs value-captured independence, four-driver diagnosis of modern disbelief in secrets, power-law as VC physics, company-name-as-prophecy, more-with-less as technology test). 9 rich analogous cases with verbatim-quoted attributions (PayPal's 2001 DCF with 75%-of-value-from-2011+ math; the $500K Facebook investment as power-law-in-one-decision; Competition is for Losers YC 2014 lecture as canonical monopoly-theory artifact; Confinity/X.com 2000 merger at equidistant café; Against Edenism 2015 theology; Cato 2009 retraction case; Hamilton 2016 inversion-as-structure speech; Cambridge Union 2024 diversity-myth-as-magic-show; Cowen 2015+2024 long-substance-short-status + katechon). 6 benchmark prompts including `bp_political_scope_boundary` and `bp_contrarian_posture_vs_method` specifically testing the load-bearing disciplines. 16 verified sources. All 6 canonical dilemmas covered via `canonical_mapping`. LIVING SUBJECT — mandatory disclaimer with explicit political-scope-boundary disclosure.
+- **`commands/muse:peter-thiel.md`** — slash command entry point matching v2.16 template. Mandatory interpretive-frame disclaimer including the political-scope-boundary disclosure printed at session start. Three specific disciplines encoded:
+  1. **Political-scope-boundary discipline (LOAD-BEARING)** — when user asks for political takes, the persona MUST decline, acknowledge positions are documented publicly, route back to business/strategic/philosophical terrain, and NOT soften the refusal. Scope boundary is the point.
+  2. **Cato 2009 retraction honesty** — the "freedom and democracy are compatible" line Thiel later said he should have double-checked is honored when user cites it approvingly.
+  3. **Contrarian-as-method vs contrarian-as-posture** — persona enforces step 3 of the inversion method (empirical stress-test), flags widely-held contrarian conventions as posture, demands evidence.
+- **`tests/build-regression/golden/peter-thiel.signatures.txt`** + **`tests/session-regression/golden/peter-thiel.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 17 → 18 personas. New "Contrarian Strategy + Monopoly Theory + Girardian Substrate (Inversion-as-Method + 10-year DCF + Two-Channel Secrets)" category introduced for Thiel. Header version bumped v2.21.0-alpha → v2.22.0-alpha.
+- Regression harnesses green at 18/18 personas (build-regression) and 90 pairs (session-regression, 18 personas × 5 modes).
+
+### Pipeline notes
+
+- **Articles subagent**: 6 articles full-read (Against Edenism verbatim, End of Future summary, Education of a Libertarian verbatim, CS183 Class 4/11/13 from Blake Masters). Extracted 16 cognitive patterns + 10 signature moves + 12 analogous cases + 6 sources + 6 tensions + 15 distinctive questions + 17 banned phrases + ~42 signature phrases. Budget: ~7,500 tokens.
+- **Transcripts subagent**: 6 transcripts skim-then-deepen (~45,000+ words total across Competition is for Losers YC 2014, Cambridge Union 2024, Cowen 2015 + 2024, Hamilton 2016, JRE #2190). 12 cognitive patterns + 11 signature moves + 23 analogous cases (including airlines-vs-Google X*Y canonical; Wright Brothers Y=0%; Einstein's 1939 letter; Bob Laughlin Nobel-defunding; 20,000-LA-stars mimetic-attraction proof; Supreme Court clerkship loss retrospective-gift; Confinity/X.com merger; Ezra Pound make-it-new; Napster/Uber bad-names; Solyndra ninth-grade-geometry; California-as-Saudi-Arabia; India-1974-nuclear-bomb; ChatGPT passing Turing test; Apollo→Woodstock pivot; Lord of the World / Solovyov; Claudius→Nero; anti-communism as katechon; Galileo-as-scientist-hero; MK Ultra → LSD) + 7 tensions + 20 distinctive questions + 13 banned phrases + ~40 signature phrases.
+- **Books subagent**: Zero to One 97 pages skim-then-deepen (Ch 3 Tolstoy inversion, Ch 5 last-mover DCF + 4-characteristic monopoly audit, Ch 6 2×2 civilizational map, Ch 7 power-law, Ch 8 two-channel secrets + 4-driver disbelief diagnostic, Ch 14 founder's paradox with Girardian tie-in). Soni Founders ~38 pages (PayPal origin, Confinity/X.com merger, 24-year-old-CEO decisions, PayPal Mafia roster). Diversity Myth 21 pages mined ONLY for methodological-seed (attention-redirection / myth-evaporation frame — *"myths tend to evaporate if people think about them"* — which becomes the 2024 Cambridge "diversity myth as magic show" thesis). Per explicit scope boundary, 1995 political positions OUT-OF-SCOPE.
+- **Ghost-citation verified**: "competition" 25 hits, "monopol" 26 hits, "last mover" 6 hits, "losers" 5 hits in YC 2014 transcript; "freedom and democracy" verified verbatim in Cato 2009 essay. Canonical Thiel phrases in persona ("competition is for losers", "last mover advantage", "all happy companies are different", "what important truth do very few people agree with you on?", "you are not a lottery ticket", "don't disrupt", "the sea was no more") attributed at source-file level per standard practice for well-documented canon.
+
+### Political-scope-boundary discipline (LOAD-BEARING, non-negotiable)
+
+The user's archive README explicitly scoped this persona to business, strategic, and philosophical thinking. Thiel's political activism (Trump endorsements 2016 and 2024, JD Vance backing, Gawker/Hulk Hogan litigation funding, anti-woke public positioning, criticism of specific politicians by name, his characterization of specific movements as quasi-religious or Antichrist-adjacent) is DOCUMENTED elsewhere in the public record and is OUT-OF-SCOPE for this persona. When user asks the persona for political takes, the persona MUST decline, acknowledge positions are documented publicly, and route back to the business/strategic/philosophical terrain — without softening the refusal into "on the one hand, on the other hand" rhetoric. This scope boundary is the point of the persona's honest use: cognitive moves only, politics stays out. Benchmark prompt `bp_political_scope_boundary` specifically tests the discipline. Structurally parallel to the v2.21 Ray Dalio Copeland-gap disclosure: the boundary is load-bearing for honest interpretive use, not an optional add-on.
+
+### Cato 2009 retraction honesty
+
+The canonical Thiel retraction case: the April 2009 Cato Unbound line *"I no longer believe that freedom and democracy are compatible"* — Thiel later publicly said this was a line he should have double-checked. Within the essay itself, he softened: *"It would be absurd to suggest that women's votes will be taken away."* When user cites the sharp formulation approvingly, persona acknowledges the public walkback. The method of the essay (exit-over-voice via new frontiers — cyberspace, outer space, seasteading) survives the retraction; the specific democracy framing did not. Structurally parallel to Naval Ravikant's 2024 Modern Wisdom retractions — a rare case of a widely-quoted line being owned as overshot. Honor the retraction; do not pretend the line stands unrevised.
+
+### Contrarian-as-method vs contrarian-as-posture (self-discipline on the frame itself)
+
+The inversion move is Thiel's most reliable rhetorical tool, but it degrades catastrophically when applied as aesthetic without the empirical stress-test. The method has three steps: (1) state the cliché, (2) construct the inverse, (3) CHECK WHETHER THE INVERSE HOLDS AGAINST EVIDENCE. Most people who adopt Thiel-style contrarianism skip step 3, which produces contrarian noise ("I disagree because I like disagreeing"). Persona enforces step 3 — asks "what evidence would change your mind?", flags widely-held contrarian conventions ("most startups fail", "markets are inefficient", "universities are corrupt") as conventions dressed as contrarianism, not secrets. Benchmark prompt `bp_contrarian_posture_vs_method` specifically tests this discipline.
+
+### Chafkin counter-perspective reference
+
+Max Chafkin's *The Contrarian* (2021) is the most complete journalistic biography — editorially hostile on politics but the deepest public reporting on Thiel-as-business-operator. Structurally parallel to Copeland's *The Fund* for Dalio: adversarial public-record corroborates some self-presentation claims and complicates others. Several specific Chafkin claims are publicly disputed. Persona encodes cognitive moves at personal/strategic scale and does NOT represent Founders Fund's organizational implementation, Palantir's operating culture, or any political network as validated protocols. Referenced in Shadow section; does not drive the primary framework (political-scope-boundary discipline does).
+
+### Girardian substrate visibility
+
+Nearly every Thiel move traces back to René Girard's mimetic theory, even when not named. Competition as mimetic rivalry. The Bible-takes-the-victim's-side (Cain/Abel inverting Romulus/Remus). Founder-as-inverse-bell-curve as Girardian scapegoat-creator vs Christian anti-scapegoat. The katechon/Antichrist framework from Cowen 2024. Persona makes Girard visible when load-bearing — if user is engaging seriously with the frame, they should know it runs on mimetic theory.
+
+### Not in scope (deferred to future updates)
+
+- "The Optimistic Thought Experiment" (Hoover Institution / *Policy Review*, Jan 2008)
+- Peter Thiel on Eric Weinstein's *The Portal* Ep. 001 (July 2019, ~2.5 hours on stagnation)
+- a16z Podcast: "The (Definite) Optimism of Peter Thiel" (Jan 2019)
+- Peter Thiel on Jordan B Peterson: "Why We Stopped Progressing" (April 2025)
+- Peter Thiel on Ross Douthat's *Interesting Times*: "A.I., Mars and Immortality" (June 2025)
+- "Good for Google, Bad for America" (*New York Times* op-ed, Aug 2019)
+- CS183 Classes 5, 7, 9, 14, 15, 17 (remaining Masters-notes lectures)
+- Founders Fund Manifesto ("What Happened to the Future?")
+- 2019 Hoover talk "Peter Thiel on 'The Straussian Moment'" (video walk-through)
+- Socrates in the City with Peter Thiel (Feb 2020, Eric Metaxas's platform)
+
+---
+
 ## [2.21.0-alpha] — 2026-04-21 — "Ray Dalio joins the starter pack"
 
 ### Why
