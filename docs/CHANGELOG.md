@@ -13,6 +13,58 @@ Nothing yet.
 
 ---
 
+## [2.21.0-alpha] — 2026-04-21 — "Ray Dalio joins the starter pack"
+
+### Why
+
+User requested a Ray Dalio persona for ongoing startup work (Vietnamese user message: *"toi rat thich nhan vat nay va dang rat lien quan den startup cua toi"* — they resonate strongly with the figure and find his frames directly relevant to their startup). Corpus was pre-curated and unusually rich: 6 books (Dalio's own *Principles: Life and Work* 2017; *Principles for Navigating Big Debt Crises* 2018; *Principles for Dealing with the Changing World Order* 2021; *How the Economic Machine Works* 2008 paper; plus Rob Copeland's *The Fund* 2023 as critical counter-perspective; Roger Lowenstein's *When Genius Failed* 2000 as LTCM context). 5 articles (LinkedIn/economicprinciples.org 2019-2024 on capitalism reform, the 2019 system-broken diagnosis, the big-cycles method essay, the 2021 bubble framework, the 2024 pivotal-year framing — stored as `fetch_status: summary` paraphrases per LinkedIn editorial returns). 5 verbatim video transcripts totaling ~45,800 words (30-min *How the Economic Machine Works* 2013 video — the most-watched economics video on YouTube; *Principles For Success* 8-episode animated mini-series 2019; *Changing World Order* animated companion 2022; *Lex Fridman Podcast* 2019 ~1h48m; *Changing World Order with Tony Robbins* 2022 ~2h). User-authored README pre-identified 4 core cognitive moves + flagged the LOAD-BEARING Copeland critical-perspective gap as non-negotiable honesty discipline.
+
+Built using the full v2.14 research pipeline (4 parallel subagents: articles, transcripts, books, root) per `/muse:build`.
+
+### Added
+
+- **`personas/ray-dalio.md`** — interpretive persona with 7 signature moves (balanced 2 framing + 3 inquiry + 2 test-probe): pattern-match to historical template *(framing)*; pain + reflection = progress *(inquiry)*; believability-weighted disagreement *(test-probe)*; the five-step process *(framing)*; where are we in the cycle? *(framing)*; principles-as-code rule-writing *(inquiry)*; four-lever beautiful-deleveraging diagnostic *(test-probe)*. 12 cognitive patterns (4 user-identified + 8 surfaced: reality-is-a-machine, hold-two-extreme-views-and-triangulate, know-what-you-dont-know, five-step-process, meditate-on-the-edges, where-are-we-in-the-cycle, beautiful-deleveraging-four-lever, reflect-share-iterate). 7 analogous cases with verbatim attributions (the 1982 disaster as founding event of principles; *How the Economic Machine Works* three-forces + four-levers mechanism thesis; *Changing World Order* 11-empires big-cycle thesis; the 2019 "system is broken" + capitalism-reform diagnosis; the 2021 six-indicator bubble framework; the 2024 five-forces "pivotal year" framing; Bridgewater's idea-meritocracy protocol with Copeland-gap flagged). 5 benchmark prompts (bp_pattern_match, bp_repeating_mistake, bp_macro_cycle_location, bp_believability_weight, bp_copeland_self_awareness). 15 verified sources. All 6 canonical dilemmas covered via `canonical_mapping`. LIVING SUBJECT — mandatory disclaimer with explicit Copeland-gap disclosure.
+- **`commands/muse:ray-dalio.md`** — slash command entry point matching v2.16 template. Mandatory interpretive-frame disclaimer including the Copeland-gap disclosure printed at session start. Three specific disciplines encoded: (1) **Copeland critical-perspective honesty** — load-bearing: when user asks persona to validate/import/implement a Bridgewater-style organizational protocol (dot-rating at scale, formal believability-weighting system), the persona MUST flag Copeland's *The Fund* counter-perspective explicitly and route to personal-scale cognitive moves rather than cloning the organizational implementation; (2) **probabilistic humility on macro calls** — when user cites Dalio's confident macro forecasts, the persona honors Dalio's own probabilistic frame (probability + payoff, opposite-case-stated, sizing-for-survival) and flags the "end of debt supercycle" 2010s timing miss as the canonical case of forecaster-certainty outliving its sell-by date; (3) **regime-detection on pattern-matching** — when the situation is plausibly genuinely novel (AI as general-purpose technology mid-2020s as candidate), persona must explicitly ask "new regime or one of the old ones?" before forcing the pattern.
+- **`tests/build-regression/golden/ray-dalio.signatures.txt`** + **`tests/session-regression/golden/ray-dalio.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 16 → 17 personas. New "Macro Systems + Principles + Pattern-Recognition (Historical-Templates + Cycles + Believability-Weighting)" category introduced for Dalio. Header version bumped v2.11.0-alpha → v2.21.0-alpha.
+- Regression harnesses green at 17/17 personas (build-regression) and 85 pairs (session-regression, 17 personas × 5 modes).
+
+### Pipeline notes
+
+- **Articles subagent**: 5 articles full-read (LinkedIn summaries per README fetch_status). 14 cognitive patterns + 12 signature moves + 14 analogous cases + 10 sources + 8 tensions + 16 distinctive questions + 12 banned phrases + 21 signature phrases extracted. Budget: ~62k tokens.
+- **Transcripts subagent**: 5 transcripts skim-then-deepen (~45,800 words total across Economic Machine video, Principles For Success animated, Changing World Order animated, Lex Fridman 2019, Tony Robbins 2022). 15 cognitive patterns + 15 analogous cases (including the 1982 disaster verbatim recounting, Nixon 1971 gold de-linking, 1930s deleveraging case, Dutch/British/US empire transitions, Hero's Journey framing from Principles For Success, Deng Xiaoping cat metaphor, China 27x-growth statistics, Elon Musk helicoptering reference) + 7 tensions + 36 signature phrases + 15 distinctive questions + 12 banned phrases.
+- **Books subagent**: text-first strategy (books stored as metadata + key ideas + <15-word quotes, copyright-respecting). Extensive Copeland *The Fund* mining at pp. 1-150 with documented incidents (Stefanova onboarding-panel breakdown, baseball-card rigging, Britt Harris arrival/departure, contract-dispute cases) paired with Dalio-lawyer publicly-disputed verbatim disputes. 12 cognitive patterns + 12 signature moves + 15 analogous cases + 25+ sources + 40+ signature phrases + 8 Copeland-Dalio tensions extracted. Lowenstein *When Genius Failed* captured for LTCM-risk-doctrine context.
+- **Root subagent (README)**: user-authored curation captured the 4 core cognitive moves (principles-as-code, pattern-match-across-centuries, pain-reflection-progress, believability-weighted-decision-making) + flagged the LOAD-BEARING Copeland critical-perspective as non-negotiable honesty discipline. 5 cognitive patterns + 12 analogous cases + 5 tensions + 10 signature phrases + 5 distinctive questions + 16 sources extracted.
+- **Ghost-citation spot checks**: "pain" / "idea meritocracy" / "believab" keyword presence verified across archive files via Grep (multiple hits in transcripts + README). Canonical Dalio phrases in persona ("Pain + Reflection = Progress", "An idea meritocracy", "meaningful work and meaningful relationships", "radical truth and radical transparency", "I'm a hyperrealist") are widely-documented across primary-source canon; attributed at source-file level rather than line-level per standard practice for well-documented canon. Signature phrases in thinking_mode kept to commonly-documented formulations only.
+
+### Copeland critical-perspective honesty (load-bearing)
+
+The persona's Shadow section explicitly encodes the Copeland-documented gap between the idea-meritocracy-as-advertised in *Principles* (2017) and the Bridgewater organization-as-operated in practice: (a) dots system reportedly elevated Dalio's own opinions disproportionately; (b) believability-weighting produced chronic anxiety rather than safety; (c) high turnover at senior levels; (d) specific documented incidents (Stefanova, Harris, contract disputes) describe operating environment substantially more coercive than *Principles* acknowledges. Several specific Copeland claims are publicly disputed by Dalio. Some former employees endorse Copeland's broader picture; others contest it. The persona encodes the cognitive moves at personal scale (pattern-match, believability-weight one-off disagreements, write principles down) and explicitly does NOT endorse the Bridgewater organizational implementation as a validated protocol. The gap is non-negotiable load-bearing honesty for the persona — do not soften into "on the one hand, on the other hand" rhetoric. The discipline is written into both the persona's Shadow section and the slash command's Step 3 voice rules.
+
+### Probabilistic humility on macro calls
+
+Second encoded discipline: Dalio's own frame prescribes probability + payoff + sizing-for-survival for every forecast. Persona honors this explicitly. When user cites a confident Dalio macro call (civil-war-class conflict ~50% in next decade, late-stage big-cycle positioning of US, end-of-debt-supercycle), persona delivers as stated bet with probability, triangulates opposite case, and flags the "end of debt supercycle" 2010s timing miss as canonical case of forecaster-certainty that outlived its sell-by date. Does not deliver certainty masquerading as conviction.
+
+### Regime-detection on pattern-matching
+
+Third encoded discipline: the pattern-matching reflex ("what kind of thing is this? how many times before?") is powerful when the reference class applies, degrades into false precision when the situation is genuinely novel. When user's situation is plausibly new-regime (AI as general-purpose technology mid-2020s is the canonical live case), persona asks "new regime or one of the old ones?" before forcing the pattern. Willing to say "reference class is genuinely thin, pattern-matching produces false precision, need a different frame."
+
+### Not in scope (deferred to future updates)
+
+- TED 2017 "How to Build a Company Where the Best Ideas Win" (captions not directly fetchable from ted.com)
+- Lex Fridman Podcast #251 "Money, Power, and the Collapse of Empires" (December 2021)
+- Talks at Google "Principles: Life and Work" (October 2018, Jordan Thibodeau)
+- Tucker Carlson Show — Ray Dalio on the Civil War Cycle (Feb 2025/2026, singjupost transcript available)
+- David Rubenstein Show — Ray Dalio at 92nd Street Y (January 2026)
+- Tim Ferriss Show #264 "Ray Dalio, The Steve Jobs of Investing" (September 2017)
+- Bridgewater Daily Observations selected publicly-released excerpts
+- Full *Changing World Order* essay series on economicprinciples.org (chapters not yet captured)
+
+---
+
 ## [2.20.0-alpha] — 2026-04-22 — "Charlie Munger joins the starter pack"
 
 ### Why
