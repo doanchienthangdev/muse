@@ -13,6 +13,48 @@ Nothing yet.
 
 ---
 
+## [2.18.0-alpha] — 2026-04-22 — "Naval Ravikant joins the starter pack"
+
+### Why
+
+User requested a Naval Ravikant persona for ongoing startup work. Corpus was pre-curated with exceptional depth: 6 articles from nav.al (mix verbatim/summary), 1 primary book (The Almanack of Naval Ravikant, 232 pages, Jorgenson 2020) + 5 text-only summaries of influence books (Poor Charlie's Almanack, Beginning of Infinity, Finite/Infinite Games, Skin in the Game), and 5 verbatim video transcripts totaling ~162k words across 13h15m (Naval Podcast 'How to Get Rich' mega-episode with Nivi 2019, JRE #1309 2019, Tim Ferriss #473 2020, Knowledge Project Ep. 18 2017, Modern Wisdom '44 Harsh Truths' 2024). User-authored README pre-identified 6 core cognitive moves + flagged the LIVING-SUBJECT disclaimer as especially load-bearing (Naval publicly revises his own most-quoted aphorisms — 2024 Modern Wisdom contains several "I'm not sure that statement is true anymore" retractions).
+
+Built using the full v2.14 research pipeline (4 parallel subagents: articles, transcripts, books, root) per `/muse:build`.
+
+### Added
+
+- **`personas/naval-ravikant.md`** — interpretive persona with 7 signature moves (balanced 2 framing + 3 inquiry + 2 test-probe), 12 cognitive patterns (6 user-identified + 6 surfaced during mining), 5 rich analogous cases with verbatim quotes (AngelList 2010 founding, Epinions 'competition is the wrong game', the mom-at-pizza-parlor specific-knowledge reveal at 15, the jealousy-breakthrough moment on impossibility-of-cherry-picking, the 60-day one-hour-morning meditation protocol), 6 benchmark prompts, 24 verified sources (tweet thread + 6 articles + Almanack with 6 chapters + 5 transcripts + 4 influence books). All 6 canonical dilemmas covered via `canonical_mapping`. LIVING SUBJECT — mandatory disclaimer with explicit 2024 retraction honesty.
+- **`commands/muse:naval-ravikant.md`** — slash command entry point matching v2.16 template. Full disclaimer printed at session start. Retraction-honesty instruction in Step 3 (persona acknowledges when user cites aphorisms with known 2024 updates).
+- **`tests/build-regression/golden/naval-ravikant.signatures.txt`** + **`tests/session-regression/golden/naval-ravikant.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 13 → 14 personas. New "Strategy + Execution + Philosophy (Leverage-as-Wealth-Engine)" category introduced for Naval.
+- Regression harnesses now green at 14/14 personas (build-regression) and 70 pairs (session-regression, 14 personas × 5 modes).
+
+### Pipeline notes
+
+- Articles subagent: 6 files (mix verbatim/summary per README fetch_status), ~185k tokens used, 29 signature phrases + 14 signature moves + 13 cognitive patterns + 10 analogous cases extracted
+- Transcripts subagent: 5 files, skim-then-deepen applied per v2.14 protocol — ~52k words read of ~162k total, covering: leverage/specific-knowledge/long-term-games (Naval Podcast), happiness/anxiety/meditation (Ferriss), reading/jealousy-breakthrough (Knowledge Project), retrospective-aphorism-revision (Modern Wisdom 2024), mainstream-breakthrough (JRE). 43 signature phrases + 15 cognitive patterns + 11 analogous cases + 16 distinctive questions extracted. The 2024 Modern Wisdom episode was explicitly mined for retractions to honor the living-subject honesty.
+- Books subagent: text-first strategy — 5 ref summaries + targeted Almanack PDF skim (100/232 pages across 5 windows: TOC, wealth, judgment, happiness+saving-yourself, philosophy+recommended-reading). 14 cognitive patterns + 12 signature moves + 14 analogous cases + 38 signature phrases + 29 sources extracted. Noted Naval's 2008 Life Formulas I and 2016 Rules as earlier canonical primary texts beyond the Almanack.
+- Root subagent (README): user-authored curation captured the 6 cognitive moves + 10 analogous cases (AngelList, Vast.com, Epinions, Hit Forge, ~200 investments, How-to-Get-Rich 2018 tweetstorm, Almanack 2020, nav.al, 2024 Modern Wisdom, JRE 1309) + living-iterating-thinker meta-note.
+- Ghost-citation: all key quotes verified to appear in source files via Grep (specific knowledge / long-term game / leverage: 7 hits in play-long-term-games; 1000 parallel universes: 3 hits in How to Get Rich; $5,000/hr aspirational rate: 3 hits in How to Get Rich; "I'm not sure that statement": 2 hits in Modern Wisdom 2024).
+
+### Living-subject honesty
+
+This persona includes an explicit "retraction honesty" instruction in the slash command: when a user cites a Naval aphorism that has a known 2024 Modern Wisdom update, the session acknowledges both versions. Example: user cites "success requires dissatisfaction" → Naval 2024 Modern Wisdom: "I'm not sure that statement is true anymore." This honesty is part of the persona because Naval himself does this in public. The persona refuses to pretend Naval's canonical corpus is settled.
+
+### Not in scope (deferred to future updates)
+
+- Lex Fridman Podcast Ep. #138 (2020) and #307+ (2022) — two canonical long-forms, captions not maximally extractable yet
+- Naval on EconTalk with Russ Roberts
+- All-In Podcast appearances (multiple)
+- Tim Ferriss Show #97 (2015) "The Evolutionary Angel" early-career interview
+- Ranveer Show "Self-Obsession Is the Root of All Misery" (2024) — most explicitly Vedantic
+- Sapiens by Yuval Noah Harari — most-cited background reading
+
+---
+
 ## [2.17.0-alpha] — 2026-04-22 — "David Ogilvy joins the starter pack"
 
 ### Why

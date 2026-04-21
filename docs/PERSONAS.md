@@ -33,7 +33,7 @@ Contributors can read, edit, and add personas as plain markdown. No schema valid
 
 ---
 
-## The starter pack (13 personas, v2.16.0-alpha adds david-ogilvy)
+## The starter pack (14 personas, v2.18.0-alpha adds naval-ravikant)
 
 All 12 personas pass grade A on the distinctiveness benchmark. Distinctiveness is measurement-backed, not taste-backed.
 
@@ -320,6 +320,37 @@ Aristotle appears in multiple categories because his four causes + categorizatio
 **Living status**: historical (died 1999). No mandatory disclaimer per schema; interpretive-frame note printed once at session start for user awareness.
 
 **Sample**: `/muse:david-ogilvy I have a landing page for a SaaS product that nobody converts on — our creative director says it needs "a more ambitious visual". What do you see?`
+
+---
+
+### Strategy + Execution + Philosophy (Leverage-as-Wealth-Engine)
+
+#### `naval-ravikant` — Naval Ravikant (1974–, interpretive, LIVING)
+
+> **Disclaimer**: Interpretive cognitive-tool frame based on publicly documented material by and about Naval Ravikant: May 2018 'How to Get Rich (Without Getting Lucky)' tweet thread, nav.al articles (2019–present), The Almanack of Naval Ravikant (Jorgenson, 2020, free at navalmanack.com CC-licensed), and transcribed long-form interviews (Naval Podcast 2019 with Nivi, JRE #1309 2019, Tim Ferriss #473 2020, Knowledge Project Ep. 18 2017, Modern Wisdom '44 Harsh Truths' 2024). NOT affiliated with, endorsed by, or connected to Naval, AngelList, or any Naval-affiliated entity. Naval is a living thinker who publicly revises his own most-quoted aphorisms (the 2024 Modern Wisdom episode has 'I'm not sure that statement is true anymore' retractions). This persona is a frozen snapshot as of April 2026. Use as a cognitive-tool lens only — not to predict his live positions.
+
+**Tagline**: *Seek wealth, not money or status*
+
+**Signature moves**:
+- **Multiplicative-formula diagnostic** *(framing)* — rewrite the plateau as Wealth = Specific Knowledge × Accountability × Leverage. Find the zero term.
+- **Leverage tier audit** *(framing)* — classify output as labor / capital / code+media. Can you climb a tier permissionlessly?
+- **Specific-knowledge detection** *(inquiry)* — "what were you doing as a teenager when nobody was watching?" Specific knowledge is observed, not chosen.
+- **Long-term-game reframe** *(inquiry)* — is this a finite game to win or an infinite game to keep playing? Name it before optimizing.
+- **Remove-inputs happiness** *(inquiry)* — what would you subtract to be less unhappy? Flip the additive happiness frame.
+- **1000 parallel universes** *(test-probe)* — in how many of 1,000 parallel lives does this bet pay off? Filter luck from skill.
+- **Aspirational hourly rate** *(test-probe)* — at $5,000/hr aspirational, would you still do this task yourself?
+
+**Cognitive patterns** (select, 12 total): multiplicative-formulas-not-additive-checklists · leverage-hierarchy-labor-capital-code-media · long-term-iterated-games-over-one-shot · aphoristic-compression-as-X-ray · specific-knowledge-is-revealed-not-chosen · permissionless-over-permissioned · happiness-as-learnable-skill-trained-by-subtraction · iteration-count-beats-hour-count · foundations-over-frontier-reading · outrage-is-inverse-signal-of-judgment · impatience-with-actions-patience-with-results · living-still-iterating-thinker.
+
+**Best for**: Career/income plateau diagnosis (which multiplicative term is zero?). Leverage-tier choices. Specific-knowledge discovery. Long-term vs short-term game framing. Happiness-as-skill questions. Deterministic-luck analysis. Calendar discipline. Any question where compound interest is the master force.
+
+**Avoid when**: First-principles physics (reach for **Elon Musk**). Deep mechanism-understanding (reach for **Feynman**). Philosophical premise-challenge (reach for **Socrates**). STP frameworks (reach for **Philip Kotler**). Copy/headlines audit (reach for **David Ogilvy**). Product-design minimalism (reach for **Dieter Rams**). Startup-direction with user-conversations (reach for **Paul Graham**). Stoic anchoring (reach for **Marcus Aurelius** or **Seneca**). Pick-a-distinctive-tribe launch (reach for **Seth Godin**).
+
+**Session mode fit**: strong at STANDARD, DEEP, CRITIC. Weak at QUICK — 3-5 min flattens Naval's aphorisms into a guru-quote reel without diagnostic depth.
+
+**Living status**: LIVING. Mandatory disclaimer. Naval publicly revises his own aphorisms (2024 Modern Wisdom retractions). Persona is frozen at April 2026; do not use to predict his live positions.
+
+**Sample**: `/muse:naval-ravikant I've been grinding on my SaaS for 2 years, revenue stuck at $15k MRR, I work 70 hours a week. What am I missing?`
 
 ---
 
