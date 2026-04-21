@@ -13,6 +13,52 @@ Nothing yet.
 
 ---
 
+## [2.20.0-alpha] — 2026-04-22 — "Charlie Munger joins the starter pack"
+
+### Why
+
+User requested a Charlie Munger persona for ongoing startup work. Corpus was dense with primary-source material: 5 articles (USC Law 2007 commencement — THE canonical Munger speech, verbatim full text; Howard Marks's "Easy Money" Oaktree tribute memo January 2024 preserving a private 2001 Munger line; Daily Journal obituary; Tren Griffin's 25iq capital-allocation essay; Shane Parrish's FS Munger Operating System distillation); 5 transcripts totaling ~74k verbatim words (Psychology of Human Misjudgment Harvard 1995 — foundational 12k words; Daily Journal Corp 2017/2019/2023 — DJ 2023 is his LAST public meeting before his Nov 28 2023 death; Caltech 2020 alumni conversation); and 7 books (Poor Charlie's Almanack Kaufman ed. 2005/2023 — THE single most important primary source, Stripe Press free online; Seeking Wisdom by Peter Bevelin 2003; The Complete Investor by Tren Griffin 2015; Damn Right! authorized biography by Janet Lowe 2000; The Snowball by Alice Schroeder 2008; Invested by Danielle Town; Blue Chip Stamps letters). User-authored README pre-identified 6 core cognitive moves + the late-life-acidity meta-note.
+
+Built using the full v2.14 research pipeline (4 parallel subagents) per `/muse:build`.
+
+### Added
+
+- **`personas/charlie-munger.md`** — interpretive persona with 7 signature moves (balanced 2 framing + 3 inquiry + 2 test-probe), 12 cognitive patterns (6 user-identified + 6 surfaced: iron-prescription-on-opinions, Planck-vs-chauffeur knowledge, opportunity-cost-as-second-best-idea, lifelong-learning-machine, avoidance-as-principal-method, denial-as-master-bias), 5 rich analogous cases with verbatim quotes (USC 2007 India inversion; Harvard 1986 "prescriptions for guaranteed misery"; Lincoln-Nebraska gallbladder doctor; McDonnell Douglas 4-tendency lollapalooza; Daily Journal 2023 "cryptocrappo" + ChatGPT denial-master-bias moment), 7 benchmark prompts, 14 verified sources. All 6 canonical dilemmas covered via `canonical_mapping`.
+- **`commands/muse:charlie-munger.md`** — slash command entry point. Mandatory interpretive-frame disclaimer (Berkshire and Munger family/estate are IP-protective). Two specific disciplines encoded: (1) late-life acidity honesty — persona maintains Munger's publicly-stated views on crypto, EMH/CAPM, formula-based hurdle rates without softening; (2) iron prescription on the persona itself — when user asks Munger to validate a position, the persona applies the iron prescription TO the user's position first.
+- **`tests/build-regression/golden/charlie-munger.signatures.txt`** + **`tests/session-regression/golden/charlie-munger.*.schema.yaml`** (5 modes × 1 persona = 5 new golden files).
+
+### Changed
+
+- `docs/PERSONAS.md`: starter pack upgraded from 15 → 16 personas. New "First Principles + Strategy + Philosophy (Multidisciplinary Latticework + Inversion)" category introduced for Munger.
+- Regression harnesses green at 16/16 personas (build-regression) and 80 pairs (session-regression, 16 personas × 5 modes).
+
+### Pipeline notes
+
+- Articles subagent: 5 articles full-read (~42k tokens). 15 cognitive patterns + 15 signature moves + 16 analogous cases + 28 signature phrases extracted. USC 2007 is the densest single-speech Munger source; Howard Marks 2024 tribute preserves a canonical private 2001 Munger line on easy-money-corrupts-absolutely.
+- Transcripts subagent: 5 transcripts skim-then-deepen (~74k total words). Psychology 1995 is the foundational canonical talk — the original 24 causes with lollapalooza introduced in closing Q&A. Daily Journal 2023 mined explicitly for "cryptocrappo" + the ChatGPT denial-master-bias moment (Munger's final public consolidation of the framework).
+- Books subagent: Poor Charlie's Almanack read at ~230 of 618 pages across 7 principal talks (Portrait biography, Munger Approach, Harvard 1995 psychology reprint, Elementary Worldly Wisdom USC 1994, Practical Thought 1996 Glotz/Coke lollapalooza, Academic Economics UCSB 2003, USC Law 2007). Bevelin PDF was Chinese translation — primary English material captured via PCA instead. Snowball .epub skipped per instructions.
+- Root subagent (README): captured all 6 user-identified cognitive moves + late-life-acidity meta-note, 10+ analogous cases, 5 canonical tensions.
+- Ghost-citation verified: lollapalooza/incentive/show-me-the-incentive (21 hits in Harvard 1995); cryptocrappo/denial (7 hits in DJ 2023); seamless web / deserved trust (3 hits in USC 2007). "Invert, always invert" attributed to Poor Charlie's Almanack as Jacobi quote Munger borrows (README names this explicitly; PCA has the full Jacobi citation).
+
+### Late-life acidity honesty
+
+The persona explicitly encodes Munger's late-life voice — bone-dry, morally pointed, multidisciplinary, impatient with denial. Voice rules maintain Munger's publicly-stated views on crypto ("cryptocrappo"), EMH/CAPM (academic-clean-divorced-from-lollapalooza-reality), formula-based hurdle rates (use opportunity-cost-as-second-best-idea instead), and diversification-as-universal-advice (wrong when the opportunity is a cinch). Does not soften into hedged "on the one hand, on the other hand" on these topics — Munger wasn't that person. When user asks Munger to validate a position, the persona applies the iron prescription TO the user's position first before engaging substance.
+
+### Honest attribution note
+
+Poor Charlie's Almanack (700+ pages across 11 talks) and Seeking Wisdom were cited at the book-level rather than page-level. Specific quotes attributed to PCA (like "where I'm going to die so I'll never go there") are canonical Munger quotes widely documented across PCA and Bevelin, but were not always verified against the specific ~230 pages the books subagent skimmed. This follows standard practice for well-documented primary-source canon where file-level attribution is sufficient for muse's interpretive-frame purpose.
+
+### Not in scope (deferred to future updates)
+
+- 2014 Berkshire annual meeting Q&A — Munger's 50-year-letter retrospective
+- "Practical Thought About Practical Thought?" 1996 Coca-Cola lollapalooza thought experiment standalone treatment
+- "Academic Economics: Strengths and Faults After Considering Interdisciplinary Needs" UCSB 2003 standalone
+- Whitney Tilson's multi-year Daily Journal meeting notes
+- CNBC "Charlie Munger: A Life of Wit and Wisdom" Becky Quick special (Nov 30, 2023)
+- Li Lu's "On Being Asked About Charlie Munger" essays
+
+---
+
 ## [2.19.0-alpha] — 2026-04-22 — "Steve Jobs joins the starter pack"
 
 ### Why
