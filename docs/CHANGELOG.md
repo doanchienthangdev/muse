@@ -13,6 +13,68 @@ Nothing yet.
 
 ---
 
+## [2.36.0-alpha] — 2026-04-22 — "Eric Ries joins the starter pack — Lean Startup author + LTSE founder"
+
+### Why
+
+Ninth starter-pack extension. User requested an Eric Ries persona because Ries's methodology is directly relevant to startup work the user is doing. Ries is living (47 as of April 2026), author of *The Lean Startup* (Crown 2011, ~1M+ copies, 30+ languages) and *The Startup Way* (Currency 2017), founder of Long-Term Stock Exchange (LTSE — SEC-approved May 10, 2019, first listings Asana + Twilio August 2021), and the person who named "Lean Startup," "pivot" as structured course correction, Build-Measure-Learn feedback loop, Innovation Accounting, vanity vs actionable metrics, and the MVP-as-learning-instrument concept. Ries's teacher Steve Blank already has a persona in the starter pack; this persona distinguishes carefully (Customer Development / "get out of the building" / Four Steps to the Epiphany / search-vs-execute are Blank's, not Ries's; Ries's distinctive contribution is the fusion of Blank's customer development + agile software + Toyota lean with named specific instruments).
+
+This is a NEW addition. Persona count 28 → 29.
+
+### Added
+
+- **`personas/eric-ries.md`** — NEW persona with 7 signature moves balanced 2F/3I/2T:
+  - **"Entrepreneurship is management"** *(framing)* — Lean Startup Principle 2; canonical definition "a startup is a human institution designed to create new products and services under conditions of extreme uncertainty"
+  - **"Pivot or persevere?"** *(framing)* — scheduled checkpoint binary with 10-pivot taxonomy; "a pivot is a change in strategy without a change in vision"
+  - **"What hypothesis is this test supposed to validate?"** *(inquiry)* — block build until hypothesis + actionable metric + falsification threshold
+  - **"What's the smallest MVP that would produce the first real data point?"** *(inquiry)* — landing page / concierge / Wizard-of-Oz; Dropbox (Drew Houston video) + Zappos (Nick Swinmurn concierge) as exemplars
+  - **"Is this vanity or actionable?"** *(inquiry)* — three-part test (can-it-go-down + cohort-based + attribution)
+  - **Five Whys with proportional investment + "human problem behind technical"** *(test-probe)* — Ries's two-part adaptation of Toyota TPS + Five Whys as automatic speed regulator
+  - **"Could we have gotten this learning faster and cheaper?"** *(test-probe)* — IMVU retrospective probe that produced MVP
+
+  12 cognitive patterns (entrepreneurship is management; startup = human institution under extreme uncertainty; MVP as learning instrument; Build-Measure-Learn feedback loop; pivot with 10-taxonomy; innovation accounting three-stage; three engines of growth sticky/viral/paid; validated learning as unit of progress; vanity vs actionable metrics; Five Whys adaptation; runway = pivots remaining; success theater + achieve failure as anti-patterns). 11 rich analogous cases (IMVU own canonical; There.com own failure; Dropbox video MVP; Zappos concierge MVP; Blue River Technology golf→ag pivot; GE Durathon corporate Lean Startup; IMVU hockey-stick-in-ones VC pitch; Intuit SnapTax / Scott Cook; NSF I-Corps; GE FastWorks; LTSE Ries's current venture with vested-interest disclosure). 10 benchmark prompts. 25+ verified sources.
+
+- **`commands/muse:eric-ries.md`** — slash command entry point (v2.16 template) with mandatory disclaimer + seven LOAD-BEARING honesty disciplines encoded at session start. Voice discipline expanded: Silicon Valley hype phrases banned, "Lean Startup = cheap" correction, MVP ≠ minimum crappy product correction, pivot ≠ drift correction, talk-to-customers ≠ build-what-they-say correction.
+
+### Seven LOAD-BEARING honesty disciplines
+
+1. **Living-subject + positions-evolving (LOAD-BEARING)** — Ries is 47 as of April 2026, actively speaking / consulting / operating LTSE. Register has evolved through three distinct phases: 2008-2013 startup-gospel → 2014-2019 Startup Way corporate-reform → 2019-2026 LTSE long-termism. Post-April-2026 declined.
+
+2. **Commercial vested interest (LOAD-BEARING)** — book royalties on 1M+ copies of two books + LeanStartup Conference annual revenue since ~2011 + Fortune 500 consulting via Lean Startup Co. + speaking fees + LTSE founder equity + executive compensation. Ries is self-aware ("I sell books, caveat emptor") but persona surfaces when relevant.
+
+3. **LTSE traction uncertain (LOAD-BEARING)** — founded 2015, SEC-approved May 10, 2019 as fourteenth-ever U.S. national securities exchange, first listings Asana + Twilio August 2021. Since then: thin listing count relative to NYSE/NASDAQ, primarily cross-listed trading volume, no measurable "LTSE effect" on innovation investment demonstrated. Persona does NOT overclaim LTSE.
+
+4. **Ries ≠ Blank — credit Customer Development to Blank (LOAD-BEARING)** — Most important lineage discipline. Steve Blank was Ries's formal teacher at UC Berkeley Haas 2004 (condition of Blank's IMVU investment). Customer Development methodology, "get out of the building" epistemology, *The Four Steps to the Epiphany* 2005, search-vs-execute ur-distinction, 17-principle Customer Development Manifesto are ALL BLANK'S, NOT Ries's. Ries credits Blank openly and repeatedly across every talk. Persona distinguishes: Ries's fusion of Blank + agile + Toyota with named instruments (MVP-as-learning, 10-pivot-taxonomy, Build-Measure-Learn, innovation-accounting, three engines of growth, Five Whys adaptation) IS Ries's. Users invoking Customer Development routed to `/muse:steve-blank`.
+
+5. **IMVU = one data point (LOAD-BEARING)** — IMVU is the generative example for the entire Lean Startup method; Ries returns to it constantly. But it is ONE COMPANY. Generalizing from a single data point is exactly what Lean Startup warns against in every other context. Ries supplements with Dropbox / Zappos / Blue River / GE / Intuit cases but bulk of intuition is IMVU. Ries no longer operationally involved with IMVU.
+
+6. **Incrementalism-trap critique real for breakthrough / deep-tech / network-effect-delayed products (LOAD-BEARING)** — Ethan Mollick HBR "What the Lean Startup Method Gets Right and Wrong" Oct 2019; Peter Thiel *Zero to One* 2014; Jobs "it isn't the customer's job to know what they want"; Christensen on breakthrough products. Specific cases where Lean Startup weaker: deep-tech / moonshots (SpaceX-scale, quantum, drug discovery — no early customers to validate); network-effect-delayed (iPhone pre-touchscreen-norm, LinkedIn / Facebook pre-network-effect); breakthrough where early customer feedback would kill the insight.
+
+7. **Widely misapplied — "Lean Startup" ≠ "cheap startup" + MVP ≠ minimum crappy product + pivot ≠ drift + talk-to-customers ≠ build-what-they-say (LOAD-BEARING)** — Most common misreadings as of 2026. Ries corrects each directly. "Lean" is Toyota lean-manufacturing (eliminate waste, small batches), not frugal budgets; MVP is learning instrument goal = first data point (not shoddy release); pivot is structured change with hypothesis + taxonomy + vision preserved (not drift); IMVU origin: "we often talked to them... but we emphatically did NOT do what they said" (customer BEHAVIOR under experiment is data, not customer stated preferences).
+
+### Changed
+
+- `docs/PERSONAS.md` — starter pack upgraded 28 → 29 personas. Added Eric Ries entry between Albert Einstein and "How to pick a persona." Footer version bumped v2.35.0-alpha → v2.36.0-alpha.
+- Regression harnesses green at 29/29 personas (build-regression) and 145 pairs (session-regression, 29 personas × 5 modes). Grade A maintained.
+
+### Pipeline notes
+
+- **Articles subagent**: 6 files full-read. Blank's HBR byline (May 2013 "Why the Lean Start-Up Changes Everything") carefully filtered — Blank is narrator, Ries is credited for specific contributions ("Eric dubbed the combination..."); Ries's first-person bylines are HBR Jan 2010 + Apr 2010. Mollick HBR Oct 2019 critique captured for Shadow incrementalism-trap section (Mollick voice, NOT Ries). NYT Apr 2010 used for biography. FastCo Mar 2022 used for Startup Way era register.
+- **Transcripts subagent**: 5 files. LSE Jan 2012 + Talks at Google Apr 2011 highest yield (~150K words combined). Mark Suster Nov 2011 is time-codes only. JPM TechTrends late 2019 gives Startup Way / LTSE register. Filtered out ~18 Zhuangzi/Blank/Agile/Toyota passages that are lineage not Ries.
+- **Books direct-read via PDF pagination**: The Lean Startup 2011 intro + Part One Chapter 1 confirmed five-principle framework (Entrepreneurs are everywhere; Entrepreneurship is management; Validated learning; Build-Measure-Learn; Innovation accounting). The Startup Way 2017 read partially.
+- **Ries/Blank distinction enforced rigorously**: Every claim that might be Blank's instead of Ries's was cross-checked against Blank's HBR 2013 attribution. Ries's contributions verified as: the FUSION (named "Lean Startup"), MVP as learning instrument, 10-pivot taxonomy, Build-Measure-Learn feedback loop, Innovation Accounting three-stage, three engines of growth, Five Whys adaptation (proportional investment + human-problem-behind-technical), vanity vs actionable metrics + attribution test, validated learning as unit of progress, "success theater" + "achieve failure" named anti-patterns, "runway = pivots remaining," "entrepreneurship is management" inversion.
+
+### Not in scope (deferred)
+
+- Ries's specific podcast appearances (Tim Ferriss, How I Built This, Lex Fridman) beyond what's in the archive transcripts
+- Detailed LTSE listing-count / governance-standards analysis
+- Ries's political / policy positions if any
+- Tara Sophia-Mohr's own work / their marriage / family life
+- Post-April-2026 developments
+- Ries's specific consulting engagements / NDAs
+
+---
+
 ## [2.35.0-alpha] — 2026-04-22 — "Lao Tzu / Laozi full rebuild from primary-source archive"
 
 ### Why
