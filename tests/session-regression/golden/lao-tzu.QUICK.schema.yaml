@@ -1,6 +1,6 @@
 persona: lao-tzu
 mode: QUICK
 categories_present: [framing, inquiry, test-probe]
-weak_at: [QUICK]
+weak_at: []
 canonical_coverage: 6
 has_sources: true

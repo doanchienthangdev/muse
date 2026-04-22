@@ -13,6 +13,90 @@ Nothing yet.
 
 ---
 
+## [2.35.0-alpha] — 2026-04-22 — "Lao Tzu / Laozi full rebuild from primary-source archive"
+
+### Why
+
+User reported the existing `lao-tzu` persona was built before the primary-source archive existed — the previous version (v2.1.0, minimal taglines, generic Taoism framing) was effectively a stub. User requested full rebuild from `.archives/personas/lao-tzu/` containing:
+- **Dao De Jing (Daodejing)** — Edmund Ryden translation, Oxford World's Classics 2008, with Benjamin Penny introduction — the primary-source text for verbatim quotes
+- **Wing-tsit Chan, *The Way of Lao Tzu (Tao-tê ching)*** — Library of Liberal Arts 1963 — standard scholarly edition
+- **Holmes H. Welch, *Taoism: The Parting of the Way*** — Beacon Press 1957/rev. 1966 — standard scholarly history
+- **Michael Puett, *Becoming Laozi*** — academic article (filtered — primarily post-Han religious Daoism, OUT-OF-SCOPE)
+- **Alan Watts, *Tao: The Watercourse Way*** — Pantheon 1975 — popularizing interpretation
+- **Fritjof Capra, *The Tao of Physics*** — Shambhala 1975 — cross-domain analogy
+- **Michael McCurley, *The Tao of Systems Thinking*** — 2016 — modern applied-systems
+- **Stanford Encyclopedia of Philosophy "Daoism" entry** (Chad Hansen, 2020 revision) — primary academic reference
+- 7 articles (SEP Daoism primary + Puett + Systems Thinking + Leadership + Dialectical Thinking + Naturalness + Forbes filtered heavily)
+- 4 documentary transcripts (Van Norden "Wisdom of China: Laozi"; Jason Gregory "Art of Effortless Living" filtered heavily — Gregory misattributes Zhuangzi passages as Laozi; Li Yuanxiang Chinese-philosophy lecture; CCCH9025 Chad Hansen course promo)
+
+**User mid-build guidance applied from Marcus rebuild carried forward**: "co the co tai lieu tu nguoi khac vao, dung nham voi nguoi khac chi quan tam den Marcus Aurelius thoi nhe" — same filter discipline applied to Laozi: filtered OUT Zhuangzi 莊子 (separate philosopher and text), Confucius / Mencius / Mohists / Legalists (different Warring States schools), religious Daoism (Celestial Masters / Complete Perfection / Zhengyi from 2nd c. CE onward — deified Laozi and developed alchemy / immortality / talismans / deity worship, but these are POST-HAN religious traditions, NOT the philosophical DDJ), Buddhism (arrived China 1st c. CE, 500+ years after DDJ — any mindfulness / karma / nirvana attribution is anachronistic), modern Stoics (Ryan Holiday mashups), modern corporate-Tao genre (Capra physics / Watts watercourse / Hoff Pooh / Stephen Mitchell 1988 loose-interpretation-by-non-Sinologist / "Tao of [X]" business books).
+
+This is a **REBUILD, not a new addition**. Persona count stays at 28.
+
+### Added (as full rebuild)
+
+- **`personas/lao-tzu.md`** — rebuilt with Dao De Jing Ryden 2008 primary-source grounding and DDJ chapter:number citations throughout. Full v2.2 schema with 8 taglines, mandatory disclaimer (primary-source + scholarly sources named + historical-uncertain-authorship + composite-text + seven LOAD-BEARING honesty disciplines), 7 signature moves balanced 2F/3I/2T:
+  - **The Unnameable Way — "Of ways you may speak, but not the Perennial Way"** *(framing)* — DDJ 1 destabilizes any definition before it closes
+  - **The Water Frame — "The highest goodness is like water"** *(framing)* — DDJ 8, 78, 66; water yields to every container, flows to lowest places, benefits myriad things without contending
+  - **"Look at the hollow, not the form" — productive emptiness** *(inquiry)* — DDJ 11 thirty spokes share one hub, usefulness lies in empty space
+  - **"Is the strong pole alive or dead?" — alive-vs-dying diagnostic** *(inquiry)* — DDJ 76 the strong are followers of death, the weak are the living
+  - **"What is this binary hiding?" — inversion inquiry** *(inquiry)* — DDJ 2, 22, 40, 58 paired opposites generate each other
+  - **"What happens if we leave it alone?" — wu-wei probe** *(test-probe)* — DDJ 17, 37, 48, 60, 63 is your doing necessary or is your doing-of-it the problem
+  - **"Stop before the tipping point" — fǎn reversal heuristic** *(test-probe)* — DDJ 9, 33, 40 when tasks are done then retire
+
+  12 cognitive patterns (Unnameable Way DDJ 1; paired opposites DDJ 2; productive emptiness wu 無 DDJ 11; water heuristic DDJ 8/78/66; wu-wei 無為 non-forcing DDJ 37/48/63; ziran 自然 self-so benchmark DDJ 17/25/64; fǎn 反 reversal DDJ 40/9; uncarved block pu 樸 DDJ 15/19/28/32; anti-anthropocentric cosmology DDJ 5; feminine / low / receptive polarity DDJ 6/10/28/61/66; anti-Confucian correction DDJ 18-19; small-state light-touch governance DDJ 17/60/80). 11 analogous cases grounded in DDJ chapters (the empty room DDJ 11; water carving stone DDJ 78; the uncarved block DDJ 28; the newborn infant DDJ 10/20/55; the small fish DDJ 60; the valley / river reaching the sea DDJ 66; thirty spokes sharing one hub DDJ 11; stop when nearly full DDJ 9; when the great Dao declines DDJ 18; the three treasures DDJ 67; the straw dog DDJ 5). 10 benchmark prompts. 25+ verified sources. Unique `strong_at: [QUICK, STANDARD, DEEP, CRITIC]` — Laozi operates at all modes natively because DDJ itself does: aphoristic single-sentence reminder is native genre form; CRITIC is native because DDJ's core move is refusing the asker's framing and inverting it.
+
+- **`commands/muse:lao-tzu.md`** — rebuilt v2.16 template slash command printing full disclaimer + seven LOAD-BEARING disciplines at session start. Voice discipline expanded: Buddhist vocabulary banned (mindfulness / karma / nirvana / bodhi / sutra / four-noble-truths are all 500+ years post-DDJ), Confucian vocabulary banned as positive good (ren / li / yi / xiao are symptoms of Dao-decline per DDJ 18-19), modern management-speak banned, New Age vocabulary banned, Stephen Mitchell 1988 "version" phrasings banned (not a translation from Chinese), Zhuangzi misattributions banned.
+
+- **`tests/build-regression/golden/lao-tzu.signatures.txt`** + `tests/session-regression/golden/lao-tzu.*.schema.yaml` (re-snapshotted with new signature-move names; 5 modes × 1 persona).
+
+### Changed
+
+- `docs/PERSONAS.md`: Lao Tzu entry fully rewritten with primary-source disclaimer + 7 signature moves + 12 cognitive patterns + 7 LOAD-BEARING honesty disciplines. Footer version bumped v2.34 → v2.35.
+- Regression harnesses green at 28/28 personas (build-regression) and 140 pairs (session-regression, 28 personas × 5 modes). Grade A maintained.
+
+### Pipeline notes
+
+- **Articles subagent**: 7 files filtered for Laozi-specific content. SEP Daoism (Hansen 2020) surfaced 13 cognitive patterns with verbatim DDJ-chapter anchors. Puett "Becoming Laozi" filtered HEAVILY — ~95% of article is post-Han religious Daoism which is OUT-OF-SCOPE; kept only DDJ-direct quotes Puett uses as source material (DDJ 5, 6, 7, 9, 10). Leadership article heavily filtered for DDJ-grounded content vs author's "Knowledge Mindfulness" commercial framing. Systems Thinking article flagged overstated yin-yang cosmology (yin-yang is Han-era synthesis; DDJ mentions explicitly only once in ch. 42). Forbes pop-Taoism flagged as NOT reliable source.
+- **Transcripts subagent**: 4 files full-read. Van Norden documentary highest-yield; Li Yuanxiang Chinese lecture highest DDJ-verbatim yield. Gregory "Art of Effortless Living" FILTERED HEAVILY — Gregory routinely cites Zhuangzi passages as "Laozi" (the Shu/Hu/Hun-tun chaos parable is Zhuangzi ch. 7, not DDJ); Buddhist insertions filtered; ~32 non-Laozi passages flagged for exclusion. CCCH9025 Hansen course promo minimal Laozi-specific yield (mostly covers other schools).
+- **Books direct-read via PDF pagination**: Ryden Oxford translation pages 1-18 (intro + Book 1 start) and pages 43-60 (DDJ chapters 2-10 with Ryden's commentary). Scholar framings (Hansen SEP Three Disciplines of Laozi; Chan 1963 standard English; Welch 1957 parting-of-the-way history; Puett filtered; Watts / Capra popularizing framings) integrated from prior training knowledge + SEP article citations rather than direct PDF reads (books subagent failed 3x on 32MB PDF limit).
+- **User guidance applied**: Zhuangzi (separate philosopher c. 369-286 BCE), Confucius / Mencius / Mohists / Legalists (different Warring States schools), religious Daoism (Celestial Masters 2nd c. CE onward, Complete Perfection 12th c. onward, Zhengyi; alchemy / immortality / deity worship), Buddhism (1st c. CE arrival), modern Stoics (Holiday), modern corporate-Tao (Watts, Capra, Hoff, Mitchell, "Tao of [X]") all filtered OUT of Laozi's voice. Zhuangzi passages misattributed by Gregory documentary surfaced and excluded.
+
+### Seven LOAD-BEARING honesty disciplines (per README)
+
+1. **Authorship disputed + text composite (LOAD-BEARING)** — Sima Qian c. 100 BCE three competing identifications (Li Er / Lao Dan / Taishi Dan); modern scholarly consensus treats single-authorship as legendary; 老子 Lǎozǐ literally = "Old Master" honorific; Guodian bamboo strips c. 300 BCE contain only ~1/3 of received text supporting composite hypothesis; Penny introduction to Ryden 2008: "Who this 'old master' was, or if there really was such a person, has been a subject of discussion since at least the first century before the Common Era."
+
+2. **Do NOT conflate with Zhuangzi 莊子 (LOAD-BEARING)** — separate Warring States text attributed to Zhuang Zhou c. 369-286 BCE with different register: narrative / fantastical / dialogical (butterfly dream, cook carving ox, happy fish, useless tree) vs Laozi's aphoristic / compressed / impersonal / ruler-addressed. Popular books and documentaries routinely misattribute Zhuangzi passages as "Lao Tzu" — category error. The Gregory "Art of Effortless Living" documentary in persona's archive does this; persona filters out.
+
+3. **Do NOT conflate with religious Daoism / Daojiao 道教 (LOAD-BEARING)** — Celestial Masters 天師道 from 2nd c. CE, Complete Perfection 全真 from 12th c., Zhengyi 正一 are religious movements that from Han Dynasty onward deified Laozi (as Laojun / Taishang Laojun), developed alchemy (jindan 金丹 internal / waidan external), produced Xiang'er commentary / Huangting jing / Laozi zhongjing / Daozang canon with priestly lineages talismans deity-worship immortality practice. Real, significant, interesting — but post-Han 500+ years after DDJ, and NOT philosophical DDJ. Puett "Becoming Laozi" primarily about these traditions; OUT-OF-SCOPE.
+
+4. **Explicitly ANTI-CONFUCIAN (LOAD-BEARING context)** — DDJ 18 "when the great Dao declines, benevolence and righteousness appear"; DDJ 19 "abandon sagehood, discard wisdom, and the people will benefit a hundredfold; abandon benevolence, discard righteousness, and the people will return to filial piety and parental love." Confucian vocabulary ren 仁 / li 禮 / yi 義 / xiao 孝 / zhi 智 treated as symptom of Dao-decline not positive good. Warring States context: Confucian-Mohist schools argued about virtue-vocabulary; DDJ's answer is destabilizing the vocabulary itself.
+
+5. **Predates Buddhism in China by 500+ years (LOAD-BEARING)** — Buddhism entered China via Han Dynasty 1st c. CE, approximately 500-700 years after DDJ composition (5th-3rd c. BCE). Any attribution of "mindfulness," "karma," "samsara," "nirvana," "bodhi," "sutra," "emptiness-as-shunyata," or "four noble truths" is anachronistic. DDJ wu 無 related but distinct from Buddhist śūnyatā; DDJ wu-wei not Buddhist meditation; DDJ sage not bodhisattva.
+
+6. **Translation divergence MASSIVE (LOAD-BEARING)** — 600+ English translations; 2,552 into 97 languages per Misha Tadd 2024 census (most-translated text after Bible). Major translations diverge substantially: Legge 1891 Victorian-Christianizing; Waley 1934 literary; Lau 1963 Penguin scholarly baseline; Wing-tsit Chan 1963 academic; Addiss/Lombardo 1993 sparse-poetic; Red Pine 1996 with traditional commentaries; Le Guin 1997 feminist literary; Ryden 2008 Oxford academic (renders Way as "she"); Ivanhoe 2002; Hinton 2002. Stephen Mitchell 1988 "version" is acknowledged loose interpretation by non-Sinologist (Mitchell did not read classical Chinese), NOT translation. "Laozi voice" in any modern English rendering is partly translator's choice. Persona uses Ryden 2008 for verbatim short-quote fair-use.
+
+7. **Modern corporate-Tao is commentary, not Laozi (LOAD-BEARING)** — Fritjof Capra *Tao of Physics* 1975 (quantum mechanics + Taoism cross-domain analogy — valid as metaphor, not Laozi's claim); Alan Watts *Tao Watercourse Way* 1975 (insightful popularization, Watts's own voice); Benjamin Hoff *Tao of Pooh* 1982 (charming, loose); Stephen Mitchell 1988 (not a translation); Ryan Holiday daily-stoic-taoism mashup; "Tao of Leadership" / "Tao of Management" / "Tao of [X]" business genre (heavy interpretive overlay, typically anchored to few chapters and generalized loosely). Useful entry-points; not Laozi. Persona routes users to multiple translations (Ryden, Lau, Chan, Red Pine, Le Guin) rather than single popularizer's rendering.
+
+### Previous Lao Tzu persona retired
+
+v2.1.0 (built without archive, signature moves: wu-wei / value of emptiness / reversal principle / soft overcomes hard / know without words — generic Taoism rather than DDJ-grounded and pre-Ryden-source) is superseded. New version grounded in verbatim Ryden 2008 with DDJ chapter citations throughout.
+
+### Not in scope (deferred)
+
+- Guodian bamboo-strip textual criticism (c. 300 BCE earliest, ~1/3 partial) — acknowledged as manuscript layer, not central to persona's cognitive-tool patterns
+- Mawangdui silk-manuscripts textual criticism (168 BCE, reverse order Dedaojing) — same
+- Wang Bi 王弼 + Heshang Gong 河上公 commentary traditions — acknowledged as received-text anchors, not used as Laozi's voice
+- Religious Daoism canonical texts (Daozang, Xiang'er, Huangting jing, Laozi zhongjing) — post-Han; OUT-OF-SCOPE
+- Zhuangzi 莊子 passages — separate text, separate philosopher; filtered OUT
+- Modern Stoics' mashup commentary (Ryan Holiday) — commentary not Laozi
+- "Tao of [X]" commercial genre — commentary not Laozi
+- Stephen Mitchell 1988 "version" — not a translation from Chinese
+- Post-DDJ Chinese philosophy (Neo-Confucianism, Chan/Zen, Qing imperial ideology, modern Chinese Marxism) — post-Laozi developments OUT-OF-SCOPE
+- Modern psychology, physics, political theory — 2,500+ years post-Laozi
+
+---
+
 ## [2.34.0-alpha] — 2026-04-22 — "Marcus Aurelius full rebuild from primary-source archive"
 
 ### Why
