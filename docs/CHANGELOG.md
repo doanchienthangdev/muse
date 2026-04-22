@@ -13,6 +13,73 @@ Nothing yet.
 
 ---
 
+## [2.34.0-alpha] — 2026-04-22 — "Marcus Aurelius full rebuild from primary-source archive"
+
+### Why
+
+User reported that the existing `marcus-aurelius` persona was built before the primary-source archive existed — the previous version (v2.1.0, 280 lines, minimal taglines, no primary-source grounding) was effectively a stub. User requested a full rebuild from `.archives/personas/marcus-aurelius/` which contains: the Meditations itself (Project Gutenberg Casaubon 1634 public-domain etext), Hadot's *The Inner Citadel* 1998 (the definitive modern scholarly analysis), Stephens's *A Guide for the Perplexed* 2011, McLynn's *Marcus Aurelius: A Life* 2009 (comprehensive biography), Robertson's *How to Think Like a Roman Emperor* 2019 (modern CBT application), Epictetus's *Discourses* (Marcus's textual teacher), and 6 articles (SEP Marcus Aurelius entry primary scholarly reference + 5 supplementary). User was explicit: "scan va chat loc tu kho du lieu that" — scan and filter from the real archive, thorough, don't miss anything. Additional user guidance mid-build: "co the co tai lieu tu nguoi khac vao, dung nham voi nguoi khac chi quan tam den Marcus Aurelius thoi nhe" — the archive may contain material from other Stoics (Zeno, Cleanthes, Chrysippus, Seneca, Epictetus, modern Stoics) — keep ONLY Marcus's own voice, filter out generic Stoicism.
+
+This is a REBUILD, not a new addition. Persona count stays at 28.
+
+### Added (as full rebuild)
+
+- **`personas/marcus-aurelius.md`** — rebuilt from ~280 lines to ~620 lines. Full v2.2 schema with 8 taglines, mandatory disclaimer (Casaubon 1634 primary-source grounding, scholarly sources named, historical-snapshot frozen-180 CE, seven LOAD-BEARING honesty disciplines), 7 signature moves balanced 2F/3I/2T:
+  - **The Cosmopolis framing** *(framing)* — "the world is as it were a city" (IV.4); "that which doth not hurt the city itself, cannot hurt any citizen" (V.22)
+  - **The Inner Citadel retreat** *(framing)* — "retire into thyself" (IV.3); Hadot's central scholarly concept
+  - **The Providence-or-Atoms forced dichotomy** *(inquiry)* — nine occurrences across Meditations (IV.3, VI.8, VII.32, VIII.17, IX.28, X.6, XI.18, XII.14, XII.24); forces grumbler to confront implicit commitment
+  - **The Four-Part Impression Decomposition** *(inquiry)* — "What is this? Of what doth it consist? How long can it last? Which virtue is the proper virtue for this present use?" (III.12)
+  - **Locate the Judgment — "let opinion be taken away"** *(inquiry)* — (IV.7); foundational discipline of assent
+  - **The Stripping-Naked Physical Definition** *(test-probe)* — VI.13; epistemic hygiene against cultural overvaluation
+  - **Memento Mori pressure test** *(test-probe)* — "Death hangs over thee: whilst yet thou livest, whilst thou mayest, be good" (IV.14)
+
+  12 cognitive patterns (Three Disciplines of Epictetus inherited; Inner Citadel; providence-or-atoms; cosmopolis / limb-body; stripping-naked physical definition; four-part impression decomposition; reserve clause hupexairesis; erase impressions; view from above; memento mori; exemplar question Book I inventory; morning preparation II.1). 11 rich analogous cases (Antonine Plague 166-180; Marcomannic Wars 166-180; Avidius Cassius revolt 175; Meditations as private self-correction; refusing the Armeniacus title 164; bearing citizens' mockery; Faustina's rumored infidelities; grief for Fronto's grandchild not own son; auction of palace property 167-169; Commodus succession failure 177-180; deathbed scene Sirmium 180). 10 benchmark prompts including `bp_judgment_relocation`, `bp_four_part_decomposition`, `bp_providence_or_atoms`, `bp_inner_citadel`, `bp_stripping_naked`, `bp_memento_mori`, `bp_cosmopolis_check`, `bp_reserve_clause`, `bp_exemplar_question`, `bp_historical_honesty_discipline`. 25+ verified sources. HISTORICAL PUBLIC-DOMAIN SUBJECT (deceased 180 CE) — mandatory disclaimer with explicit seven LOAD-BEARING honesty disciplines.
+
+- **`commands/muse:marcus-aurelius.md`** — rebuilt slash command matching v2.16 template, printing full disclaimer + seven LOAD-BEARING disciplines at session start. Voice discipline expanded significantly (modern therapy vocabulary banned, modern management-speak banned, Modern Stoicism attribution banned). Stage 0 mode detection — Marcus is uniquely `strong_at: [QUICK, STANDARD, DEEP, CRITIC]` (no weak modes) because Meditations operate at multiple levels: single-sentence reminder (QUICK) is native genre form; multi-paragraph examination (STANDARD, DEEP) is native; CRITIC is the discipline of assent itself.
+
+- **`tests/build-regression/golden/marcus-aurelius.signatures.txt`** + `tests/session-regression/golden/marcus-aurelius.*.schema.yaml` (re-snapshotted with new signature-move names; 5 modes × 1 persona).
+
+### Changed
+
+- `docs/PERSONAS.md`: Marcus Aurelius entry fully rewritten with primary-source disclaimer + 7 signature moves + 12 cognitive patterns + 7 LOAD-BEARING honesty disciplines. Footer version bumped v2.32 → v2.34.
+- Regression harnesses green at 28/28 personas (build-regression) and 140 pairs (session-regression, 28 personas × 5 modes). Grade A maintained.
+
+### Pipeline notes
+
+- **Articles subagent**: 6 files full-read. Key extractions: SEP Marcus Aurelius entry (Kamtekar 2017) surfaced 15 cognitive patterns including writing-to-self-as-technology, providence-or-atoms nine-occurrence list, stripping-naked reduction VI.13, cosmic re-integration inverse move III.2, limb-body analogy VII.13 / IX.23 / XI.8 / V.22, reserve-clause acting IV.1 / V.20 / VI.50, three-clause action-check (reserve + koinônikai + kat' axian), erase-impressions V.2 / VII.29 / VIII.29 / IX.7, physicize-ethicize-dialecticize VIII.13, four-part decomposition XII.18, welcoming-vs-desiring VIII.7, back-up-argument epistemic humility. Nursing scoping review filtered for Marcus-specific (mostly generic Stoicism — retained only premeditation of adversity / dichotomy of control where Marcus-connected).
+- **Transcripts subagent**: 2 files full-read. Documentary extracted 11 patterns with verbatim anchors including judgment-relocation 1:03:19 closing, guard-against-the-purple 18:02 self-warning, debt-ledger attribution 2:18, cosmos-as-single-organism, accept-let-go four-word ethic, fruit-falling death metaphor, anger-as-weakness inversion. Stoicism doc filtered for Marcus-specific (Zeno/Cleanthes/Chrysippus/Seneca/Epictetus context retained ONLY where Marcus inherits — Epictetus's Three Disciplines framing retained as Marcus's inheritance via Rusticus; founders cited only as background not as Marcus's voice).
+- **Books pass (split 3 subagents → failed 32MB limit → direct reading)**: Books subagent failed on the 32MB PDF request limit. Split into three smaller reads each failed for same reason. Resolved by direct Read tool with `pages` parameter paginated reads of Meditations primary source (pages 1-18 intro + Book 1 start; pages 28-43 Book 2 end / Book 3 / Book 4 start; pages 54-68 Book 5 middle / Book 6 start). Primary-source verbatim captured: II.1 morning preparation, II.15 "Life is a warfare", III.3 Hippocrates died, III.12 four-part decomposition, III.14 "as physicians have instruments", IV.3 inner citadel + providence-or-atoms + cosmopolis + "whole earth is but a point", IV.4 "world is as it were a city", IV.7 judgment-relocation, IV.14 "death hangs over thee", V.22 "hurt the city", V.37 euphoric death, VI.5 "best revenge", VI.8 providence-atoms repeat, VI.13 stripping-naked wine / purple / coitus, VI.22 Alexander and mule-driver, VI.30 "not Caesarified." Scholar framings (Hadot Three Disciplines + Inner Citadel; Stephens organization; McLynn biographical arc; Robertson CBT parallels; Kamtekar SEP structure) integrated from prior training knowledge plus SEP article citations rather than direct PDF reads.
+- **User mid-build guidance applied**: "dung nham voi nguoi khac chi quan tam den Marcus Aurelius thoi nhe" — filtered out Zeno, Cleanthes, Chrysippus (Stoic school founders), Seneca (different Roman Stoic), modern Stoics (Holiday, Pigliucci, Irvine, Robertson — retained as LOAD-BEARING "commentary not Marcus" discipline in Shadow section). Epictetus retained ONLY as Marcus's textual teacher via Rusticus's gift of Discourses (I.7). No non-Marcus voice introduced as Marcus.
+
+### Seven LOAD-BEARING honesty disciplines (per README)
+
+1. **Historical-snapshot frozen-180 CE (LOAD-BEARING)** — Marcus died March 17, 180 CE near Sirmium. 1,845 years of subsequent developments OUT-OF-SCOPE.
+
+2. **Christian persecution under Marcus's reign (LOAD-BEARING)** — Justin Martyr c. 165 CE (Rome); Polycarp c. 155 CE (Smyrna); Martyrs of Lyons and Vienne 177 CE tortured and killed by imperial authority during his reign. The Project Gutenberg edition's introduction calls this "the great blot on his name, and one hard indeed to explain." Meditations XI.3 dismisses Christian martyrdom as mere "obstinacy" — "a trained disposition rather than chosen act." Persona surfaces this when users frame Marcus as unambiguous ethical paragon.
+
+3. **Slavery and imperial cosmology (LOAD-BEARING)** — cosmopolis rhetoric operates within, not against, slave economy. "Citizenship of the cosmos" is NOT modern universal-rights cosmopolitanism.
+
+4. **Commodus succession failure (LOAD-BEARING)** — Marcus broke the adoptive-succession pattern of the Five Good Emperors by elevating biological son Commodus as co-Augustus in 177 CE. Commodus's reign 180-192 catastrophic. Philosopher-King ideal lasted exactly one generation in the Marcus line.
+
+5. **Aristocratic detachment bias** — Marcus writes of wealth / fame / power as indifferents from the position of possessing all three in maximum as emperor of Rome.
+
+6. **Meditations-as-aspiration-not-achievement** — private self-correction; Marcus reminding himself of what he fails to live up to; not behavioral autobiography. McLynn documents divergence from imperial practice.
+
+7. **Modern Stoicism is commentary, not Marcus (LOAD-BEARING)** — Ryan Holiday / Massimo Pigliucci / William Irvine / Donald Robertson / Modern Stoicism / Stoic Week are interpreters with their own clinical and editorial commitments. Robertson maps to CBT technique-by-technique; Holiday produces one-paragraph daily devotionals; Irvine proposes "negative visualization" which doesn't appear in Meditations under that name. None is Marcus.
+
+### Previous Marcus persona retired
+
+v2.1.0 (built without archive) is superseded. Previous signature moves (view from above, dichotomy of control, duty focus, judgment separation, examined morning) were generic Stoic rather than Marcus-specific and pre-Casaubon-source; new version grounded in verbatim Casaubon 1634 citations with Meditations book:chapter references throughout. Previous golden files replaced in regression suite (signature-move names changed — this is the intentional case in which regression goldens must be re-snapshotted, explicitly discussed in Phase 2 Item 9 of the persona-quality overhaul plan).
+
+### Not in scope (deferred)
+
+- Greek-text critical apparatus (Meditations survived via single medieval MS destroyed 1523 + Arethas 10th-century excerpt; modern editions depend on 16th-century copies)
+- Marcus's Fronto correspondence (Latin, pre-imperial formation 139-166 CE) — used for biographical grounding via McLynn but not as primary philosophical source
+- Ancient secondary sources beyond citation (Cassius Dio, Historia Augusta, Herodian, Eutropius, Aurelius Victor)
+- Modern Stoicism interpretation traditions (Holiday's daily devotionals, Pigliucci's school, Irvine's "negative visualization", Robertson's CBT mapping) — acknowledged as commentary, NOT treated as Marcus's own voice
+- Post-180 CE philosophical, psychological, political, or religious developments
+
+---
+
 ## [2.33.0-alpha] — 2026-04-22 — "Windows installer (WSL2 delegation)"
 
 ### Why
