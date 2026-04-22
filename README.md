@@ -189,8 +189,14 @@ Zero dependencies. Zero shell scripts. Zero build step. The agent is the runtime
 
 ## Install — 30 seconds
 
+**macOS / Linux / WSL2:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/doanchienthangdev/muse/main/install.sh | sh
+```
+
+**Windows (PowerShell):**
+```powershell
+iwr -useb https://raw.githubusercontent.com/doanchienthangdev/muse/main/install.ps1 | iex
 ```
 
 That's it. No dependencies. No build. No package manager. The installer clones the repo to `~/.claude/skills/muse/`, copies all slash commands to `~/.claude/commands/`, and creates `~/.muse/sessions/` for your session artifacts. Restart Claude Code once and start typing:
@@ -208,6 +214,10 @@ git clone https://github.com/doanchienthangdev/muse ~/.claude/skills/muse
 cd ~/.claude/skills/muse
 ./install.sh
 ```
+
+### Windows notes
+
+Muse uses filenames containing colons (e.g., `commands/muse:aristotle.md`) which are invalid on native Windows NTFS (reserved for Alternate Data Streams). The Windows installer delegates to **WSL2** (recommended) or **Git Bash** (fallback), both of which handle colons transparently. If neither is installed, the PowerShell installer prints instructions to install WSL2 via `wsl --install`. After install, run Claude Code inside WSL2 (`wsl && claude`) for the slash commands to register correctly. See [`docs/WINDOWS.md`](docs/WINDOWS.md) for details.
 
 For Codex CLI or Gemini CLI users (no slash command support), Muse invokes via free-text: `muse:warren-buffett <question>`, `muse:chain a→b <question>`, `muse:who <question>`. See `adapters/codex/README.md` and `adapters/gemini/README.md`.
 

@@ -13,6 +13,47 @@ Nothing yet.
 
 ---
 
+## [2.33.0-alpha] — 2026-04-22 — "Windows installer (WSL2 delegation)"
+
+### Why
+
+User reported that Windows users cloning muse hit missing-`commands/` failures because muse filenames contain colons (`/muse:aristotle` → `commands/muse:aristotle.md`), which native Windows NTFS reserves for Alternate Data Streams. Git for Windows either silently sparse-checkouts the `commands/` directory or sanitizes the colon, breaking the slash command mapping.
+
+User's preference: keep the colon filename convention (it's muse's public API across 32 releases — changing it would cascade through every doc, session file, and command name) and ship a Windows-specific install path instead.
+
+Solution: a PowerShell installer that detects a POSIX filesystem layer (WSL2 preferred, Git Bash fallback) and delegates to the existing `install.sh`. Both layers handle colons transparently. When neither is present, the installer prints clear `wsl --install` / `winget install --id Git.Git` instructions instead of failing silently.
+
+### Added
+
+- **`install.ps1`** — Windows PowerShell entry point (~130 lines). Detects WSL2 via `wsl --list --quiet`; falls back to Git Bash at standard locations (`Program Files\Git`, `Program Files (x86)\Git`, `LOCALAPPDATA\Programs\Git`, Scoop). Delegates to `install.sh` via `curl -fsSL ... | sh` inside the POSIX environment. Honors `MUSE_REPO`, `MUSE_REF`, `MUSE_TARGET` env vars identically to `install.sh`. Emits structured `[ok]` / `[warn]` / `[fail]` tags. One-liner: `iwr -useb https://raw.githubusercontent.com/doanchienthangdev/muse/main/install.ps1 | iex`.
+- **`docs/WINDOWS.md`** — Windows-specific installation + troubleshooting guide. Explains the NTFS-colon constraint, the two supported paths (WSL2, Git Bash), common failure modes (sparse-checkout fallback, `/muse:*` commands missing after install), version pinning via env vars, and why renaming the files would be worse than a one-time install friction.
+
+### Changed
+
+- `README.md` — `## Install — 30 seconds` section now documents both macOS/Linux/WSL2 and Windows entry points. Added a "Windows notes" subsection linking to `docs/WINDOWS.md`.
+
+### Pipeline notes
+
+- **Zero-dep constraint preserved**: `install.ps1` uses only PowerShell 5.0+ built-ins (`Invoke-RestMethod` equivalent via `iwr`, `Test-Path`, `& wsl.exe`). No external modules required.
+- **Delegation model**: rather than re-implementing `install.sh`'s logic in PowerShell, `install.ps1` downloads and runs `install.sh` inside WSL/Git Bash. This keeps the two installers in lockstep — any future `install.sh` change propagates to Windows users on their next install without additional work.
+- **Env var passthrough**: `MUSE_REPO`, `MUSE_REF`, `MUSE_TARGET` set in PowerShell are forwarded to the bash process as a command prelude (`MUSE_REPO='...' MUSE_REF='...' sh -c 'curl ... | sh'`), preserving the same customization surface as the Unix installer.
+- **No new personas or command changes** — regression goldens at 28/28 personas and 140 pairs unchanged from v2.32.0-alpha.
+
+### Rejected alternatives (documented in `docs/WINDOWS.md`)
+
+- **Rename filenames from `muse:X.md` → `muse-X.md`** — would change every slash command name (`/muse:aristotle` → `/muse-aristotle`), break every doc and session file, fragment the namespace, and require maintaining two parallel command sets. Colon is part of muse's public API.
+- **Ship a Windows-specific tarball with renamed files** — same API-fragmentation problem as above, plus install-time divergence between Windows users and everyone else on every release.
+- **Pure PowerShell native install (no WSL/Git Bash)** — cannot be done: native NTFS rejects the colon. Would require symlinks (Windows Developer Mode + admin on older versions) plus a symlink-following mode for Claude Code's slash command scanner, which is out of muse's control.
+
+### Not in scope (deferred)
+
+- WSL1 support — WSL1 uses a Windows-backed filesystem that inherits the NTFS colon restriction. WSL2 required.
+- Cygwin support — less common than Git Bash; users who run Cygwin can typically run `install.sh` directly from the Cygwin shell without a PowerShell wrapper.
+- Automatic WSL2 installation — `install.ps1` does not run `wsl --install` on the user's behalf because that requires admin + reboot. It prints the command for the user to run themselves.
+- Detection of Claude Code's install location — installer assumes `~/.claude/` convention; if Claude Code is configured to a different skills directory, user sets `MUSE_TARGET`.
+
+---
+
 ## [2.32.0-alpha] — 2026-04-22 — "Albert Einstein joins the starter pack"
 
 ### Why
